@@ -1,0 +1,93 @@
+// use prisma-next
+
+enum AddressCategory {
+  DELIVERY
+  EMERGENCY_SOS
+  CIVIC_ALERT
+}
+
+enum IssueStatus {
+  REPORTED
+  VERIFIED
+  IN_PROGRESS
+  RESOLVED
+}
+
+model User {
+  id            String             @id @default(uuid())
+  email         String             @unique
+  name          String?
+  phone         String?            @unique
+  avatarUrl     String?
+  
+  // Relations: Ek user multiple addresses aur issues create kar sakta hai
+  addresses     MicroAddress[]
+  reportedIssues CivicIssueCluster[]
+  
+  createdAt     TimestamptzString  @default(now())
+  updatedAt     temporal.updatedAtString()
+}
+
+model MicroAddress {
+  id              String             @id @default(uuid())
+  slug            String             @unique
+  digipin         String
+  latitude        Float
+  longitude       Float
+  title           String
+  subUnit         String?
+  accessNotes     String?
+  photoUrl        String?
+  category        AddressCategory    @default(DELIVERY)
+  isEphemeral     Boolean            @default(true)
+  passwordHash    String?
+  hasLiveTracking Boolean            @default(false)
+  expiresAt       TimestamptzString?
+  
+  // Foreign Key to User (Nullable because anonymous users can also create ephemeral links)
+  userId          String?
+  user            User?              @relation(fields: [userId], references: [id])
+  
+  createdAt       TimestamptzString  @default(now())
+  updatedAt       temporal.updatedAtString()
+
+  @@index([digipin])
+  @@index([slug])
+  @@index([expiresAt])
+  @@index([userId]) // Indexing foreign key for fast lookups
+}
+
+model CivicIssueCluster {
+  id               String             @id @default(uuid())
+  digipinPrefix8   String
+  category         String
+  status           IssueStatus        @default(REPORTED)
+  reportCount      Int                @default(1)
+  latitude         Float
+  longitude        Float
+  initialPhotoUrl  String
+  resolvedPhotoUrl String?
+  
+  // Foreign Key to User (Reporter)
+  reporterId       String?
+  reporter         User?              @relation(fields: [reporterId], references: [id])
+
+  createdAt        TimestamptzString  @default(now())
+  updatedAt        temporal.updatedAtString()
+
+  @@index([digipinPrefix8])
+  @@index([reporterId])
+}
+
+model Blacklist {
+  id              String             @id @default(uuid())
+  fingerprintHash String             @unique
+  cookieId        String?            @unique
+  ipAddress       String?
+  digipinOrigin   String
+  reason          String
+  bannedAt        TimestamptzString  @default(now())
+
+  @@index([fingerprintHash])
+  @@index([cookieId])
+}

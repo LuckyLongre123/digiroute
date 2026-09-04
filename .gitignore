@@ -1,0 +1,20 @@
+# Root & General
+.DS_Store
+.env
+.env.*
+node_modules/
+
+# Frontend (Next.js)
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.vercel/
+
+# Backend (Prisma & Bun)
+backend/dist/
+backend/logs/
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# Ignore Husky cache but keep the hooks
+.husky/_/
