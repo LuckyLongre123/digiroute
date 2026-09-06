@@ -18,3 +18,9 @@ backend/prisma/*.db-journal
 
 # Ignore Husky cache but keep the hooks
 .husky/_/
+
+# AI Agent & Editor Files
+.agents/
+.claude/
+.cursor/
+.devin/

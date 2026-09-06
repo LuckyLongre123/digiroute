@@ -1,7 +1,9 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { globalLimiter } from './middlewares/rateLimiter.js';
 import authRouter from './routes/auth.route.js';
 
 const app = express();
@@ -15,10 +17,14 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Global rate limiter applied to all API routes
+app.use('/api', globalLimiter);
 
 app.use('/api/v1/auth', authRouter);
 
