@@ -1,0 +1,35 @@
+// use prisma-8
+
+model User {
+  id           String    @id @default(uuid())
+  email        String?   @unique
+  phone        String?   @unique
+  name         String?
+  passwordHash String?
+  addresses    Address[]
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+}
+
+model Address {
+  id              String    @id @default(uuid())
+  slug            String    @unique
+  digipin         String
+  baseLat         Float
+  baseLng         Float
+  entranceLat     Float
+  entranceLng     Float
+  floor           String?
+  flat            String?
+  landmark        String?
+  label           String?
+  routingNotes    String?
+  doorwayPhotoUrl String?
+  passcode        String?
+  isEphemeral     Boolean   @default(false)
+  expiresAt       TimestamptzString?
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id])
+  createdAt       TimestamptzString @default(now())
+  updatedAt       temporal.updatedAtString()
+}

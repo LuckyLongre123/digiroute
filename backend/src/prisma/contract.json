@@ -539,6 +539,13 @@
                   "kind": "scalar"
                 }
               },
+              "password": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "phone": {
                 "nullable": true,
                 "type": {
@@ -602,6 +609,9 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "password": {
+                  "column": "password"
                 },
                 "phone": {
                   "column": "phone"
@@ -1046,6 +1056,11 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "password": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "phone": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -1102,7 +1117,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c83989172f0513ab803ca497c54e824a456892025d2f705ca80ff9b6c2e1bc04"
+    "storageHash": "faf0093949b9302bc4ace898ba70b773d9e7e0011d1d38bc18bccbfff134a69b"
   },
   "execution": {
     "executionHash": "06280bc06e3ca233b679f5794f2c54a1cfd5b9511c7c9cbba7a1a8a416af054f",

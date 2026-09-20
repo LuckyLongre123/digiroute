@@ -16,3 +16,11 @@ export const ENVIRONMENTS = {
   PRODUCTION: 'production',
   TEST: 'test',
 } as const;
+
+// Helper: Secure Cookie Options
+export const cookieOptions = {
+  httpOnly: true, // Prevents frontend JS from reading the cookie (XSS protection)
+  secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+  sameSite: 'strict' as const, // CSRF protection
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+} as const;

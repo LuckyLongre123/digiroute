@@ -16,6 +16,7 @@ enum IssueStatus {
 model User {
   id            String             @id @default(uuid())
   email         String             @unique
+  password      String
   name          String?
   phone         String?            @unique
   avatarUrl     String?

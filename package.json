@@ -1,0 +1,25 @@
+{
+  "name": "digiroute-workspace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LuckyLongre123/digiroute.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/LuckyLongre123/digiroute/issues"
+  },
+  "homepage": "https://github.com/LuckyLongre123/digiroute#readme",
+  "dependencies": {
+    "husky": "^9.1.7"
+  }
+}

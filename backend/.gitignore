@@ -4,3 +4,9 @@ dist/
 src/logs/*.log
 *.tsbuildinfo
 .DS_Store
+
+# AI Agent & Editor Files
+.agents
+.claude
+.cursor
+.devin
