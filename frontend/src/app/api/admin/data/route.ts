@@ -8,7 +8,12 @@ import type { AddressPayload } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const LOCAL_STORAGE_FILE = path.join(process.cwd(), 'src', 'data', 'addresses.json');
+const LOCAL_STORAGE_FILE = path.join(
+  process.cwd(),
+  'src',
+  'data',
+  'addresses.json'
+);
 
 interface DbUserRecord {
   id: string;
@@ -55,7 +60,9 @@ export async function GET() {
 
   // Fetch users from DB (ordered newest first)
   try {
-    const dbUsers = await db.orm.public.User.where({}).orderBy((u) => u.createdAt.desc()).all();
+    const dbUsers = await db.orm.public.User.where({})
+      .orderBy((u) => u.createdAt.desc())
+      .all();
     users = (dbUsers || []).map((u) => ({
       id: u.id,
       email: u.email,
@@ -69,7 +76,9 @@ export async function GET() {
 
   // Fetch addresses from DB (ordered newest first)
   try {
-    const dbAddresses = await db.orm.public.Address.where({}).orderBy((a) => a.createdAt.desc()).all();
+    const dbAddresses = await db.orm.public.Address.where({})
+      .orderBy((a) => a.createdAt.desc())
+      .all();
     addresses = (dbAddresses || []).map((a) => ({
       id: a.id,
       slug: a.slug,
@@ -91,12 +100,19 @@ export async function GET() {
       updatedAt: a.updatedAt ? String(a.updatedAt) : undefined,
     }));
   } catch (err) {
-    console.warn('[Admin Data] Could not fetch addresses from DB, falling back to local file:', err);
+    console.warn(
+      '[Admin Data] Could not fetch addresses from DB, falling back to local file:',
+      err
+    );
     // Fallback to local file
     try {
       const content = await fs.readFile(LOCAL_STORAGE_FILE, 'utf-8');
       const parsed = JSON.parse(content) as AddressPayload[];
-      addresses = parsed.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+      addresses = parsed.sort(
+        (a, b) =>
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime()
+      );
     } catch {
       addresses = [];
     }

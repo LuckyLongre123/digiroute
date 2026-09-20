@@ -41,7 +41,10 @@ export async function hashPassword(password: string): Promise<string> {
 /**
  * Verify password against stored scrypt hash using timingSafeEqual
  */
-export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  storedHash: string
+): Promise<boolean> {
   const [salt, key] = storedHash.split(':');
   if (!salt || !key) return false;
   return new Promise((resolve, reject) => {
@@ -80,7 +83,9 @@ export async function createSessionToken(user: SessionUser): Promise<string> {
 /**
  * Verify and decode a JWT session token
  */
-export async function verifySessionToken(token: string): Promise<SessionUser | null> {
+export async function verifySessionToken(
+  token: string
+): Promise<SessionUser | null> {
   try {
     const { payload } = await jwtVerify(token, getJwtSecret(), {
       algorithms: ['HS256'],

@@ -11,7 +11,10 @@ import { revalidatePath } from 'next/cache';
 export async function updateAddressPhoto(slugOrId: string, photoUrl: string) {
   try {
     if (!slugOrId || !photoUrl) {
-      return { success: false, error: 'Missing address identifier or photo URL.' };
+      return {
+        success: false,
+        error: 'Missing address identifier or photo URL.',
+      };
     }
 
     const session = await getSession();
@@ -19,10 +22,17 @@ export async function updateAddressPhoto(slugOrId: string, photoUrl: string) {
       return { success: false, error: 'Authentication required.' };
     }
 
-    const updated = await updateAddressPhotoInDb(slugOrId, photoUrl, session.user.id);
+    const updated = await updateAddressPhotoInDb(
+      slugOrId,
+      photoUrl,
+      session.user.id
+    );
 
     if (!updated) {
-      return { success: false, error: 'Address not found or permission denied.' };
+      return {
+        success: false,
+        error: 'Address not found or permission denied.',
+      };
     }
 
     try {

@@ -47,10 +47,16 @@ interface ManageAddressModalProps {
  * 4. Generate QR Badge action
  * 5. Explicit opt-in "👁️ Open Public View" link
  */
-export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressModalProps) {
+export function ManageAddressModal({
+  isOpen,
+  onClose,
+  address,
+}: ManageAddressModalProps) {
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
-  const [fetchedExpiresAt, setFetchedExpiresAt] = useState<string | null | undefined>(undefined);
+  const [fetchedExpiresAt, setFetchedExpiresAt] = useState<
+    string | null | undefined
+  >(undefined);
   const [prevSlug, setPrevSlug] = useState(address?.slug);
   const [currentTime, setCurrentTime] = useState<number | null>(null);
 
@@ -126,14 +132,16 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
   };
 
   const unitOrDetails =
-    address.unit || [address.floor, address.flat].filter(Boolean).join(', ') || '';
+    address.unit ||
+    [address.floor, address.flat].filter(Boolean).join(', ') ||
+    '';
 
   const renderLinkStatusBadge = () => {
     const isExpiring = Boolean(effectiveExpiresAt);
 
     if (!isExpiring) {
       return (
-        <span className="font-sans normal-case text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+        <span className="font-sans text-[11px] font-medium text-emerald-600 normal-case dark:text-emerald-400">
           ✅ Verified Permanent
         </span>
       );
@@ -143,7 +151,7 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
     if (!isNaN(target)) {
       if (currentTime === null) {
         return (
-          <span className="font-sans normal-case text-[11px] font-medium text-amber-600 dark:text-amber-400">
+          <span className="font-sans text-[11px] font-medium text-amber-600 normal-case dark:text-amber-400">
             ⏳ Guest Link: Expiring
           </span>
         );
@@ -151,7 +159,7 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
       const diff = target - currentTime;
       if (diff <= 0) {
         return (
-          <span className="font-sans normal-case text-[11px] font-medium text-red-600 dark:text-red-400">
+          <span className="font-sans text-[11px] font-medium text-red-600 normal-case dark:text-red-400">
             ⚠️ Link Expired
           </span>
         );
@@ -171,14 +179,14 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
       }
 
       return (
-        <span className="font-sans normal-case text-[11px] font-medium text-amber-600 dark:text-amber-400">
+        <span className="font-sans text-[11px] font-medium text-amber-600 normal-case dark:text-amber-400">
           ⏳ Guest Link: Expires in {timeText}
         </span>
       );
     }
 
     return (
-      <span className="font-sans normal-case text-[11px] font-medium text-amber-600 dark:text-amber-400">
+      <span className="font-sans text-[11px] font-medium text-amber-600 normal-case dark:text-amber-400">
         ⏳ Guest Link: Expiring
       </span>
     );
@@ -187,24 +195,24 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="rounded-[6px] border border-border bg-card p-5 sm:p-6 sm:max-w-md shadow-2xl font-sans"
+        className="border-border bg-card rounded-[6px] border p-5 font-sans shadow-2xl sm:max-w-md sm:p-6"
         showCloseButton={true}
       >
-        <DialogHeader className="gap-2 text-center items-center pb-1">
+        <DialogHeader className="items-center gap-2 pb-1 text-center">
           <div
-            className={`w-12 h-12 rounded-full border flex items-center justify-center shadow-xs ${
+            className={`flex h-12 w-12 items-center justify-center rounded-full border shadow-xs ${
               effectiveExpiresAt
-                ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-600'
-                : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-600'
+                ? 'border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-800 dark:bg-amber-950/40'
+                : 'border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-800 dark:bg-emerald-950/40'
             }`}
           >
-            <CheckCircle2 className="w-6 h-6 stroke-[2.5]" />
+            <CheckCircle2 className="h-6 w-6 stroke-[2.5]" />
           </div>
           <div>
-            <DialogTitle className="text-lg sm:text-xl font-bold font-sans text-foreground tracking-tight">
+            <DialogTitle className="text-foreground font-sans text-lg font-bold tracking-tight sm:text-xl">
               {address.label || 'Sovereign Micro-Address'}
             </DialogTitle>
-            <p className="text-xs text-muted-foreground font-sans mt-0.5">
+            <p className="text-muted-foreground mt-0.5 font-sans text-xs">
               Creator Management &amp; Distribution Portal
             </p>
           </div>
@@ -212,31 +220,39 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
 
         <div className="space-y-4 pt-1 font-sans">
           {/* DIGIPIN + Unit info chip */}
-          <div className="flex items-center justify-between p-2.5 rounded-[4px] bg-muted/40 border border-border text-xs">
+          <div className="bg-muted/40 border-border flex items-center justify-between rounded-[4px] border p-2.5 text-xs">
             <div>
-              <span className="text-[10px] uppercase font-bold text-muted-foreground block">DIGIPIN</span>
-              <span className="font-mono font-bold text-sm text-foreground tracking-wider">{code}</span>
+              <span className="text-muted-foreground block text-[10px] font-bold uppercase">
+                DIGIPIN
+              </span>
+              <span className="text-foreground font-mono text-sm font-bold tracking-wider">
+                {code}
+              </span>
             </div>
             {unitOrDetails && (
-              <div className="text-right max-w-[50%]">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground block">Details</span>
-                <span className="text-xs text-foreground truncate block">{unitOrDetails}</span>
+              <div className="max-w-[50%] text-right">
+                <span className="text-muted-foreground block text-[10px] font-bold uppercase">
+                  Details
+                </span>
+                <span className="text-foreground block truncate text-xs">
+                  {unitOrDetails}
+                </span>
               </div>
             )}
           </div>
 
           {/* 1. Sovereign Link Box (exact match to Step 5) */}
-          <div className="bg-card border border-border rounded-[4px] p-3.5 shadow-2xs space-y-2">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+          <div className="bg-card border-border space-y-2 rounded-[4px] border p-3.5 shadow-2xs">
+            <div className="text-muted-foreground flex items-center justify-between text-[11px] font-semibold tracking-wider uppercase">
               <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-accent" />
+                <MapPin className="text-accent h-3.5 w-3.5" />
                 <span>Sovereign Link</span>
               </span>
               {renderLinkStatusBadge()}
             </div>
 
-            <div className="bg-muted/60 border border-border rounded-[4px] px-3 py-2.5 font-mono text-xs text-foreground select-all break-all shadow-2xs">
-              <span className="font-semibold text-primary">{shareUrl}</span>
+            <div className="bg-muted/60 border-border text-foreground rounded-[4px] border px-3 py-2.5 font-mono text-xs break-all shadow-2xs select-all">
+              <span className="text-primary font-semibold">{shareUrl}</span>
             </div>
           </div>
 
@@ -246,16 +262,16 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
               type="button"
               id="manage-copy-link-btn"
               onClick={handleCopy}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-[4px] bg-card border border-border text-foreground font-semibold text-xs hover:border-primary/50 active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+              className="bg-card border-border text-foreground hover:border-primary/50 flex cursor-pointer items-center justify-center gap-2 rounded-[4px] border px-3 py-2.5 font-sans text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <Check className="h-3.5 w-3.5 text-emerald-600" />
                   <span>Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5" />
+                  <Copy className="h-3.5 w-3.5" />
                   <span>Copy Link</span>
                 </>
               )}
@@ -265,16 +281,16 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
               type="button"
               id="manage-share-btn"
               onClick={handleShare}
-              className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-[4px] bg-primary text-primary-foreground font-semibold text-xs hover:opacity-95 active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+              className="bg-primary text-primary-foreground flex cursor-pointer items-center justify-center gap-2 rounded-[4px] px-3 py-2.5 font-sans text-xs font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98]"
             >
               {shared ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-accent" />
+                  <Check className="text-accent h-3.5 w-3.5" />
                   <span>Shared!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="w-3.5 h-3.5" />
+                  <Share2 className="h-3.5 w-3.5" />
                   <span>Share Link</span>
                 </>
               )}
@@ -286,29 +302,29 @@ export function ManageAddressModal({ isOpen, onClose, address }: ManageAddressMo
             href={`/dashboard/manage/${address.slug}/qr`}
             id="manage-generate-qr-badge-btn"
             onClick={onClose}
-            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-[4px] bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-zinc-100 dark:text-zinc-900 font-semibold text-xs active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-zinc-900 px-4 py-2.5 font-sans text-xs font-semibold text-zinc-100 shadow-xs transition-all hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
-            <QrCode className="w-3.5 h-3.5 text-accent" />
+            <QrCode className="text-accent h-3.5 w-3.5" />
             <span>Generate QR Badge</span>
           </Link>
 
           {/* 4. Public View Button (explicit opt-in to view public view) */}
-          <div className="pt-2 border-t border-border flex items-center justify-between gap-2">
+          <div className="border-border flex items-center justify-between gap-2 border-t pt-2">
             <Link
               href={`/a/${address.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               id="manage-public-view-link"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline cursor-pointer"
+              className="text-accent inline-flex cursor-pointer items-center gap-1.5 text-xs font-semibold hover:underline"
             >
               <span>👁️ Open Public View</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="h-3.5 w-3.5" />
             </Link>
 
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-1.5 rounded-[4px] border border-border text-xs font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-all cursor-pointer font-sans"
+              className="border-border text-foreground bg-background hover:bg-muted cursor-pointer rounded-[4px] border px-3 py-1.5 font-sans text-xs font-medium transition-all active:scale-[0.98]"
             >
               Done
             </button>

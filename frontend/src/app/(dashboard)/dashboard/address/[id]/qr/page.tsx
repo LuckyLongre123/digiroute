@@ -17,7 +17,8 @@ export default async function AddressQrPage({ params }: QrPageProps) {
   let addressRecord = await getAddressBySlug(id);
   if (!addressRecord && session?.user?.id) {
     const userAddresses = await getUserAddresses(session.user.id);
-    addressRecord = userAddresses.find((a) => a.id === id || a.slug === id) || null;
+    addressRecord =
+      userAddresses.find((a) => a.id === id || a.slug === id) || null;
   }
 
   if (!addressRecord) {

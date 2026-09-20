@@ -56,7 +56,9 @@ async function apiClient<T>(
         success: false,
         error: {
           code: errorBody.code ?? `HTTP_${response.status}`,
-          message: errorBody.message ?? `Request failed with status ${response.status}`,
+          message:
+            errorBody.message ??
+            `Request failed with status ${response.status}`,
         },
       };
     }
@@ -69,7 +71,10 @@ async function apiClient<T>(
     if (err instanceof Error && err.name === 'AbortError') {
       return {
         success: false,
-        error: { code: 'TIMEOUT', message: 'Request timed out. Please check your connection.' },
+        error: {
+          code: 'TIMEOUT',
+          message: 'Request timed out. Please check your connection.',
+        },
       };
     }
 
@@ -77,7 +82,10 @@ async function apiClient<T>(
       success: false,
       error: {
         code: 'NETWORK_ERROR',
-        message: err instanceof Error ? err.message : 'An unexpected network error occurred.',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'An unexpected network error occurred.',
       },
     };
   }
@@ -122,7 +130,9 @@ export const addressService = {
     return apiClient<PublicAddressCard>(`/api/addresses/${slug}`);
   },
 
-  async create(draft: CreateAddressDraft): Promise<ApiResponse<{ slug: string }>> {
+  async create(
+    draft: CreateAddressDraft
+  ): Promise<ApiResponse<{ slug: string }>> {
     const formData = new FormData();
     formData.append('digipin', draft.digipin);
     formData.append('lat', String(draft.lat));
@@ -167,7 +177,8 @@ export const authService = {
 // Civic Reporting Service — anonymous grievance submission
 // ============================================================
 
-export type CivicCategory = 'pothole' | 'broken-streetlight' | 'water-leak' | 'road-block' | 'other';
+export type CivicCategory =
+  'pothole' | 'broken-streetlight' | 'water-leak' | 'road-block' | 'other';
 
 export interface CivicReport {
   category: CivicCategory;
@@ -179,14 +190,17 @@ export interface CivicReport {
 }
 
 export const civicService = {
-  async submitReport(report: CivicReport): Promise<ApiResponse<{ reportId: string }>> {
+  async submitReport(
+    report: CivicReport
+  ): Promise<ApiResponse<{ reportId: string }>> {
     const formData = new FormData();
     formData.append('category', report.category);
     if (report.description) formData.append('description', report.description);
     if (report.lat != null) formData.append('lat', String(report.lat));
     if (report.lng != null) formData.append('lng', String(report.lng));
     if (report.digipin) formData.append('digipin', report.digipin);
-    if (report.photoBlob) formData.append('photo', report.photoBlob, 'evidence.webp');
+    if (report.photoBlob)
+      formData.append('photo', report.photoBlob, 'evidence.webp');
 
     return apiClient<{ reportId: string }>('/api/civic/report', {
       method: 'POST',

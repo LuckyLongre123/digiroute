@@ -68,8 +68,14 @@ async function compressImageToWebp(
  * EditCameraModal: Live device hardware camera capture for Edit Micro-Address flow.
  * Reuses the exact camera reticle framing and frame compression from Step 2.
  */
-export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalProps) {
-  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
+export function EditCameraModal({
+  isOpen,
+  onClose,
+  onCapture,
+}: EditCameraModalProps) {
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>(
+    'environment'
+  );
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -94,7 +100,9 @@ export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalP
 
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error('Camera API is not supported on this browser or environment.');
+        throw new Error(
+          'Camera API is not supported on this browser or environment.'
+        );
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -118,10 +126,20 @@ export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalP
     } catch (err: unknown) {
       console.warn('Camera access denied or unavailable:', err);
       const errorObj = err as { name?: string; message?: string } | undefined;
-      if (errorObj?.name === 'NotAllowedError' || errorObj?.name === 'PermissionDeniedError') {
-        setCameraError('Permission to access camera was denied. Please allow camera access in browser settings.');
-      } else if (errorObj?.name === 'NotFoundError' || errorObj?.name === 'DevicesNotFoundError') {
-        setCameraError('No physical camera device was detected on your system.');
+      if (
+        errorObj?.name === 'NotAllowedError' ||
+        errorObj?.name === 'PermissionDeniedError'
+      ) {
+        setCameraError(
+          'Permission to access camera was denied. Please allow camera access in browser settings.'
+        );
+      } else if (
+        errorObj?.name === 'NotFoundError' ||
+        errorObj?.name === 'DevicesNotFoundError'
+      ) {
+        setCameraError(
+          'No physical camera device was detected on your system.'
+        );
       } else {
         setCameraError(errorObj?.message || 'Failed to initialize camera.');
       }
@@ -146,7 +164,8 @@ export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalP
   }, [isOpen, startCamera, stopStream]);
 
   const handleCapture = async () => {
-    if (!videoRef.current || !streamRef.current || !isStreaming || isProcessing) return;
+    if (!videoRef.current || !streamRef.current || !isStreaming || isProcessing)
+      return;
 
     try {
       setIsProcessing(true);
@@ -179,12 +198,12 @@ export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalP
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 animate-in fade-in duration-150 font-sans">
-      <div className="relative w-full max-w-lg bg-card border border-border rounded-xl overflow-hidden shadow-2xl flex flex-col text-card-foreground">
+    <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 font-sans duration-150 sm:p-4">
+      <div className="bg-card border-border text-card-foreground relative flex w-full max-w-lg flex-col overflow-hidden rounded-xl border shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
-          <div className="flex items-center gap-2 text-foreground font-semibold text-xs sm:text-sm">
-            <Camera className="w-4 h-4 text-primary" />
+        <div className="border-border bg-muted/30 flex items-center justify-between border-b px-4 py-3">
+          <div className="text-foreground flex items-center gap-2 text-xs font-semibold sm:text-sm">
+            <Camera className="text-primary h-4 w-4" />
             <span>Retake Doorway Photo</span>
           </div>
           <button
@@ -193,53 +212,57 @@ export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalP
               stopStream();
               onClose();
             }}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded-md p-1.5 transition-colors"
             aria-label="Close camera"
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Viewfinder Area */}
-        <div className="p-4 flex flex-col items-center">
+        <div className="flex flex-col items-center p-4">
           {cameraError ? (
-            <div className="p-6 text-center space-y-3 max-w-sm">
-              <div className="w-12 h-12 mx-auto rounded-full bg-destructive/10 text-destructive flex items-center justify-center border border-destructive/20">
-                <AlertTriangle className="w-6 h-6" />
+            <div className="max-w-sm space-y-3 p-6 text-center">
+              <div className="bg-destructive/10 text-destructive border-destructive/20 mx-auto flex h-12 w-12 items-center justify-center rounded-full border">
+                <AlertTriangle className="h-6 w-6" />
               </div>
-              <p className="text-sm font-bold text-foreground">Camera Access Required</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">{cameraError}</p>
+              <p className="text-foreground text-sm font-bold">
+                Camera Access Required
+              </p>
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                {cameraError}
+              </p>
               <button
                 type="button"
                 onClick={startCamera}
-                className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                className="bg-primary text-primary-foreground mt-2 inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold transition-opacity hover:opacity-90"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
+                <RefreshCw className="h-3.5 w-3.5" />
                 <span>Try Again</span>
               </button>
             </div>
           ) : (
-            <div className="relative aspect-[4/3] w-full bg-black rounded-lg overflow-hidden border border-border flex items-center justify-center shadow-inner">
+            <div className="border-border relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-lg border bg-black shadow-inner">
               <video
                 ref={videoRef}
                 playsInline
                 muted
                 autoPlay
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
 
               {/* 4:3 Reticle Corner Brackets */}
-              <div className="absolute w-[82%] aspect-[4/3] rounded-md pointer-events-none">
-                <div className="absolute -top-0.5 -left-0.5 w-6 h-6 border-t-2 border-l-2 border-cyan-400" />
-                <div className="absolute -top-0.5 -right-0.5 w-6 h-6 border-t-2 border-r-2 border-cyan-400" />
-                <div className="absolute -bottom-0.5 -left-0.5 w-6 h-6 border-b-2 border-l-2 border-cyan-400" />
-                <div className="absolute -bottom-0.5 -right-0.5 w-6 h-6 border-b-2 border-r-2 border-cyan-400" />
+              <div className="pointer-events-none absolute aspect-[4/3] w-[82%] rounded-md">
+                <div className="absolute -top-0.5 -left-0.5 h-6 w-6 border-t-2 border-l-2 border-cyan-400" />
+                <div className="absolute -top-0.5 -right-0.5 h-6 w-6 border-t-2 border-r-2 border-cyan-400" />
+                <div className="absolute -bottom-0.5 -left-0.5 h-6 w-6 border-b-2 border-l-2 border-cyan-400" />
+                <div className="absolute -right-0.5 -bottom-0.5 h-6 w-6 border-r-2 border-b-2 border-cyan-400" />
 
                 <div className="absolute inset-0 flex flex-col items-center justify-between p-2">
-                  <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-black/60 text-white font-sans">
+                  <span className="rounded bg-black/60 px-2 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-white uppercase">
                     Doorway Framing
                   </span>
-                  <span className="text-[11px] font-medium text-white drop-shadow-sm font-sans">
+                  <span className="font-sans text-[11px] font-medium text-white drop-shadow-sm">
                     Align entrance in center
                   </span>
                 </div>
@@ -250,15 +273,15 @@ export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalP
                 type="button"
                 onClick={handleToggleCamera}
                 title="Flip Camera"
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 active:scale-95 transition-all cursor-pointer"
+                className="absolute top-3 right-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white transition-all hover:bg-black/80 active:scale-95"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="h-4 w-4" />
               </button>
 
               {/* Processing Overlay */}
               {isProcessing && (
-                <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center gap-2 text-white text-xs font-medium">
-                  <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/75 text-xs font-medium text-white">
+                  <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
                   <span>Processing WebP...</span>
                 </div>
               )}
@@ -272,12 +295,12 @@ export function EditCameraModal({ isOpen, onClose, onCapture }: EditCameraModalP
                 type="button"
                 onClick={handleCapture}
                 disabled={!isStreaming || isProcessing}
-                className="w-16 h-16 rounded-full bg-primary text-primary-foreground border-4 border-card flex items-center justify-center shadow-lg hover:opacity-90 active:scale-[0.92] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary text-primary-foreground border-card flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-4 shadow-lg transition-all hover:opacity-90 active:scale-[0.92] disabled:cursor-not-allowed disabled:opacity-50"
                 aria-label="Capture photo"
               >
-                <Camera className="w-7 h-7 fill-current" />
+                <Camera className="h-7 w-7 fill-current" />
               </button>
-              <span className="text-[11px] text-muted-foreground font-medium">
+              <span className="text-muted-foreground text-[11px] font-medium">
                 Tap shutter to capture entrance
               </span>
             </div>

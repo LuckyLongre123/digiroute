@@ -16,12 +16,16 @@ export interface UserRecord {
  * Returns null if user does not exist or has no password hash.
  * Strictly zero mock, fallback, or default users.
  */
-export async function findUserByEmail(email: string): Promise<UserRecord | null> {
+export async function findUserByEmail(
+  email: string
+): Promise<UserRecord | null> {
   const normalizedEmail = email.trim().toLowerCase();
   if (!normalizedEmail) return null;
 
   try {
-    const record = await db.orm.public.User.where({ email: normalizedEmail }).first();
+    const record = await db.orm.public.User.where({
+      email: normalizedEmail,
+    }).first();
     if (!record || !record.email || !record.passwordHash) {
       return null;
     }
@@ -36,7 +40,10 @@ export async function findUserByEmail(email: string): Promise<UserRecord | null>
       updatedAt: record.updatedAt,
     };
   } catch (err) {
-    console.error('[UserService] Database query error in findUserByEmail:', err);
+    console.error(
+      '[UserService] Database query error in findUserByEmail:',
+      err
+    );
     return null;
   }
 }

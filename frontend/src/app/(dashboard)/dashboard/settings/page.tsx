@@ -2,14 +2,7 @@
 
 import { getSessionAction, logoutAction } from '@/app/actions/auth';
 import { useAuthStore } from '@/store/useAuthStore';
-import {
-  Check,
-  LogOut,
-  Map,
-  Smartphone,
-  Trash2,
-  User
-} from 'lucide-react';
+import { Check, LogOut, Map, Smartphone, Trash2, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -39,11 +32,11 @@ export default function SettingsPage() {
   const name = user?.name?.trim() || email.split('@')[0] || 'Citizen Owner';
   const initials = name
     ? name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .slice(0, 2)
-      .toUpperCase()
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
     : email.slice(0, 2).toUpperCase();
 
   const handleClearCache = () => {
@@ -67,51 +60,48 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-150 max-w-2xl font-sans">
+    <div className="animate-in fade-in max-w-2xl space-y-6 font-sans duration-150">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
+        <h1 className="text-foreground text-2xl font-bold tracking-tight">
           Settings &amp; Preferences
         </h1>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="text-muted-foreground mt-0.5 text-xs">
           Manage your account profile, offline storage, and spatial defaults
         </p>
       </div>
 
       {/* Profile Card — Dynamically rendered for authenticated user */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <User className="w-3.5 h-3.5" />
+      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
+          <User className="h-3.5 w-3.5" />
           <span>Sovereign Identity Profile</span>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground font-bold text-lg flex items-center justify-center shrink-0">
+          <div className="bg-primary text-primary-foreground flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-lg font-bold">
             {initials}
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-semibold text-foreground tracking-tight truncate">
+            <h2 className="text-foreground truncate text-base font-semibold tracking-tight">
               {name}
             </h2>
-            <p className="text-xs text-muted-foreground truncate">
-              {email}
-            </p>
-
+            <p className="text-muted-foreground truncate text-xs">{email}</p>
           </div>
         </div>
       </div>
 
       {/* Spatial / Map Layer Settings */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <Map className="w-3.5 h-3.5" />
+      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
+          <Map className="h-3.5 w-3.5" />
           <span>Spatial &amp; Map Layer Preferences</span>
         </div>
 
         <div className="space-y-2">
           <label
             htmlFor="map-provider"
-            className="block text-xs font-medium text-foreground tracking-tight"
+            className="text-foreground block text-xs font-medium tracking-tight"
           >
             Default Spatial Base Map
           </label>
@@ -119,47 +109,49 @@ export default function SettingsPage() {
             id="map-provider"
             value={offlineMap}
             onChange={(e) => setOfflineMap(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer"
+            className="bg-background border-input text-foreground focus:ring-accent w-full cursor-pointer rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           >
             <option value="mappls">Mappls (MapmyIndia) Sovereign Vector</option>
             <option value="osm">OpenStreetMap India Regional</option>
             <option value="bhuvan">ISRO Bhuvan Satellite Hybrid</option>
           </select>
-          <p className="text-[11px] text-muted-foreground">
-            Mappls is recommended for optimal accuracy in dense Indian urban wards.
+          <p className="text-muted-foreground text-[11px]">
+            Mappls is recommended for optimal accuracy in dense Indian urban
+            wards.
           </p>
         </div>
       </div>
 
       {/* Storage & Offline Cache */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <Smartphone className="w-3.5 h-3.5" />
+      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
+          <Smartphone className="h-3.5 w-3.5" />
           <span>Offline PWA Storage &amp; Diagnostics</span>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+        <div className="flex flex-col justify-between gap-3 pt-1 sm:flex-row sm:items-center">
           <div>
-            <div className="text-xs font-medium text-foreground tracking-tight">
+            <div className="text-foreground text-xs font-medium tracking-tight">
               Local Offline Cache
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              Clear saved tile caches, temporary camera captures, and draft addresses.
+            <p className="text-muted-foreground text-[11px]">
+              Clear saved tile caches, temporary camera captures, and draft
+              addresses.
             </p>
           </div>
           <button
             onClick={handleClearCache}
             type="button"
-            className="inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium rounded-lg border border-border bg-background hover:bg-muted text-foreground transition-colors shrink-0 cursor-pointer"
+            className="border-border bg-background hover:bg-muted text-foreground inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors"
           >
             {cleared ? (
               <>
-                <Check className="w-3.5 h-3.5 text-accent" />
+                <Check className="text-accent h-3.5 w-3.5" />
                 <span>Cache Cleared</span>
               </>
             ) : (
               <>
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="h-3.5 w-3.5" />
                 <span>Clear Cache</span>
               </>
             )}
@@ -173,9 +165,9 @@ export default function SettingsPage() {
           type="button"
           onClick={handleLogout}
           id="settings-logout-btn"
-          className="w-full h-11 border border-destructive/30 text-destructive hover:bg-destructive/10 font-semibold text-sm rounded flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer"
+          className="border-destructive/30 text-destructive hover:bg-destructive/10 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded border text-sm font-semibold transition-all active:scale-[0.98]"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="h-4 w-4" />
           <span>Log Out</span>
         </button>
       </div>

@@ -54,19 +54,21 @@ export function ManageAddressView({ address }: { address: ManageAddressItem }) {
   };
 
   const unitOrDetails =
-    address.unit || [address.floor, address.flat].filter(Boolean).join(', ') || '';
+    address.unit ||
+    [address.floor, address.flat].filter(Boolean).join(', ') ||
+    '';
 
   return (
-    <div className="rounded-[6px] border border-border bg-card p-6 shadow-sm font-sans space-y-5">
-      <div className="text-center space-y-2">
-        <div className="mx-auto w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 shadow-xs">
-          <CheckCircle2 className="w-6 h-6 stroke-[2.5]" />
+    <div className="border-border bg-card space-y-5 rounded-[6px] border p-6 font-sans shadow-sm">
+      <div className="space-y-2 text-center">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600 shadow-xs dark:border-emerald-800 dark:bg-emerald-950/40">
+          <CheckCircle2 className="h-6 w-6 stroke-[2.5]" />
         </div>
         <div>
-          <h1 className="text-xl font-bold font-sans text-foreground tracking-tight">
+          <h1 className="text-foreground font-sans text-xl font-bold tracking-tight">
             {address.label || 'Sovereign Micro-Address'}
           </h1>
-          <p className="text-xs text-muted-foreground font-sans mt-0.5">
+          <p className="text-muted-foreground mt-0.5 font-sans text-xs">
             Creator Management &amp; Distribution Portal
           </p>
         </div>
@@ -74,45 +76,49 @@ export function ManageAddressView({ address }: { address: ManageAddressItem }) {
 
       <div className="space-y-4 pt-1 font-sans">
         {/* DIGIPIN + Unit info chip */}
-        <div className="flex items-center justify-between p-3 rounded-[4px] bg-muted/40 border border-border text-xs">
+        <div className="bg-muted/40 border-border flex items-center justify-between rounded-[4px] border p-3 text-xs">
           <div>
-            <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+            <span className="text-muted-foreground block text-[10px] font-bold uppercase">
               DIGIPIN
             </span>
-            <span className="font-mono font-bold text-sm text-foreground tracking-wider">
+            <span className="text-foreground font-mono text-sm font-bold tracking-wider">
               {code}
             </span>
           </div>
           {unitOrDetails && (
-            <div className="text-right max-w-[50%]">
-              <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+            <div className="max-w-[50%] text-right">
+              <span className="text-muted-foreground block text-[10px] font-bold uppercase">
                 Details
               </span>
-              <span className="text-xs text-foreground truncate block">{unitOrDetails}</span>
+              <span className="text-foreground block truncate text-xs">
+                {unitOrDetails}
+              </span>
             </div>
           )}
         </div>
 
         {/* 1. Sovereign Link Box */}
-        <div className="bg-card border border-border rounded-[4px] p-4 shadow-2xs space-y-2">
-          <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+        <div className="bg-card border-border space-y-2 rounded-[4px] border p-4 shadow-2xs">
+          <div className="text-muted-foreground flex items-center justify-between text-[11px] font-semibold tracking-wider uppercase">
             <span className="flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-accent" />
+              <MapPin className="text-accent h-3.5 w-3.5" />
               <span>Sovereign Link</span>
             </span>
             <span
-              className={`font-sans normal-case text-[11px] font-medium ${
+              className={`font-sans text-[11px] font-medium normal-case ${
                 address.expiresAt
                   ? 'text-amber-600 dark:text-amber-400'
                   : 'text-emerald-600 dark:text-emerald-400'
               }`}
             >
-              {address.expiresAt ? '⏳ Ephemeral link' : '✅ Verified Permanent'}
+              {address.expiresAt
+                ? '⏳ Ephemeral link'
+                : '✅ Verified Permanent'}
             </span>
           </div>
 
-          <div className="bg-muted/60 border border-border rounded-[4px] px-3 py-2.5 font-mono text-xs text-foreground select-all break-all shadow-2xs">
-            <span className="font-semibold text-primary">{shareUrl}</span>
+          <div className="bg-muted/60 border-border text-foreground rounded-[4px] border px-3 py-2.5 font-mono text-xs break-all shadow-2xs select-all">
+            <span className="text-primary font-semibold">{shareUrl}</span>
           </div>
         </div>
 
@@ -122,16 +128,16 @@ export function ManageAddressView({ address }: { address: ManageAddressItem }) {
             type="button"
             id="manage-page-copy-btn"
             onClick={handleCopy}
-            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-[4px] bg-card border border-border text-foreground font-semibold text-xs hover:border-primary/50 active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+            className="bg-card border-border text-foreground hover:border-primary/50 flex cursor-pointer items-center justify-center gap-2 rounded-[4px] border px-3 py-2.5 font-sans text-xs font-semibold shadow-xs transition-all active:scale-[0.98]"
           >
             {copied ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <Check className="h-3.5 w-3.5 text-emerald-600" />
                 <span>Copied!</span>
               </>
             ) : (
               <>
-                <Copy className="w-3.5 h-3.5" />
+                <Copy className="h-3.5 w-3.5" />
                 <span>Copy Link</span>
               </>
             )}
@@ -141,16 +147,16 @@ export function ManageAddressView({ address }: { address: ManageAddressItem }) {
             type="button"
             id="manage-page-share-btn"
             onClick={handleShare}
-            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-[4px] bg-primary text-primary-foreground font-semibold text-xs hover:opacity-95 active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+            className="bg-primary text-primary-foreground flex cursor-pointer items-center justify-center gap-2 rounded-[4px] px-3 py-2.5 font-sans text-xs font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98]"
           >
             {shared ? (
               <>
-                <Check className="w-3.5 h-3.5 text-accent" />
+                <Check className="text-accent h-3.5 w-3.5" />
                 <span>Shared!</span>
               </>
             ) : (
               <>
-                <Share2 className="w-3.5 h-3.5" />
+                <Share2 className="h-3.5 w-3.5" />
                 <span>Share Link</span>
               </>
             )}
@@ -160,32 +166,38 @@ export function ManageAddressView({ address }: { address: ManageAddressItem }) {
         {/* 3. Physical Distribution (QR Badge) */}
         <Link
           href={`/qr?slug=${address.slug}`}
-          className="flex items-center justify-between p-3 rounded-[4px] border border-border bg-card hover:bg-muted/30 hover:border-primary/40 transition-colors shadow-2xs cursor-pointer group"
+          className="border-border bg-card hover:bg-muted/30 hover:border-primary/40 group flex cursor-pointer items-center justify-between rounded-[4px] border p-3 shadow-2xs transition-colors"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-[4px] bg-muted/60 text-foreground group-hover:text-primary transition-colors">
-              <QrCode className="w-4 h-4" />
+            <div className="bg-muted/60 text-foreground group-hover:text-primary rounded-[4px] p-2 transition-colors">
+              <QrCode className="h-4 w-4" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-foreground">Generate QR Badge</p>
-              <p className="text-[11px] text-muted-foreground">Printable physical delivery badge</p>
+              <p className="text-foreground text-xs font-semibold">
+                Generate QR Badge
+              </p>
+              <p className="text-muted-foreground text-[11px]">
+                Printable physical delivery badge
+              </p>
             </div>
           </div>
-          <span className="text-xs font-bold text-accent group-hover:translate-x-0.5 transition-transform">
+          <span className="text-accent text-xs font-bold transition-transform group-hover:translate-x-0.5">
             &rarr;
           </span>
         </Link>
 
         {/* 4. Public View Action */}
-        <div className="pt-2 border-t border-border/80 flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Preview external courier screen</span>
+        <div className="border-border/80 flex items-center justify-between border-t pt-2">
+          <span className="text-muted-foreground text-xs">
+            Preview external courier screen
+          </span>
           <Link
             href={`/a/${address.slug}`}
             target="_blank"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+            className="text-primary inline-flex items-center gap-1.5 text-xs font-semibold hover:underline"
           >
             <span>Open Public View</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="h-3.5 w-3.5" />
           </Link>
         </div>
       </div>

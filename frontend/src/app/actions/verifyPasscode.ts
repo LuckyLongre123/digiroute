@@ -27,7 +27,10 @@ export async function verifyAddressPasscode(
 
     const address = await getAddressBySlug(slug.trim());
     if (!address || !address.passcode) {
-      return { success: false, error: 'Address not found or no passcode required.' };
+      return {
+        success: false,
+        error: 'Address not found or no passcode required.',
+      };
     }
 
     // Strict Server-Side Expiry Enforcement
@@ -42,7 +45,10 @@ export async function verifyAddressPasscode(
       }
     }
 
-    const isValid = await verifyPassword(enteredPasscode.trim(), address.passcode);
+    const isValid = await verifyPassword(
+      enteredPasscode.trim(),
+      address.passcode
+    );
     if (!isValid) {
       return { success: false, error: 'Incorrect passcode. Please try again.' };
     }
@@ -71,7 +77,8 @@ export async function verifyAddressPasscode(
     console.error('[verifyAddressPasscode] Verification error:', error);
     return {
       success: false,
-      error: 'An unexpected error occurred during verification. Please try again.',
+      error:
+        'An unexpected error occurred during verification. Please try again.',
     };
   }
 }

@@ -18,7 +18,10 @@ export async function claimAddress(addressId: string) {
 
     const session = await getSession();
     if (!session?.user?.id) {
-      return { success: false, error: 'Authentication required to claim address.' };
+      return {
+        success: false,
+        error: 'Authentication required to claim address.',
+      };
     }
 
     let claimed = await claimAddressForUser(addressId, session.user.id);
@@ -31,7 +34,10 @@ export async function claimAddress(addressId: string) {
       }
     }
     if (!claimed) {
-      return { success: false, error: 'Address not found or already claimed by another account.' };
+      return {
+        success: false,
+        error: 'Address not found or already claimed by another account.',
+      };
     }
 
     try {

@@ -10,21 +10,27 @@ const CATEGORIES = [
 
 export default function ReportPage() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-3.5rem)] pb-24 animate-route-enter">
+    <div className="animate-route-enter flex min-h-[calc(100vh-3.5rem)] flex-col pb-24">
       <section className="pt-6 pb-4">
-        <h1 className="text-xl font-bold text-foreground mb-1">Report Civic Defect</h1>
-        <p className="text-sm text-muted-foreground">Anonymous. Takes 30 seconds.</p>
+        <h1 className="text-foreground mb-1 text-xl font-bold">
+          Report Civic Defect
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          Anonymous. Takes 30 seconds.
+        </p>
       </section>
 
       <form id="civic-report-form" className="flex flex-col gap-4">
         {/* Category picker */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">Category</label>
+          <label className="text-foreground mb-2 block text-sm font-medium">
+            Category
+          </label>
           <div className="grid grid-cols-2 gap-2">
             {CATEGORIES.map((cat) => (
               <label
                 key={cat.id}
-                className="pressable flex items-center gap-2 px-3 py-2.5 bg-card border border-border rounded cursor-pointer has-[:checked]:border-accent has-[:checked]:bg-accent/5 transition-colors"
+                className="pressable bg-card border-border has-[:checked]:border-accent has-[:checked]:bg-accent/5 flex cursor-pointer items-center gap-2 rounded border px-3 py-2.5 transition-colors"
               >
                 <input
                   type="radio"
@@ -32,7 +38,7 @@ export default function ReportPage() {
                   value={cat.id}
                   className="accent-accent"
                 />
-                <span className="text-sm text-foreground">{cat.label}</span>
+                <span className="text-foreground text-sm">{cat.label}</span>
               </label>
             ))}
           </div>
@@ -40,38 +46,49 @@ export default function ReportPage() {
 
         {/* Description */}
         <div>
-          <label htmlFor="report-description" className="block text-sm font-medium text-foreground mb-1.5">
-            Description <span className="text-muted-foreground font-normal">(optional)</span>
+          <label
+            htmlFor="report-description"
+            className="text-foreground mb-1.5 block text-sm font-medium"
+          >
+            Description{' '}
+            <span className="text-muted-foreground font-normal">
+              (optional)
+            </span>
           </label>
           <textarea
             id="report-description"
             rows={3}
             placeholder="Brief description of the issue..."
-            className="w-full px-3 py-2.5 bg-card border border-input rounded text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors resize-none"
+            className="bg-card border-input placeholder:text-muted-foreground focus:ring-ring w-full resize-none rounded border px-3 py-2.5 text-sm transition-colors focus:ring-2 focus:outline-none"
           />
         </div>
 
         {/* Photo capture placeholder */}
         <div>
-          <label className="block text-sm font-medium text-foreground mb-1.5">
-            Photo <span className="text-muted-foreground font-normal">(optional)</span>
+          <label className="text-foreground mb-1.5 block text-sm font-medium">
+            Photo{' '}
+            <span className="text-muted-foreground font-normal">
+              (optional)
+            </span>
           </label>
-          <div className="w-full h-24 bg-muted border border-dashed border-border rounded flex items-center justify-center">
-            <p className="text-xs text-muted-foreground">Tap to capture photo evidence</p>
+          <div className="bg-muted border-border flex h-24 w-full items-center justify-center rounded border border-dashed">
+            <p className="text-muted-foreground text-xs">
+              Tap to capture photo evidence
+            </p>
           </div>
         </div>
       </form>
 
       {/* Bottom thumb-zone action bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card/95 backdrop-blur-sm border-t border-border px-4 pb-safe pt-3 pb-5">
-        <div className="max-w-md mx-auto">
+      <div className="bg-card/95 border-border pb-safe fixed right-0 bottom-0 left-0 z-30 border-t px-4 pt-3 pb-5 backdrop-blur-sm">
+        <div className="mx-auto max-w-md">
           <button
             type="submit"
             form="civic-report-form"
             id="report-submit-btn"
-            className="pressable flex items-center justify-center gap-2 w-full bg-primary text-primary-foreground font-semibold text-sm py-3.5 rounded hover:opacity-90 transition-opacity cursor-pointer"
+            className="pressable bg-primary text-primary-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded py-3.5 text-sm font-semibold transition-opacity hover:opacity-90"
           >
-            <Flag className="w-4 h-4" />
+            <Flag className="h-4 w-4" />
             <span>Submit Report</span>
           </button>
         </div>

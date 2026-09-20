@@ -97,35 +97,41 @@ export default function AdminSettingsPage() {
   return (
     <div
       className="min-h-[100dvh] p-4 sm:p-6"
-      style={{ backgroundColor: '#09090b', fontFamily: 'var(--font-geist-mono), monospace' }}
+      style={{
+        backgroundColor: '#09090b',
+        fontFamily: 'var(--font-geist-mono), monospace',
+      }}
     >
       <div className="max-w-lg space-y-6">
         {/* Header */}
         <div>
-          <p className="text-[10px] uppercase tracking-widest mb-1 text-zinc-600 font-mono">
+          <p className="mb-1 font-mono text-[10px] tracking-widest text-zinc-600 uppercase">
             /admin/settings
           </p>
-          <h1 className="text-xl font-mono font-semibold tracking-tight text-zinc-100 flex items-center gap-2">
-            <Shield className="w-5 h-5 text-cyan-400" />
+          <h1 className="flex items-center gap-2 font-mono text-xl font-semibold tracking-tight text-zinc-100">
+            <Shield className="h-5 w-5 text-cyan-400" />
             <span>Admin Credentials &amp; Security</span>
           </h1>
-          <p className="text-xs font-mono mt-1 text-zinc-400">
-            Configure administrative root identity, email routing, and cryptographic access passphrases.
+          <p className="mt-1 font-mono text-xs text-zinc-400">
+            Configure administrative root identity, email routing, and
+            cryptographic access passphrases.
           </p>
           {currentEmail && (
-            <div className="mt-3 inline-flex items-center gap-2 px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono text-zinc-300">
+            <div className="mt-3 inline-flex items-center gap-2 rounded border border-zinc-800 bg-zinc-900 px-2.5 py-1 font-mono text-xs text-zinc-300">
               <span className="text-zinc-500">Active Root:</span>
-              <span className="text-cyan-400 font-semibold">{currentEmail}</span>
+              <span className="font-semibold text-cyan-400">
+                {currentEmail}
+              </span>
             </div>
           )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Group 1: Identity & Email */}
-          <div className="bg-zinc-950 border border-zinc-800/80 rounded-lg p-4 sm:p-5 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-zinc-800/60">
-              <Mail className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-xs text-zinc-300 font-semibold uppercase tracking-wider font-mono">
+          <div className="space-y-4 rounded-lg border border-zinc-800/80 bg-zinc-950 p-4 sm:p-5">
+            <div className="flex items-center gap-2 border-b border-zinc-800/60 pb-2">
+              <Mail className="h-4 w-4 text-cyan-400" />
+              <h2 className="font-mono text-xs font-semibold tracking-wider text-zinc-300 uppercase">
                 Admin Identity &amp; Email
               </h2>
             </div>
@@ -133,7 +139,7 @@ export default function AdminSettingsPage() {
             <div>
               <label
                 htmlFor="settings-email"
-                className="block text-xs text-zinc-400 uppercase tracking-wider mb-1.5 font-mono"
+                className="mb-1.5 block font-mono text-xs tracking-wider text-zinc-400 uppercase"
               >
                 New Admin Email
               </label>
@@ -144,22 +150,22 @@ export default function AdminSettingsPage() {
                 onChange={(e) => setNewEmail(e.target.value)}
                 disabled={isPending}
                 placeholder={currentEmail || 'admin@digiroute.in'}
-                className="w-full px-3 py-2.5 text-sm font-mono rounded-[4px] outline-none disabled:opacity-50 transition-colors"
+                className="w-full rounded-[4px] px-3 py-2.5 font-mono text-sm transition-colors outline-none disabled:opacity-50"
                 style={inputStyle}
                 onFocus={(e) => (e.target.style.borderColor = '#22d3ee')}
                 onBlur={(e) => (e.target.style.borderColor = '#27272a')}
               />
-              <p className="text-[11px] text-zinc-500 mt-1 font-mono">
+              <p className="mt-1 font-mono text-[11px] text-zinc-500">
                 Leave blank if you only want to change your passphrase.
               </p>
             </div>
           </div>
 
           {/* Group 2: Security & Passphrase */}
-          <div className="bg-zinc-950 border border-zinc-800/80 rounded-lg p-4 sm:p-5 space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-zinc-800/60">
-              <KeyRound className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-xs text-zinc-300 font-semibold uppercase tracking-wider font-mono">
+          <div className="space-y-4 rounded-lg border border-zinc-800/80 bg-zinc-950 p-4 sm:p-5">
+            <div className="flex items-center gap-2 border-b border-zinc-800/60 pb-2">
+              <KeyRound className="h-4 w-4 text-cyan-400" />
+              <h2 className="font-mono text-xs font-semibold tracking-wider text-zinc-300 uppercase">
                 Security &amp; Passphrase
               </h2>
             </div>
@@ -168,7 +174,7 @@ export default function AdminSettingsPage() {
             <div>
               <label
                 htmlFor="settings-current"
-                className="block text-xs text-zinc-400 uppercase tracking-wider mb-1.5 font-mono"
+                className="mb-1.5 block font-mono text-xs tracking-wider text-zinc-400 uppercase"
               >
                 Current Passphrase <span className="text-red-400">*</span>
               </label>
@@ -180,7 +186,7 @@ export default function AdminSettingsPage() {
                 required
                 disabled={isPending}
                 placeholder="Enter current passphrase"
-                className="w-full px-3 py-2.5 text-sm font-mono rounded-[4px] outline-none disabled:opacity-50 transition-colors"
+                className="w-full rounded-[4px] px-3 py-2.5 font-mono text-sm transition-colors outline-none disabled:opacity-50"
                 style={inputStyle}
                 onFocus={(e) => (e.target.style.borderColor = '#22d3ee')}
                 onBlur={(e) => (e.target.style.borderColor = '#27272a')}
@@ -191,7 +197,7 @@ export default function AdminSettingsPage() {
             <div>
               <label
                 htmlFor="settings-new"
-                className="block text-xs text-zinc-400 uppercase tracking-wider mb-1.5 font-mono"
+                className="mb-1.5 block font-mono text-xs tracking-wider text-zinc-400 uppercase"
               >
                 New Passphrase
               </label>
@@ -203,12 +209,12 @@ export default function AdminSettingsPage() {
                 minLength={6}
                 disabled={isPending}
                 placeholder="Enter new passphrase (min 6 chars)"
-                className="w-full px-3 py-2.5 text-sm font-mono rounded-[4px] outline-none disabled:opacity-50 transition-colors"
+                className="w-full rounded-[4px] px-3 py-2.5 font-mono text-sm transition-colors outline-none disabled:opacity-50"
                 style={inputStyle}
                 onFocus={(e) => (e.target.style.borderColor = '#22d3ee')}
                 onBlur={(e) => (e.target.style.borderColor = '#27272a')}
               />
-              <p className="text-[11px] text-zinc-500 mt-1 font-mono">
+              <p className="mt-1 font-mono text-[11px] text-zinc-500">
                 Leave blank if you only want to change your admin email.
               </p>
             </div>
@@ -218,7 +224,7 @@ export default function AdminSettingsPage() {
               <div className="animate-in fade-in duration-150">
                 <label
                   htmlFor="settings-confirm"
-                  className="block text-xs text-zinc-400 uppercase tracking-wider mb-1.5 font-mono"
+                  className="mb-1.5 block font-mono text-xs tracking-wider text-zinc-400 uppercase"
                 >
                   Confirm New Passphrase <span className="text-red-400">*</span>
                 </label>
@@ -230,7 +236,7 @@ export default function AdminSettingsPage() {
                   required={Boolean(newPassphrase)}
                   disabled={isPending}
                   placeholder="Repeat new passphrase"
-                  className="w-full px-3 py-2.5 text-sm font-mono rounded-[4px] outline-none disabled:opacity-50 transition-colors"
+                  className="w-full rounded-[4px] px-3 py-2.5 font-mono text-sm transition-colors outline-none disabled:opacity-50"
                   style={inputStyle}
                   onFocus={(e) => (e.target.style.borderColor = '#22d3ee')}
                   onBlur={(e) => (e.target.style.borderColor = '#27272a')}
@@ -242,7 +248,7 @@ export default function AdminSettingsPage() {
           {/* Feedback */}
           {error && (
             <div
-              className="flex items-center gap-2 py-2.5 px-3 rounded-[4px] text-xs font-mono"
+              className="flex items-center gap-2 rounded-[4px] px-3 py-2.5 font-mono text-xs"
               style={{
                 backgroundColor: 'rgba(239,68,68,0.1)',
                 border: '1px solid rgba(239,68,68,0.2)',
@@ -256,7 +262,7 @@ export default function AdminSettingsPage() {
 
           {success && (
             <div
-              className="flex items-center gap-2 py-2.5 px-3 rounded-[4px] text-xs font-mono"
+              className="flex items-center gap-2 rounded-[4px] px-3 py-2.5 font-mono text-xs"
               style={{
                 backgroundColor: 'rgba(34,197,94,0.1)',
                 border: '1px solid rgba(34,197,94,0.2)',
@@ -273,12 +279,12 @@ export default function AdminSettingsPage() {
             type="submit"
             id="admin-settings-submit"
             disabled={isPending}
-            className="w-full py-3 text-sm font-mono font-semibold rounded-[4px] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm hover:brightness-105"
+            className="w-full cursor-pointer rounded-[4px] py-3 font-mono text-sm font-semibold shadow-sm transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
             style={{ backgroundColor: '#22d3ee', color: '#09090b' }}
           >
             {isPending ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="w-3.5 h-3.5 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-zinc-950 border-t-transparent" />
                 <span>$ updating --credentials...</span>
               </span>
             ) : (

@@ -58,7 +58,9 @@ export const db = new DigiRouteDatabase();
 
 // ---- Storage Helpers ----------------------------------------------------
 
-export async function saveCameraBlob(blob: Blob): Promise<{ id: string; previewUrl: string }> {
+export async function saveCameraBlob(
+  blob: Blob
+): Promise<{ id: string; previewUrl: string }> {
   const id = `photo_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   const previewUrl = URL.createObjectURL(blob);
   await db.camera_blobs.put({
@@ -70,6 +72,8 @@ export async function saveCameraBlob(blob: Blob): Promise<{ id: string; previewU
   return { id, previewUrl };
 }
 
-export async function getCameraBlob(id: string): Promise<CameraBlobRecord | undefined> {
+export async function getCameraBlob(
+  id: string
+): Promise<CameraBlobRecord | undefined> {
   return db.camera_blobs.get(id);
 }

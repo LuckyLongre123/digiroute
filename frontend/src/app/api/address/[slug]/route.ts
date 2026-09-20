@@ -8,24 +8,35 @@ export async function GET(
   try {
     const { slug } = await context.params;
     if (!slug) {
-      return NextResponse.json({ error: 'Missing slug parameter' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing slug parameter' },
+        { status: 400 }
+      );
     }
 
     const address = await getAddressBySlug(slug);
     if (!address) {
-      return NextResponse.json({ error: 'Address not found or expired' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Address not found or expired' },
+        { status: 404 }
+      );
     }
 
     // 1. Server-Side Expiry Enforcement
     if (address.expiresAt) {
       const expiryTime = new Date(address.expiresAt).getTime();
       if (Date.now() > expiryTime) {
-        return NextResponse.json({ error: 'Address link has expired' }, { status: 410 });
+        return NextResponse.json(
+          { error: 'Address link has expired' },
+          { status: 410 }
+        );
       }
     }
 
     // 2. Critical Passcode Security: Do NOT return protected details before authorization
-    const hasPasscode = Boolean(address.passcode && address.passcode.trim().length > 0);
+    const hasPasscode = Boolean(
+      address.passcode && address.passcode.trim().length > 0
+    );
 
     if (hasPasscode) {
       // Protected address: Omit doorway photo, unit, floor, landmark, instructions, and entrance coordinates.

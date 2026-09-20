@@ -101,7 +101,10 @@ export async function registerAction(
     }
 
     if (!password || password.length < 6) {
-      return { success: false, error: 'Password must be at least 6 characters long.' };
+      return {
+        success: false,
+        error: 'Password must be at least 6 characters long.',
+      };
     }
 
     // Check if account already exists
@@ -160,7 +163,9 @@ export async function logoutAction(): Promise<{ success: boolean }> {
 /**
  * Server Action: Query active session user from cookies
  */
-export async function getSessionAction(): Promise<{ user: SessionUser | null }> {
+export async function getSessionAction(): Promise<{
+  user: SessionUser | null;
+}> {
   try {
     const user = await getCurrentSession();
     return { user };

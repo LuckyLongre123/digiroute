@@ -4,7 +4,10 @@ import { getAddressBySlug, type AddressPayload } from '@/lib/prisma';
 
 export interface GetAddressActionResult {
   success: boolean;
-  address?: Partial<AddressPayload> & { hasPasscode: boolean; isLocked: boolean };
+  address?: Partial<AddressPayload> & {
+    hasPasscode: boolean;
+    isLocked: boolean;
+  };
   isExpired?: boolean;
   error?: string;
 }
@@ -13,7 +16,9 @@ export interface GetAddressActionResult {
  * Server Action: Securely fetch address record with server-side expiry enforcement
  * and sensitive field protection prior to passcode authentication.
  */
-export async function getAddressAction(slug: string): Promise<GetAddressActionResult> {
+export async function getAddressAction(
+  slug: string
+): Promise<GetAddressActionResult> {
   try {
     if (!slug || typeof slug !== 'string' || slug.trim().length === 0) {
       return { success: false, error: 'Missing address slug parameter.' };
@@ -37,7 +42,9 @@ export async function getAddressAction(slug: string): Promise<GetAddressActionRe
     }
 
     // 2. Sensitive Field Protection: Mask doorstep details if passcode is configured
-    const hasPasscode = Boolean(address.passcode && address.passcode.trim().length > 0);
+    const hasPasscode = Boolean(
+      address.passcode && address.passcode.trim().length > 0
+    );
 
     if (hasPasscode) {
       return {

@@ -5,7 +5,12 @@ import { NextResponse } from 'next/server';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const LOCAL_STORAGE_FILE = path.join(process.cwd(), 'src', 'data', 'addresses.json');
+const LOCAL_STORAGE_FILE = path.join(
+  process.cwd(),
+  'src',
+  'data',
+  'addresses.json'
+);
 
 async function deleteFromCloudinary(photoUrl: string): Promise<void> {
   try {
@@ -39,10 +44,13 @@ async function deleteFromCloudinary(photoUrl: string): Promise<void> {
     formData.append('api_key', apiKey);
     formData.append('timestamp', String(timestamp));
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
-      method: 'POST',
-      body: formData,
-    });
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
     const result = await res.json();
     console.log('[Cloudinary Delete]', result);
   } catch (err) {
@@ -78,7 +86,9 @@ export async function DELETE(request: Request) {
         const existing = await db.orm.public.Address.where({ slug }).first();
         if (existing) {
           photoUrl = existing.doorwayPhotoUrl || null;
-          await db.orm.public.Address.where({ slug }).update({ doorwayPhotoUrl: null });
+          await db.orm.public.Address.where({ slug }).update({
+            doorwayPhotoUrl: null,
+          });
         }
       } catch {
         // DB offline, update local file
@@ -89,7 +99,11 @@ export async function DELETE(request: Request) {
           if (idx !== -1) {
             photoUrl = list[idx].doorwayPhotoUrl || null;
             list[idx] = { ...list[idx], doorwayPhotoUrl: null };
-            await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(list, null, 2), 'utf-8');
+            await fs.writeFile(
+              LOCAL_STORAGE_FILE,
+              JSON.stringify(list, null, 2),
+              'utf-8'
+            );
           }
         } catch {
           // ignore
@@ -112,7 +126,11 @@ export async function DELETE(request: Request) {
           if (idx !== -1) {
             photoUrl = list[idx].doorwayPhotoUrl || null;
             list.splice(idx, 1);
-            await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(list, null, 2), 'utf-8');
+            await fs.writeFile(
+              LOCAL_STORAGE_FILE,
+              JSON.stringify(list, null, 2),
+              'utf-8'
+            );
           }
         } catch {
           // ignore
@@ -124,7 +142,11 @@ export async function DELETE(request: Request) {
         const content = await fs.readFile(LOCAL_STORAGE_FILE, 'utf-8');
         const list = JSON.parse(content) as AddressPayload[];
         const filtered = list.filter((a) => a.slug !== slug);
-        await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(filtered, null, 2), 'utf-8');
+        await fs.writeFile(
+          LOCAL_STORAGE_FILE,
+          JSON.stringify(filtered, null, 2),
+          'utf-8'
+        );
       } catch {
         // ignore
       }
@@ -138,6 +160,9 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[Admin Delete Address] Error:', err);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error.' },
+      { status: 500 }
+    );
   }
 }

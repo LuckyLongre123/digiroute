@@ -17,14 +17,14 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-50 text-slate-900 flex flex-col items-center justify-center p-4 font-sans">
-        <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xl text-center space-y-5">
+      <body className="flex min-h-screen flex-col items-center justify-center bg-slate-50 p-4 font-sans text-slate-900">
+        <div className="w-full max-w-md space-y-5 rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-xl sm:p-8">
           {/* Brand Header */}
-          <div className="text-xl sm:text-2xl font-black tracking-tight text-[#1A3A6B]">
+          <div className="text-xl font-black tracking-tight text-[#1A3A6B] sm:text-2xl">
             DigiRoute
           </div>
 
-          <div className="mx-auto w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center font-bold text-2xl">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-2xl font-bold text-red-600">
             !
           </div>
 
@@ -33,25 +33,26 @@ export default function GlobalError({
               Critical System Failure
             </h1>
             <p className="text-sm text-slate-600">
-              A root application error occurred. The navigation context has been reset to protect system integrity.
+              A root application error occurred. The navigation context has been
+              reset to protect system integrity.
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+          <div className="flex flex-col items-center gap-3 pt-2 sm:flex-row">
             <button
               type="button"
               onClick={() => reset()}
-              className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 bg-[#EA580C] text-white text-sm font-semibold py-3 px-4 rounded-lg shadow-sm hover:bg-[#c2410c] transition-all cursor-pointer font-sans"
+              className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#EA580C] px-4 py-3 font-sans text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#c2410c] sm:flex-1"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="h-4 w-4" />
               <span>Try Again</span>
             </button>
             <Link
               href="/"
-              className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 bg-[#1A3A6B] hover:bg-[#152e55] text-white text-sm font-semibold py-3 px-4 rounded-lg shadow-sm transition-all cursor-pointer font-sans"
+              className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#1A3A6B] px-4 py-3 font-sans text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#152e55] sm:flex-1"
             >
-              <Home className="w-4 h-4" />
+              <Home className="h-4 w-4" />
               <span>Return to Home</span>
             </Link>
           </div>

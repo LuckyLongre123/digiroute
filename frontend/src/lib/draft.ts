@@ -16,7 +16,9 @@ interface ClearDraftOptions {
  * Then redirects the user to Step 1 (/create) with a full hard reload
  * to eliminate any lingering memory or UI state bugs.
  */
-export async function clearDraftAndReset(options?: ClearDraftOptions): Promise<void> {
+export async function clearDraftAndReset(
+  options?: ClearDraftOptions
+): Promise<void> {
   try {
     // 1. Reset client Zustand address store to initial state
     useAddressStore.getState().resetDraft();
@@ -42,7 +44,10 @@ export async function clearDraftAndReset(options?: ClearDraftOptions): Promise<v
       // Clear any other keys prefixed with draft_ or digiroute_draft
       for (let i = localStorage.length - 1; i >= 0; i--) {
         const key = localStorage.key(i);
-        if (key && (key.startsWith('digiroute_draft') || key.startsWith('draft_'))) {
+        if (
+          key &&
+          (key.startsWith('digiroute_draft') || key.startsWith('draft_'))
+        ) {
           localStorage.removeItem(key);
         }
       }

@@ -16,18 +16,18 @@ interface ErrorProps {
  */
 export default function SosError({ error, reset }: ErrorProps) {
   return (
-    <div className="flex flex-col min-h-screen justify-between py-6 animate-in fade-in duration-150">
-      <div className="pb-4 border-b border-red-500/40">
-        <h1 className="text-xl font-bold text-white tracking-tight">
+    <div className="animate-in fade-in flex min-h-screen flex-col justify-between py-6 duration-150">
+      <div className="border-b border-red-500/40 pb-4">
+        <h1 className="text-xl font-bold tracking-tight text-white">
           EMERGENCY DISPATCH: 112
         </h1>
-        <p className="text-sm text-red-200 mt-1">
+        <p className="mt-1 text-sm text-red-200">
           Interface encountered an issue, but emergency dispatch link is active.
         </p>
 
         {error?.message && (
-          <div className="w-full text-left bg-red-950/60 border border-red-500/40 rounded p-3 text-xs font-mono text-red-200 break-words max-h-32 overflow-y-auto mt-3">
-            <span className="font-sans font-semibold text-[11px] uppercase tracking-wider block text-red-400 mb-1">
+          <div className="mt-3 max-h-32 w-full overflow-y-auto rounded border border-red-500/40 bg-red-950/60 p-3 text-left font-mono text-xs break-words text-red-200">
+            <span className="mb-1 block font-sans text-[11px] font-semibold tracking-wider text-red-400 uppercase">
               Error Details
             </span>
             <code>{error.message}</code>
@@ -36,16 +36,16 @@ export default function SosError({ error, reset }: ErrorProps) {
       </div>
 
       {/* Primary Emergency Fallback Button */}
-      <div className="my-auto py-8 space-y-4">
+      <div className="my-auto space-y-4 py-8">
         <a
           href="tel:112"
-          className="w-full h-[72px] rounded-sm flex items-center justify-center gap-3 font-bold text-xl tracking-wide shadow-lg active:scale-[0.98] transition-transform"
+          className="flex h-[72px] w-full items-center justify-center gap-3 rounded-sm text-xl font-bold tracking-wide shadow-lg transition-transform active:scale-[0.98]"
           style={{
             backgroundColor: 'var(--sos-dial-btn, #FBBF24)',
             color: 'var(--sos-dial-text, #0F172A)',
           }}
         >
-          <PhoneCall className="w-7 h-7 fill-current" />
+          <PhoneCall className="h-7 w-7 fill-current" />
           <span>DIAL 112 NOW</span>
         </a>
 
@@ -53,22 +53,22 @@ export default function SosError({ error, reset }: ErrorProps) {
           <button
             onClick={() => reset()}
             type="button"
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-sm bg-white/10 hover:bg-white/20 text-white text-xs font-mono uppercase tracking-wider border border-white/20 active:scale-[0.98] transition-all"
+            className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-white/20 bg-white/10 px-4 py-3 font-mono text-xs tracking-wider text-white uppercase transition-all hover:bg-white/20 active:scale-[0.98]"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className="h-3.5 w-3.5" />
             <span>Retry Interface</span>
           </button>
           <Link
             href="/"
-            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-sm bg-white/10 hover:bg-white/20 text-white text-xs font-mono uppercase tracking-wider border border-white/20 active:scale-[0.98] transition-all"
+            className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-white/20 bg-white/10 px-4 py-3 font-mono text-xs tracking-wider text-white uppercase transition-all hover:bg-white/20 active:scale-[0.98]"
           >
-            <Home className="w-3.5 h-3.5" />
+            <Home className="h-3.5 w-3.5" />
             <span>Exit to Home</span>
           </Link>
         </div>
       </div>
 
-      <div className="pt-4 border-t border-red-500/40 text-center text-xs text-red-200/80 font-mono">
+      <div className="border-t border-red-500/40 pt-4 text-center font-mono text-xs text-red-200/80">
         Direct telephone dispatch operates independently of browser state
       </div>
     </div>

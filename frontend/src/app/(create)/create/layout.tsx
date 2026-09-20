@@ -43,7 +43,11 @@ const PREV_STEP: Record<string, string> = {
  * - Exit Confirmation Dialog on Close (X) button for Steps 1-5 (pauses progress)
  * - Ephemeral Data Loss Prevention Dialog on Close (X) for /create/success ("Discard this micro-address?")
  */
-export default function CreateLayout({ children }: { children: React.ReactNode }) {
+export default function CreateLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
@@ -60,7 +64,8 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
   const isCameraStep = normalizedPath === '/create/camera';
   const isMapStep = normalizedPath === '/create/map';
   const isSuccessStep = normalizedPath === '/create/success';
-  const isQrPage = pathname === '/create/qr' || pathname.startsWith('/create/qr');
+  const isQrPage =
+    pathname === '/create/qr' || pathname.startsWith('/create/qr');
 
   // Synchronize active step in Zustand store - must execute unconditionally before any return
   useEffect(() => {
@@ -233,50 +238,57 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
     await clearDraftAndReset();
   }
 
-
   return (
-    <div className={`min-h-screen bg-background flex flex-col ${isCameraStep || isMapStep ? 'h-[100dvh] overflow-hidden' : ''}`}>
+    <div
+      className={`bg-background flex min-h-screen flex-col ${isCameraStep || isMapStep ? 'h-[100dvh] overflow-hidden' : ''}`}
+    >
       {/* Wizard Chrome Header */}
-      <header className="sticky top-0 z-40 bg-card border-b border-border shrink-0 font-sans">
-        <div className="max-w-md md:max-w-xl lg:max-w-2xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+      <header className="bg-card border-border sticky top-0 z-40 shrink-0 border-b font-sans">
+        <div className="mx-auto flex h-14 max-w-md items-center justify-between gap-3 px-4 md:max-w-xl lg:max-w-2xl">
           {/* Top-Left: Back button (for previous steps) + DigiRoute Brand Logo with Safety Net */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             {!isSuccessStep && prevPath && (
               <button
                 type="button"
                 onClick={handleBack}
                 aria-label="Go to previous step"
-                className="pressable w-8 h-8 flex items-center justify-center rounded-sm hover:bg-muted active:scale-[0.98] transition-all shrink-0 cursor-pointer text-foreground"
+                className="pressable hover:bg-muted text-foreground flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-all active:scale-[0.98]"
               >
-                <ArrowLeft className="w-4 h-4 text-foreground" />
+                <ArrowLeft className="text-foreground h-4 w-4" />
               </button>
             )}
             <button
               type="button"
               onClick={handleCloseClick}
               id="wizard-header-logo-btn"
-              className="flex items-center gap-1.5 group cursor-pointer focus:outline-none"
+              className="group flex cursor-pointer items-center gap-1.5 focus:outline-none"
               aria-label="Return Home"
             >
-              <span className="text-base sm:text-lg font-bold text-zinc-950 dark:text-zinc-50 tracking-tight font-sans">
+              <span className="font-sans text-base font-bold tracking-tight text-zinc-950 sm:text-lg dark:text-zinc-50">
                 Digi<span className="text-accent">Route</span>
               </span>
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" aria-hidden="true" />
+              <span
+                className="bg-accent h-2 w-2 animate-pulse rounded-full"
+                aria-hidden="true"
+              />
             </button>
           </div>
 
           {/* Step info */}
-          <div className="flex-1 text-center" style={{ fontFamily: 'var(--font-sans), sans-serif' }}>
+          <div
+            className="flex-1 text-center"
+            style={{ fontFamily: 'var(--font-sans), sans-serif' }}
+          >
             {isSuccessStep ? (
-              <h2 className="text-sm font-bold text-foreground leading-none font-sans tracking-tight">
+              <h2 className="text-foreground font-sans text-sm leading-none font-bold tracking-tight">
                 Micro-Address Created
               </h2>
             ) : (
               <>
-                <p className="text-xs text-muted-foreground leading-none mb-1 font-sans font-medium">
+                <p className="text-muted-foreground mb-1 font-sans text-xs leading-none font-medium">
                   Step {currentStep.num} of {STEPS.length}
                 </p>
-                <h2 className="text-sm font-bold text-foreground leading-none font-sans tracking-tight">
+                <h2 className="text-foreground font-sans text-sm leading-none font-bold tracking-tight">
                   {currentStep.label}
                 </h2>
               </>
@@ -284,16 +296,16 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
           </div>
 
           {/* Right Action Group: Start Over & Close */}
-          <div className="flex items-center justify-end gap-1.5 shrink-0 min-w-[72px]">
+          <div className="flex min-w-[72px] shrink-0 items-center justify-end gap-1.5">
             {!isSuccessStep && (
               <button
                 type="button"
                 onClick={handleStartOver}
                 id="create-start-over-btn"
                 title="Reset draft and start fresh"
-                className="inline-flex items-center gap-1.5 px-2 py-1 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-slate-100 dark:hover:bg-zinc-800/60 rounded-sm transition-colors cursor-pointer font-sans"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-2 py-1 font-sans text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 sm:text-sm dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
               >
-                <RotateCcw className="w-3.5 h-3.5 shrink-0" />
+                <RotateCcw className="h-3.5 w-3.5 shrink-0" />
                 <span>Start Over</span>
               </button>
             )}
@@ -301,23 +313,27 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
             <button
               type="button"
               onClick={handleCloseClick}
-              aria-label={isSuccessStep ? 'Exit address creation' : 'Exit address creation'}
-              className="pressable w-8 h-8 flex items-center justify-center rounded-sm hover:bg-muted active:scale-[0.98] transition-all shrink-0 cursor-pointer text-foreground"
+              aria-label={
+                isSuccessStep
+                  ? 'Exit address creation'
+                  : 'Exit address creation'
+              }
+              className="pressable hover:bg-muted text-foreground flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-all active:scale-[0.98]"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         {/* Saffron progress bar */}
         {!isSuccessStep && (
-          <div className="h-0.5 bg-muted">
+          <div className="bg-muted h-0.5">
             <div
               role="progressbar"
               aria-valuenow={currentStep.num}
               aria-valuemin={1}
               aria-valuemax={STEPS.length}
-              className="h-full bg-accent transition-all duration-200 ease-in-out"
+              className="bg-accent h-full transition-all duration-200 ease-in-out"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -325,31 +341,33 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
       </header>
 
       {/* Wizard content */}
-      <main className={`flex-1 max-w-md md:max-w-xl lg:max-w-2xl mx-auto w-full ${isCameraStep || isMapStep ? 'px-3 sm:px-4 py-2 flex flex-col min-h-0 h-full overflow-hidden' : 'px-4 py-4 md:py-6'}`}>
+      <main
+        className={`mx-auto w-full max-w-md flex-1 md:max-w-xl lg:max-w-2xl ${isCameraStep || isMapStep ? 'flex h-full min-h-0 flex-col overflow-hidden px-3 py-2 sm:px-4' : 'px-4 py-4 md:py-6'}`}
+      >
         {children}
       </main>
 
       {/* ─── Exit Confirmation Dialog (Steps 1-5) ─────────────────────────── */}
       <Dialog open={isExitDialogOpen} onOpenChange={setIsExitDialogOpen}>
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-5 sm:max-w-md shadow-xl font-sans transform-gpu will-change-[transform,opacity]"
+          className="border-border bg-card transform-gpu rounded-[4px] border p-5 font-sans shadow-xl will-change-[transform,opacity] sm:max-w-md"
           style={{ fontFamily: 'var(--font-sans), sans-serif' }}
           showCloseButton={true}
         >
           <DialogHeader className="gap-2 text-left font-sans">
-            <DialogTitle className="text-base md:text-lg font-bold font-sans text-foreground tracking-tight">
+            <DialogTitle className="text-foreground font-sans text-base font-bold tracking-tight md:text-lg">
               Leave address creation?
             </DialogTitle>
-            <DialogDescription className="text-xs md:text-sm text-muted-foreground leading-relaxed pt-1 font-sans">
+            <DialogDescription className="text-muted-foreground pt-1 font-sans text-xs leading-relaxed md:text-sm">
               Your progress will be paused.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 w-full mt-4 pt-4 border-t border-border font-sans">
+          <div className="border-border mt-4 flex w-full flex-col-reverse gap-2 border-t pt-4 font-sans sm:flex-row sm:justify-end sm:gap-3">
             <button
               type="button"
               onClick={() => setIsExitDialogOpen(false)}
-              className="w-full sm:w-auto px-3.5 py-2.5 sm:py-2 rounded-[4px] border border-border text-xs md:text-sm font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans text-center"
+              className="border-border text-foreground bg-background hover:bg-muted w-full cursor-pointer rounded-[4px] border px-3.5 py-2.5 text-center font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] sm:w-auto sm:py-2 md:text-sm"
             >
               Cancel
             </button>
@@ -357,7 +375,7 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
               type="button"
               id="confirm-leave-creation-btn"
               onClick={handleConfirmLeave}
-              className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-[4px] bg-secondary text-secondary-foreground text-xs md:text-sm font-semibold hover:bg-muted active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out border border-border shadow-xs cursor-pointer font-sans"
+              className="bg-secondary text-secondary-foreground hover:bg-muted border-border flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[4px] border px-4 py-2.5 font-sans text-xs font-semibold shadow-xs transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] sm:w-auto sm:py-2 md:text-sm"
             >
               <span>Leave</span>
             </button>
@@ -368,26 +386,28 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
       {/* ─── Ephemeral Data Loss Prevention Dialog (Success Screen) ──────── */}
       <Dialog open={isDiscardDialogOpen} onOpenChange={setIsDiscardDialogOpen}>
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-5 sm:max-w-md shadow-xl font-sans transform-gpu will-change-[transform,opacity]"
+          className="border-border bg-card transform-gpu rounded-[4px] border p-5 font-sans shadow-xl will-change-[transform,opacity] sm:max-w-md"
           style={{ fontFamily: 'var(--font-sans), sans-serif' }}
           showCloseButton={true}
         >
           <DialogHeader className="gap-2 text-left font-sans">
-            <DialogTitle className="text-base md:text-lg font-bold font-sans text-foreground tracking-tight">
-              {isSuccessStep ? 'Wait! You are leaving without saving' : 'Leave address creation?'}
+            <DialogTitle className="text-foreground font-sans text-base font-bold tracking-tight md:text-lg">
+              {isSuccessStep
+                ? 'Wait! You are leaving without saving'
+                : 'Leave address creation?'}
             </DialogTitle>
-            <DialogDescription className="text-xs md:text-sm text-muted-foreground leading-relaxed pt-1 font-sans">
+            <DialogDescription className="text-muted-foreground pt-1 font-sans text-xs leading-relaxed md:text-sm">
               {isSuccessStep
                 ? "You haven't saved this address to an account. If you leave without copying the link, it will be lost."
                 : 'Do you want to save your current progress locally, or discard it and leave?'}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 w-full mt-4 pt-4 border-t border-border font-sans">
+          <div className="border-border mt-4 flex w-full flex-col-reverse gap-2 border-t pt-4 font-sans sm:flex-row sm:justify-end sm:gap-3">
             <button
               type="button"
               onClick={() => setIsDiscardDialogOpen(false)}
-              className="w-full sm:w-auto px-3.5 py-2.5 sm:py-2 rounded-[4px] border border-border text-xs md:text-sm font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans text-center"
+              className="border-border text-foreground bg-background hover:bg-muted w-full cursor-pointer rounded-[4px] border px-3.5 py-2.5 text-center font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] sm:w-auto sm:py-2 md:text-sm"
             >
               Cancel
             </button>
@@ -395,7 +415,7 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
               type="button"
               id="discard-leave-btn"
               onClick={handleDiscardAndLeave}
-              className="w-full sm:w-auto px-3.5 py-2.5 sm:py-2 rounded-[4px] border border-destructive/40 text-destructive hover:bg-destructive/10 text-xs md:text-sm font-medium active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans text-center"
+              className="border-destructive/40 text-destructive hover:bg-destructive/10 w-full cursor-pointer rounded-[4px] border px-3.5 py-2.5 text-center font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] sm:w-auto sm:py-2 md:text-sm"
             >
               Discard &amp; Leave
             </button>
@@ -405,11 +425,11 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
                 id="discard-save-account-btn"
                 onClick={handleSaveToAccount}
                 disabled={isSavingInLayout}
-                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-[4px] bg-primary text-primary-foreground text-xs md:text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-sm cursor-pointer font-sans disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary text-primary-foreground flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[4px] px-4 py-2.5 font-sans text-xs font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:py-2 md:text-sm"
               >
                 {isSavingInLayout ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     <span>Saving...</span>
                   </>
                 ) : (
@@ -421,7 +441,7 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
                 type="button"
                 id="discard-save-progress-btn"
                 onClick={handleSaveProgress}
-                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-[4px] bg-primary text-primary-foreground text-xs md:text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-sm cursor-pointer font-sans"
+                className="bg-primary text-primary-foreground flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[4px] px-4 py-2.5 font-sans text-xs font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98] sm:w-auto sm:py-2 md:text-sm"
               >
                 <span>Save Progress</span>
               </button>
@@ -431,26 +451,30 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
       </Dialog>
 
       {/* ─── Start Over Confirmation Dialog ──────────────────────────────── */}
-      <Dialog open={isStartOverDialogOpen} onOpenChange={setIsStartOverDialogOpen}>
+      <Dialog
+        open={isStartOverDialogOpen}
+        onOpenChange={setIsStartOverDialogOpen}
+      >
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-5 sm:max-w-md shadow-xl font-sans transform-gpu will-change-[transform,opacity]"
+          className="border-border bg-card transform-gpu rounded-[4px] border p-5 font-sans shadow-xl will-change-[transform,opacity] sm:max-w-md"
           style={{ fontFamily: 'var(--font-sans), sans-serif' }}
           showCloseButton={true}
         >
           <DialogHeader className="gap-2 text-left font-sans">
-            <DialogTitle className="text-base md:text-lg font-bold font-sans text-foreground tracking-tight">
+            <DialogTitle className="text-foreground font-sans text-base font-bold tracking-tight md:text-lg">
               Start over from scratch?
             </DialogTitle>
-            <DialogDescription className="text-xs md:text-sm text-muted-foreground leading-relaxed pt-1 font-sans">
-              This will clear all entered location data, doorway photos, and metadata. You will be redirected to Step 1.
+            <DialogDescription className="text-muted-foreground pt-1 font-sans text-xs leading-relaxed md:text-sm">
+              This will clear all entered location data, doorway photos, and
+              metadata. You will be redirected to Step 1.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 w-full mt-4 pt-4 border-t border-border font-sans">
+          <div className="border-border mt-4 flex w-full flex-col-reverse gap-2 border-t pt-4 font-sans sm:flex-row sm:justify-end sm:gap-3">
             <button
               type="button"
               onClick={() => setIsStartOverDialogOpen(false)}
-              className="w-full sm:w-auto px-3.5 py-2.5 sm:py-2 rounded-[4px] border border-border text-xs md:text-sm font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans text-center"
+              className="border-border text-foreground bg-background hover:bg-muted w-full cursor-pointer rounded-[4px] border px-3.5 py-2.5 text-center font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] sm:w-auto sm:py-2 md:text-sm"
             >
               Cancel
             </button>
@@ -458,9 +482,9 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
               type="button"
               id="confirm-start-over-btn"
               onClick={handleConfirmStartOver}
-              className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-[4px] bg-destructive text-destructive-foreground text-xs md:text-sm font-semibold hover:bg-destructive/90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-xs cursor-pointer font-sans"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-[4px] px-4 py-2.5 font-sans text-xs font-semibold shadow-xs transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] sm:w-auto sm:py-2 md:text-sm"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="h-3.5 w-3.5" />
               <span>Yes, Start Over</span>
             </button>
           </div>

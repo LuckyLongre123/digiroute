@@ -27,7 +27,8 @@ export function Sidebar() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
 
-  const displayName = user?.name || user?.email?.split('@')[0] || 'Citizen Owner';
+  const displayName =
+    user?.name || user?.email?.split('@')[0] || 'Citizen Owner';
   const initials = user?.name
     ? user.name
         .split(' ')
@@ -36,8 +37,8 @@ export function Sidebar() {
         .slice(0, 2)
         .toUpperCase()
     : user?.email
-    ? user.email.slice(0, 2).toUpperCase()
-    : 'DR';
+      ? user.email.slice(0, 2).toUpperCase()
+      : 'DR';
 
   const handleLogout = async () => {
     await logoutAction();
@@ -47,10 +48,14 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="hidden md:flex md:w-64 flex-col justify-between bg-card border-r border-border p-5 shrink-0 font-sans">
+    <aside className="bg-card border-border hidden shrink-0 flex-col justify-between border-r p-5 font-sans md:flex md:w-64">
       <div className="space-y-6">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center group cursor-pointer" aria-label="DigiRoute Home">
+        <Link
+          href="/"
+          className="group flex cursor-pointer items-center"
+          aria-label="DigiRoute Home"
+        >
           <Image
             src="/logo-transparent.png"
             alt="DigiRoute Logo"
@@ -58,20 +63,20 @@ export function Sidebar() {
             height={40}
             priority={true}
             quality={75}
-            className="w-36 h-auto object-contain dark:invert dark:brightness-200"
+            className="h-auto w-36 object-contain dark:brightness-200 dark:invert"
           />
         </Link>
 
         {/* User Profile Mini Badge */}
-        <div className="p-3 bg-muted/50 rounded-[4px] border border-border flex items-center gap-3 font-sans">
-          <div className="w-9 h-9 rounded-[4px] bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+        <div className="bg-muted/50 border-border flex items-center gap-3 rounded-[4px] border p-3 font-sans">
+          <div className="bg-primary text-primary-foreground flex h-9 w-9 items-center justify-center rounded-[4px] text-sm font-bold">
             {initials}
           </div>
           <div className="overflow-hidden">
-            <div className="text-sm font-semibold text-foreground truncate font-sans">
+            <div className="text-foreground truncate font-sans text-sm font-semibold">
               {displayName}
             </div>
-            <div className="text-xs text-muted-foreground truncate font-sans">
+            <div className="text-muted-foreground truncate font-sans text-xs">
               {user?.email || 'Verified Account'}
             </div>
           </div>
@@ -82,13 +87,14 @@ export function Sidebar() {
           {/* 1. Addresses */}
           <Link
             href="/dashboard"
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-[4px] text-sm font-medium transition-colors ${
-              pathname === '/dashboard' || pathname.startsWith('/dashboard/address')
+            className={`flex items-center gap-3 rounded-[4px] px-3 py-2.5 text-sm font-medium transition-colors ${
+              pathname === '/dashboard' ||
+              pathname.startsWith('/dashboard/address')
                 ? 'bg-primary text-primary-foreground'
                 : 'text-foreground hover:bg-muted'
             }`}
           >
-            <MapPin className="w-4 h-4" />
+            <MapPin className="h-4 w-4" />
             <span>Addresses</span>
           </Link>
 
@@ -96,13 +102,13 @@ export function Sidebar() {
           <div
             aria-disabled="true"
             title="Reports feature coming soon"
-            className="flex items-center justify-between px-3 py-2.5 rounded-[4px] text-sm font-medium opacity-50 cursor-not-allowed text-zinc-500 select-none"
+            className="flex cursor-not-allowed items-center justify-between rounded-[4px] px-3 py-2.5 text-sm font-medium text-zinc-500 opacity-50 select-none"
           >
             <div className="flex items-center gap-3">
-              <FileBarChart className="w-4 h-4 text-zinc-500" />
+              <FileBarChart className="h-4 w-4 text-zinc-500" />
               <span>Reports</span>
             </div>
-            <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-500">
+            <span className="rounded bg-zinc-200 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-500 uppercase dark:bg-zinc-800">
               Soon
             </span>
           </div>
@@ -110,34 +116,34 @@ export function Sidebar() {
           {/* 3. Settings */}
           <Link
             href="/dashboard/settings"
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-[4px] text-sm font-medium transition-colors ${
+            className={`flex items-center gap-3 rounded-[4px] px-3 py-2.5 text-sm font-medium transition-colors ${
               pathname === '/dashboard/settings'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-foreground hover:bg-muted'
             }`}
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="h-4 w-4" />
             <span>Settings</span>
           </Link>
         </nav>
       </div>
 
       {/* Sidebar Footer Actions */}
-      <div className="space-y-2 pt-4 border-t border-border font-sans">
+      <div className="border-border space-y-2 border-t pt-4 font-sans">
         <Link
           href="/sos"
-          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 rounded-[4px] transition-colors"
+          className="text-destructive hover:bg-destructive/10 flex items-center gap-2 rounded-[4px] px-3 py-2 text-xs font-semibold transition-colors"
         >
-          <ShieldAlert className="w-4 h-4" />
+          <ShieldAlert className="h-4 w-4" />
           <span>Emergency SOS (112)</span>
         </Link>
         <button
           type="button"
           onClick={handleLogout}
           id="dashboard-logout-btn"
-          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground rounded-[4px] transition-colors cursor-pointer text-left"
+          className="text-muted-foreground hover:text-foreground flex w-full cursor-pointer items-center gap-2 rounded-[4px] px-3 py-2 text-left text-xs transition-colors"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="h-4 w-4" />
           <span>Log Out</span>
         </button>
       </div>

@@ -17,7 +17,10 @@ export async function deleteAddressAction(slugOrId: string) {
 
     const deleted = await deleteUserAddress(session.user.id, slugOrId);
     if (!deleted) {
-      return { success: false, error: 'Address not found or permission denied.' };
+      return {
+        success: false,
+        error: 'Address not found or permission denied.',
+      };
     }
 
     revalidatePath('/dashboard');

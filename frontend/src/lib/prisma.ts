@@ -43,7 +43,11 @@ async function ensureLocalStorage(): Promise<void> {
         addressMemoryCache.set(item.slug, item);
       }
     } catch {
-      await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify([], null, 2), 'utf-8');
+      await fs.writeFile(
+        LOCAL_STORAGE_FILE,
+        JSON.stringify([], null, 2),
+        'utf-8'
+      );
     }
   } catch (err) {
     console.warn('[Storage] Local storage initialization warning:', err);
@@ -56,7 +60,9 @@ ensureLocalStorage().catch(() => {});
 /**
  * Save address with Prisma 8 ORM and fallback to local storage
  */
-export async function saveAddress(payload: AddressPayload): Promise<AddressPayload> {
+export async function saveAddress(
+  payload: AddressPayload
+): Promise<AddressPayload> {
   const now = new Date().toISOString();
   const ownerId = payload.userId ?? null;
   const isGuest = !ownerId;
@@ -102,7 +108,9 @@ export async function saveAddress(payload: AddressPayload): Promise<AddressPaylo
     });
 
     if (created) {
-      console.log(`[Prisma 8] Address ${addressRecord.slug} saved to PostgreSQL.`);
+      console.log(
+        `[Prisma 8] Address ${addressRecord.slug} saved to PostgreSQL.`
+      );
     }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
@@ -115,7 +123,11 @@ export async function saveAddress(payload: AddressPayload): Promise<AddressPaylo
   try {
     await ensureLocalStorage();
     const currentList = Array.from(addressMemoryCache.values());
-    await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(currentList, null, 2), 'utf-8');
+    await fs.writeFile(
+      LOCAL_STORAGE_FILE,
+      JSON.stringify(currentList, null, 2),
+      'utf-8'
+    );
   } catch (fileErr) {
     console.error('[Storage] Error writing address to local file:', fileErr);
   }
@@ -126,7 +138,9 @@ export async function saveAddress(payload: AddressPayload): Promise<AddressPaylo
 /**
  * Retrieve address by public slug
  */
-export async function getAddressBySlug(slug: string): Promise<AddressPayload | null> {
+export async function getAddressBySlug(
+  slug: string
+): Promise<AddressPayload | null> {
   // 1. Try Prisma 8 database first
   try {
     let record = await db.orm.public.Address.where({ slug }).first();
@@ -189,14 +203,18 @@ export async function getAddressBySlug(slug: string): Promise<AddressPayload | n
  * Retrieve all addresses belonging strictly to a specific authenticated user.
  * Strictly isolates addresses so no user can see global or other users' addresses.
  */
-export async function getUserAddresses(userId: string): Promise<AddressPayload[]> {
+export async function getUserAddresses(
+  userId: string
+): Promise<AddressPayload[]> {
   if (!userId || typeof userId !== 'string' || userId.trim().length === 0) {
     return [];
   }
 
   // 1. Try Prisma 8 Neon PostgreSQL first (ordered newest first)
   try {
-    const records = await db.orm.public.Address.where({ userId }).orderBy((a) => a.createdAt.desc()).all();
+    const records = await db.orm.public.Address.where({ userId })
+      .orderBy((a) => a.createdAt.desc())
+      .all();
     if (records && records.length > 0) {
       return records.map((record) => ({
         id: record.id,
@@ -221,7 +239,10 @@ export async function getUserAddresses(userId: string): Promise<AddressPayload[]
       }));
     }
   } catch (dbErr) {
-    console.warn('[Prisma 8] Failed to query user addresses from DB, checking local storage:', dbErr);
+    console.warn(
+      '[Prisma 8] Failed to query user addresses from DB, checking local storage:',
+      dbErr
+    );
   }
 
   // 2. Check local storage fallback strictly filtered by userId and sorted newest first
@@ -231,7 +252,11 @@ export async function getUserAddresses(userId: string): Promise<AddressPayload[]
     const list: AddressPayload[] = JSON.parse(content);
     return list
       .filter((item) => item.userId === userId)
-      .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt || 0).getTime() -
+          new Date(a.createdAt || 0).getTime()
+      );
   } catch {
     return [];
   }
@@ -243,7 +268,12 @@ export async function getUserAddresses(userId: string): Promise<AddressPayload[]
 export async function updateUserAddress(
   userId: string,
   slugOrId: string,
-  updates: Partial<Pick<AddressPayload, 'label' | 'floor' | 'flat' | 'landmark' | 'routingNotes' | 'expiresAt'>>
+  updates: Partial<
+    Pick<
+      AddressPayload,
+      'label' | 'floor' | 'flat' | 'landmark' | 'routingNotes' | 'expiresAt'
+    >
+  >
 ): Promise<AddressPayload | null> {
   const existing = await getAddressBySlug(slugOrId);
   // Strict Owner Authorization: Must exist and strictly belong to the requesting user
@@ -252,7 +282,9 @@ export async function updateUserAddress(
   }
 
   const isEphemeral =
-    updates.expiresAt !== undefined ? Boolean(updates.expiresAt) : existing.isEphemeral;
+    updates.expiresAt !== undefined
+      ? Boolean(updates.expiresAt)
+      : existing.isEphemeral;
 
   const updated: AddressPayload = {
     ...existing,
@@ -283,9 +315,16 @@ export async function updateUserAddress(
   try {
     await ensureLocalStorage();
     const currentList = Array.from(addressMemoryCache.values());
-    await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(currentList, null, 2), 'utf-8');
+    await fs.writeFile(
+      LOCAL_STORAGE_FILE,
+      JSON.stringify(currentList, null, 2),
+      'utf-8'
+    );
   } catch (fileErr) {
-    console.error('[Storage] Error writing updated address to local file:', fileErr);
+    console.error(
+      '[Storage] Error writing updated address to local file:',
+      fileErr
+    );
   }
 
   return updated;
@@ -317,15 +356,25 @@ export async function updateAddressPhotoInDb(
       doorwayPhotoUrl,
     });
   } catch (dbErr) {
-    console.warn('[Prisma 8] Failed to update doorway photo in PostgreSQL:', dbErr);
+    console.warn(
+      '[Prisma 8] Failed to update doorway photo in PostgreSQL:',
+      dbErr
+    );
   }
 
   try {
     await ensureLocalStorage();
     const currentList = Array.from(addressMemoryCache.values());
-    await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(currentList, null, 2), 'utf-8');
+    await fs.writeFile(
+      LOCAL_STORAGE_FILE,
+      JSON.stringify(currentList, null, 2),
+      'utf-8'
+    );
   } catch (fileErr) {
-    console.error('[Storage] Error writing doorway photo to local file:', fileErr);
+    console.error(
+      '[Storage] Error writing doorway photo to local file:',
+      fileErr
+    );
   }
 
   return updated;
@@ -334,7 +383,10 @@ export async function updateAddressPhotoInDb(
 /**
  * Delete an address owned strictly by a specific user.
  */
-export async function deleteUserAddress(userId: string, slugOrId: string): Promise<boolean> {
+export async function deleteUserAddress(
+  userId: string,
+  slugOrId: string
+): Promise<boolean> {
   const existing = await getAddressBySlug(slugOrId);
   if (!existing || existing.userId !== userId) {
     return false;
@@ -351,7 +403,11 @@ export async function deleteUserAddress(userId: string, slugOrId: string): Promi
   try {
     await ensureLocalStorage();
     const currentList = Array.from(addressMemoryCache.values());
-    await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(currentList, null, 2), 'utf-8');
+    await fs.writeFile(
+      LOCAL_STORAGE_FILE,
+      JSON.stringify(currentList, null, 2),
+      'utf-8'
+    );
   } catch (fileErr) {
     console.error('[Storage] Error removing address from local file:', fileErr);
   }
@@ -363,13 +419,18 @@ export async function deleteUserAddress(userId: string, slugOrId: string): Promi
  * Claim an ephemeral address for an authenticated user.
  * Persists the userId binding to Prisma 8 Neon PostgreSQL, in-memory cache, and local file storage.
  */
-export async function claimAddressForUser(slugOrId: string, userId: string): Promise<AddressPayload | null> {
+export async function claimAddressForUser(
+  slugOrId: string,
+  userId: string
+): Promise<AddressPayload | null> {
   const existing = await getAddressBySlug(slugOrId);
   if (!existing) return null;
 
   // Strict constraint: Address must be unclaimed (userId IS NULL) or already belong to this user
   if (existing.userId && existing.userId !== userId) {
-    console.warn(`[claimAddressForUser] Address ${existing.slug} is already claimed by user ${existing.userId}`);
+    console.warn(
+      `[claimAddressForUser] Address ${existing.slug} is already claimed by user ${existing.userId}`
+    );
     return null;
   }
 
@@ -386,24 +447,37 @@ export async function claimAddressForUser(slugOrId: string, userId: string): Pro
 
   // 2. Persist update to PostgreSQL via Prisma 8 (strictly only update userId, preserving expiresAt)
   try {
-    const updated = await db.orm.public.Address.where({ slug: claimed.slug }).update({
+    const updated = await db.orm.public.Address.where({
+      slug: claimed.slug,
+    }).update({
       userId,
     });
     if (updated) {
-      console.log(`[Prisma 8] Address ${claimed.slug} claimed and attached to user ${userId} in PostgreSQL.`);
+      console.log(
+        `[Prisma 8] Address ${claimed.slug} claimed and attached to user ${userId} in PostgreSQL.`
+      );
     }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    console.warn(`[Prisma 8] Database update error for claimed address (${message}). Retaining file & cache state.`);
+    console.warn(
+      `[Prisma 8] Database update error for claimed address (${message}). Retaining file & cache state.`
+    );
   }
 
   // 3. Persist update to local file storage
   try {
     await ensureLocalStorage();
     const currentList = Array.from(addressMemoryCache.values());
-    await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(currentList, null, 2), 'utf-8');
+    await fs.writeFile(
+      LOCAL_STORAGE_FILE,
+      JSON.stringify(currentList, null, 2),
+      'utf-8'
+    );
   } catch (fileErr) {
-    console.error('[Storage] Error writing claimed address to local file:', fileErr);
+    console.error(
+      '[Storage] Error writing claimed address to local file:',
+      fileErr
+    );
   }
 
   return claimed;
@@ -436,23 +510,33 @@ export async function updateAddressExpiryInDb(
       expiresAt,
       isEphemeral,
     });
-    console.log(`[Prisma 8] Address ${updated.slug} expiry updated: expiresAt=${expiresAt}, isEphemeral=${isEphemeral}`);
+    console.log(
+      `[Prisma 8] Address ${updated.slug} expiry updated: expiresAt=${expiresAt}, isEphemeral=${isEphemeral}`
+    );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    console.warn(`[Prisma 8] Database update error for address expiry (${message}). Retaining file & cache state.`);
+    console.warn(
+      `[Prisma 8] Database update error for address expiry (${message}). Retaining file & cache state.`
+    );
   }
 
   // 3. Persist update to local file storage
   try {
     await ensureLocalStorage();
     const currentList = Array.from(addressMemoryCache.values());
-    await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(currentList, null, 2), 'utf-8');
+    await fs.writeFile(
+      LOCAL_STORAGE_FILE,
+      JSON.stringify(currentList, null, 2),
+      'utf-8'
+    );
   } catch (fileErr) {
-    console.error('[Storage] Error writing address expiry to local file:', fileErr);
+    console.error(
+      '[Storage] Error writing address expiry to local file:',
+      fileErr
+    );
   }
 
   return updated;
 }
 
 export { db };
-

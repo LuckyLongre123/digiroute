@@ -53,7 +53,12 @@ export interface DigipinLocation {
  * Verify if coordinates fall strictly within India's supported boundary.
  */
 export function isWithinIndiaBounds(lat: number, lng: number): boolean {
-  if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
+  if (
+    typeof lat !== 'number' ||
+    typeof lng !== 'number' ||
+    isNaN(lat) ||
+    isNaN(lng)
+  ) {
     return false;
   }
   return libIsValidCoordinate(lat, lng);
@@ -94,8 +99,17 @@ export function formatDigipin(input: string | null | undefined): string {
  * Encode WGS84 coordinates into an official 10-character DIGIPIN.
  * By default returns the official hyphenated format (e.g. 39J-M99-P923).
  */
-export function encode(lat: number, lng: number, formatted: boolean = true): string {
-  if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
+export function encode(
+  lat: number,
+  lng: number,
+  formatted: boolean = true
+): string {
+  if (
+    typeof lat !== 'number' ||
+    typeof lng !== 'number' ||
+    isNaN(lat) ||
+    isNaN(lng)
+  ) {
     throw new Error('Latitude and Longitude must be valid numbers.');
   }
 
@@ -133,7 +147,10 @@ export function decode(digipin: string): DigipinLocation {
   const centerLng = Number(coord.lon.toFixed(6));
 
   const latSpanMeters = (bounds.maxLat - bounds.minLat) * 111000;
-  const lngSpanMeters = (bounds.maxLon - bounds.minLon) * 111000 * Math.cos((centerLat * Math.PI) / 180);
+  const lngSpanMeters =
+    (bounds.maxLon - bounds.minLon) *
+    111000 *
+    Math.cos((centerLat * Math.PI) / 180);
 
   return {
     center: {

@@ -63,7 +63,8 @@ export function RecipientMapplsMap({
   onRouteError,
 }: RecipientMapProps) {
   const [containerId] = useState(
-    () => `recipient_map_${Math.random().toString(36).slice(2, 9)}_${Date.now().toString(36)}`
+    () =>
+      `recipient_map_${Math.random().toString(36).slice(2, 9)}_${Date.now().toString(36)}`
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,14 +85,27 @@ export function RecipientMapplsMap({
     onRouteErrorRef.current = onRouteError;
   });
 
-  const [internalIsLocating, setInternalIsLocating] = useState(externalIsLocating ?? true);
-  const isLocating = externalIsLocating !== undefined ? externalIsLocating : internalIsLocating;
-  const [internalViewerLocation, setInternalViewerLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [isSdkLoaded, setIsSdkLoaded] = useState(() => typeof window !== 'undefined' && Boolean(window.mappls?.Map));
-  const [isPluginLoaded, setIsPluginLoaded] = useState(() => typeof window !== 'undefined' && Boolean(window.mappls?.direction));
+  const [internalIsLocating, setInternalIsLocating] = useState(
+    externalIsLocating ?? true
+  );
+  const isLocating =
+    externalIsLocating !== undefined ? externalIsLocating : internalIsLocating;
+  const [internalViewerLocation, setInternalViewerLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [isSdkLoaded, setIsSdkLoaded] = useState(
+    () => typeof window !== 'undefined' && Boolean(window.mappls?.Map)
+  );
+  const [isPluginLoaded, setIsPluginLoaded] = useState(
+    () => typeof window !== 'undefined' && Boolean(window.mappls?.direction)
+  );
   const [loadError, setLoadError] = useState(false);
 
-  const apiKey = process.env.NEXT_PUBLIC_MAPPLS_API_KEY || process.env.NEXT_PUBLIC_MAPPLS_TOKEN || '';
+  const apiKey =
+    process.env.NEXT_PUBLIC_MAPPLS_API_KEY ||
+    process.env.NEXT_PUBLIC_MAPPLS_TOKEN ||
+    '';
 
   // 1. Sync GPS Location
   useEffect(() => {
@@ -99,7 +113,10 @@ export function RecipientMapplsMap({
     if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          setInternalViewerLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          setInternalViewerLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
           setInternalIsLocating(false);
         },
         (err) => {
@@ -115,14 +132,19 @@ export function RecipientMapplsMap({
     }
   }, [externalViewerLocation]);
 
-  const activeViewerLocation = externalViewerLocation !== undefined ? externalViewerLocation : internalViewerLocation;
+  const activeViewerLocation =
+    externalViewerLocation !== undefined
+      ? externalViewerLocation
+      : internalViewerLocation;
 
   // 2. Load Base Map SDK
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     if (!apiKey) {
-      console.warn('[RecipientMapplsMap] Mappls API key is missing. Ensure NEXT_PUBLIC_MAPPLS_API_KEY is set in .env.local');
+      console.warn(
+        '[RecipientMapplsMap] Mappls API key is missing. Ensure NEXT_PUBLIC_MAPPLS_API_KEY is set in .env.local'
+      );
       return;
     }
 
@@ -144,7 +166,9 @@ export function RecipientMapplsMap({
           if (interval) clearInterval(interval);
         } else if (attempts > MAX_ATTEMPTS) {
           if (interval) clearInterval(interval);
-          console.error('[RecipientMapplsMap] Timed out waiting for window.mappls.Map to initialize.');
+          console.error(
+            '[RecipientMapplsMap] Timed out waiting for window.mappls.Map to initialize.'
+          );
           setLoadError(true);
         }
       }, 100);
@@ -160,7 +184,10 @@ export function RecipientMapplsMap({
       script.onload = checkSdkReady;
       script.onerror = (e) => {
         if (interval) clearInterval(interval);
-        console.error('[RecipientMapplsMap] Failed to load Mappls SDK script:', e);
+        console.error(
+          '[RecipientMapplsMap] Failed to load Mappls SDK script:',
+          e
+        );
         setLoadError(true);
       };
       document.head.appendChild(script);
@@ -202,14 +229,18 @@ export function RecipientMapplsMap({
           if (interval) clearInterval(interval);
         } else if (attempts > MAX_ATTEMPTS) {
           if (interval) clearInterval(interval);
-          console.warn('[RecipientMapplsMap] Direction plugin polling timed out, using fallback pins.');
+          console.warn(
+            '[RecipientMapplsMap] Direction plugin polling timed out, using fallback pins.'
+          );
           setIsPluginLoaded(false);
         }
       }, 100);
     };
 
     const pluginScriptId = 'mappls-direction-plugin';
-    let pluginScript = document.getElementById(pluginScriptId) as HTMLScriptElement | null;
+    let pluginScript = document.getElementById(
+      pluginScriptId
+    ) as HTMLScriptElement | null;
     if (!pluginScript) {
       pluginScript = document.createElement('script');
       pluginScript.id = pluginScriptId;
@@ -245,15 +276,23 @@ export function RecipientMapplsMap({
   // Coordinate Validation Helper
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isValidCoord = (c: any): c is { lat: number; lng: number } =>
-    Boolean(c && typeof c.lat === 'number' && !isNaN(c.lat) && typeof c.lng === 'number' && !isNaN(c.lng));
+    Boolean(
+      c &&
+      typeof c.lat === 'number' &&
+      !isNaN(c.lat) &&
+      typeof c.lng === 'number' &&
+      !isNaN(c.lng)
+    );
 
   // 4. Safe Map Instantiation with Load Event Synchronization
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.mappls || !window.mappls.Map) return;
+    if (typeof window === 'undefined' || !window.mappls || !window.mappls.Map)
+      return;
     if (!isSdkLoaded) return;
     if (mapRef.current) return;
 
-    const container = containerRef.current || document.getElementById(containerId);
+    const container =
+      containerRef.current || document.getElementById(containerId);
     if (!container) return;
 
     try {
@@ -328,7 +367,10 @@ export function RecipientMapplsMap({
         setTimeout(handleMapReady, 400);
       }
     } catch (err) {
-      console.error('[RecipientMapplsMap] Error instantiating Mappls Map:', err);
+      console.error(
+        '[RecipientMapplsMap] Error instantiating Mappls Map:',
+        err
+      );
       setLoadError(true);
     }
 
@@ -338,7 +380,7 @@ export function RecipientMapplsMap({
           if (typeof mapRef.current.remove === 'function') {
             mapRef.current.remove();
           }
-        } catch { }
+        } catch {}
         mapRef.current = null;
         setIsMapReady(false);
       }
@@ -364,7 +406,10 @@ export function RecipientMapplsMap({
               window.mappls.remove({ map: mapRef.current, layer: marker });
             }
           } catch (e) {
-            console.warn('[RecipientMapplsMap] Error removing custom marker:', e);
+            console.warn(
+              '[RecipientMapplsMap] Error removing custom marker:',
+              e
+            );
           }
         });
         customMarkersRef.current = [];
@@ -375,9 +420,12 @@ export function RecipientMapplsMap({
           if (typeof standaloneDestMarkerRef.current.remove === 'function') {
             standaloneDestMarkerRef.current.remove();
           } else if (window.mappls?.remove && mapRef.current) {
-            window.mappls.remove({ map: mapRef.current, layer: standaloneDestMarkerRef.current });
+            window.mappls.remove({
+              map: mapRef.current,
+              layer: standaloneDestMarkerRef.current,
+            });
           }
-        } catch { }
+        } catch {}
         standaloneDestMarkerRef.current = null;
       }
 
@@ -386,25 +434,31 @@ export function RecipientMapplsMap({
           if (typeof standaloneYouMarkerRef.current.remove === 'function') {
             standaloneYouMarkerRef.current.remove();
           } else if (window.mappls?.remove && mapRef.current) {
-            window.mappls.remove({ map: mapRef.current, layer: standaloneYouMarkerRef.current });
+            window.mappls.remove({
+              map: mapRef.current,
+              layer: standaloneYouMarkerRef.current,
+            });
           }
-        } catch { }
+        } catch {}
         standaloneYouMarkerRef.current = null;
       }
 
       // Also remove any DOM nodes created for custom fallback markers
-      const mapContainer = containerRef.current || document.getElementById(containerId);
+      const mapContainer =
+        containerRef.current || document.getElementById(containerId);
       if (mapContainer) {
-        mapContainer.querySelectorAll('.custom-fallback-marker').forEach((el) => {
-          try {
-            const wrapper = el.closest('.mapboxgl-marker, .mappls-marker');
-            if (wrapper) {
-              wrapper.remove();
-            } else {
-              el.remove();
-            }
-          } catch { }
-        });
+        mapContainer
+          .querySelectorAll('.custom-fallback-marker')
+          .forEach((el) => {
+            try {
+              const wrapper = el.closest('.mapboxgl-marker, .mappls-marker');
+              if (wrapper) {
+                wrapper.remove();
+              } else {
+                el.remove();
+              }
+            } catch {}
+          });
       }
     };
 
@@ -413,11 +467,14 @@ export function RecipientMapplsMap({
       if (directionPluginRef.current) {
         try {
           if (window.mappls?.remove && mapRef.current) {
-            window.mappls.remove({ map: mapRef.current, layer: directionPluginRef.current });
+            window.mappls.remove({
+              map: mapRef.current,
+              layer: directionPluginRef.current,
+            });
           } else if (typeof directionPluginRef.current.remove === 'function') {
             directionPluginRef.current.remove();
           }
-        } catch { }
+        } catch {}
         directionPluginRef.current = null;
       }
     };
@@ -449,7 +506,10 @@ export function RecipientMapplsMap({
         if (!onlyDestination && validViewer) {
           const youMarker = new window.mappls.Marker({
             map: mapRef.current,
-            position: { lat: activeViewerLocation.lat, lng: activeViewerLocation.lng },
+            position: {
+              lat: activeViewerLocation.lat,
+              lng: activeViewerLocation.lng,
+            },
             html: YOU_PIN_HTML,
           });
           standaloneYouMarkerRef.current = youMarker;
@@ -462,8 +522,12 @@ export function RecipientMapplsMap({
           if (!onlyDestination && validViewer && validDest) {
             if (typeof mapRef.current.setCenter === 'function') {
               mapRef.current.setCenter({
-                lat: Number(((activeViewerLocation.lat + destination.lat) / 2).toFixed(6)),
-                lng: Number(((activeViewerLocation.lng + destination.lng) / 2).toFixed(6)),
+                lat: Number(
+                  ((activeViewerLocation.lat + destination.lat) / 2).toFixed(6)
+                ),
+                lng: Number(
+                  ((activeViewerLocation.lng + destination.lng) / 2).toFixed(6)
+                ),
               });
             }
             if (typeof mapRef.current.setZoom === 'function') {
@@ -482,7 +546,10 @@ export function RecipientMapplsMap({
           }
         }
       } catch (err) {
-        console.warn('[RecipientMapplsMap] Error rendering custom fallback markers:', err);
+        console.warn(
+          '[RecipientMapplsMap] Error rendering custom fallback markers:',
+          err
+        );
       }
     };
 
@@ -520,7 +587,9 @@ export function RecipientMapplsMap({
         const panelId = `${containerId}_direction_panel`;
         const roughDist = Math.hypot(
           (activeViewerLocation.lat - destination.lat) * 111000,
-          (activeViewerLocation.lng - destination.lng) * 111000 * Math.cos((destination.lat * Math.PI) / 180)
+          (activeViewerLocation.lng - destination.lng) *
+            111000 *
+            Math.cos((destination.lat * Math.PI) / 180)
         );
         const routingProfile = roughDist > 1000 ? 'driving' : 'walking';
 
@@ -552,7 +621,10 @@ export function RecipientMapplsMap({
             }
             // EXPLICIT FAILURE: Engine threw an error -> ONLY here render fallback markers!
             else {
-              console.warn('[RecipientMapplsMap] Direction returned error, displaying custom fallback pins:', data?.error);
+              console.warn(
+                '[RecipientMapplsMap] Direction returned error, displaying custom fallback pins:',
+                data?.error
+              );
               renderFallbackPins(false);
               onRouteErrorRef.current?.();
             }
@@ -587,7 +659,9 @@ export function RecipientMapplsMap({
   ]);
 
   return (
-    <div className={`relative w-full h-full overflow-hidden font-sans select-none ${className}`}>
+    <div
+      className={`relative h-full w-full overflow-hidden font-sans select-none ${className}`}
+    >
       {/* Aggressive CSS Overrides */}
       <style>{`
         .mapmyindia-direction-box, .mapmyindia-search-result-box, .mappls-search-result-box,
@@ -608,29 +682,43 @@ export function RecipientMapplsMap({
       <div
         ref={containerRef}
         id={containerId}
-        style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
       />
 
       {/* Hidden direction panel element providing all required DOM nodes for Mappls direction plugin */}
       <div id={`${containerId}_direction_panel`} style={{ display: 'none' }}>
-        <div id={`expColSec_${containerId}`}><span></span></div>
+        <div id={`expColSec_${containerId}`}>
+          <span></span>
+        </div>
         <div id={`${containerId}_costRT`}></div>
       </div>
 
       {isLocating && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm transition-opacity duration-200">
-          <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin mb-3 shadow-sm" />
-          <span className="text-sm font-semibold text-foreground tracking-wide">Acquiring live location...</span>
+        <div className="bg-background/80 absolute inset-0 z-30 flex flex-col items-center justify-center backdrop-blur-sm transition-opacity duration-200">
+          <div className="border-accent mb-3 h-8 w-8 animate-spin rounded-full border-3 border-t-transparent shadow-sm" />
+          <span className="text-foreground text-sm font-semibold tracking-wide">
+            Acquiring live location...
+          </span>
         </div>
       )}
 
       {(!apiKey || loadError) && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-900 p-6 text-center border border-border">
-          <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center mb-3">
-            <AlertTriangle className="w-5 h-5" />
+        <div className="border-border absolute inset-0 z-20 flex flex-col items-center justify-center border bg-zinc-50 p-6 text-center dark:bg-zinc-900">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600">
+            <AlertTriangle className="h-5 w-5" />
           </div>
-          <p className="text-sm font-bold text-foreground">
-            {loadError ? 'Failed to initialize Mappls SDK' : 'Mappls API key missing'}
+          <p className="text-foreground text-sm font-bold">
+            {loadError
+              ? 'Failed to initialize Mappls SDK'
+              : 'Mappls API key missing'}
           </p>
         </div>
       )}

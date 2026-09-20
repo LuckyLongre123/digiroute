@@ -22,7 +22,9 @@ export interface RecentAddressItem {
  * Server Action: Retrieve the authenticated user's 3 most recent addresses.
  * Returns empty array if user is unauthenticated or has 0 addresses.
  */
-export async function getRecentAddressesAction(): Promise<{ addresses: RecentAddressItem[] }> {
+export async function getRecentAddressesAction(): Promise<{
+  addresses: RecentAddressItem[];
+}> {
   try {
     const session = await getCurrentSession();
     if (!session?.id) {

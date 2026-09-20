@@ -28,7 +28,9 @@ import {
 export default function SosPage() {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
-  const [broadcastState, setBroadcastState] = useState<'idle' | 'broadcasting' | 'sent'>('idle');
+  const [broadcastState, setBroadcastState] = useState<
+    'idle' | 'broadcasting' | 'sent'
+  >('idle');
   const [helpersCount, setHelpersCount] = useState(4);
 
   // Admin easter egg: 7 clicks within 3 seconds on the Copy button
@@ -85,48 +87,51 @@ export default function SosPage() {
 
   return (
     <div
-      className="min-h-[100dvh] w-full flex flex-col items-center justify-between py-6 font-sans select-none"
-      style={{ backgroundColor: 'var(--sos-bg, #B91C1C)', color: 'var(--sos-text, #FFFFFF)' }}
+      className="flex min-h-[100dvh] w-full flex-col items-center justify-between py-6 font-sans select-none"
+      style={{
+        backgroundColor: 'var(--sos-bg, #B91C1C)',
+        color: 'var(--sos-text, #FFFFFF)',
+      }}
     >
-      <div className="w-full max-w-sm px-4 flex-1 flex flex-col justify-between space-y-6">
+      <div className="flex w-full max-w-sm flex-1 flex-col justify-between space-y-6 px-4">
         {/* ─── 1. TOP BAR: EMERGENCY BEACON INDICATOR & EXIT ───────────────── */}
-        <div className="flex items-center justify-between pb-3 border-b border-red-500/40 shrink-0">
+        <div className="flex shrink-0 items-center justify-between border-b border-red-500/40 pb-3">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 text-amber-300 animate-pulse" />
-            <span className="text-xs font-mono uppercase tracking-widest text-amber-300 font-bold">
+            <ShieldAlert className="h-5 w-5 animate-pulse text-amber-300" />
+            <span className="font-mono text-xs font-bold tracking-widest text-amber-300 uppercase">
               Live Emergency Beacon
             </span>
           </div>
           <Link
             href="/"
-            className="inline-flex items-center justify-center w-8 h-8 rounded-[4px] bg-black/20 hover:bg-black/40 text-white transition-colors cursor-pointer"
+            className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-[4px] bg-black/20 text-white transition-colors hover:bg-black/40"
             aria-label="Exit SOS"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </Link>
         </div>
 
         {/* ─── 2. CENTER ZONE: BEACON DATA & SMS INTENT ────────────────────── */}
-        <div className="my-auto py-2 space-y-4">
+        <div className="my-auto space-y-4 py-2">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white mb-1 font-sans">
+            <h1 className="mb-1 font-sans text-2xl font-bold tracking-tight text-white">
               EMERGENCY DISPATCH: 112
             </h1>
-            <p className="text-sm text-red-100/90 leading-relaxed font-sans">
+            <p className="font-sans text-sm leading-relaxed text-red-100/90">
               Share your exact location with responders.
             </p>
           </div>
 
           {/* Exact Micro-Address Beacon Card */}
-          <div className="bg-black/30 border border-white/20 rounded-[4px] p-4 text-center space-y-2 shadow-md">
-            <div className="text-[11px] uppercase tracking-wider text-red-200 font-medium font-sans">
+          <div className="space-y-2 rounded-[4px] border border-white/20 bg-black/30 p-4 text-center shadow-md">
+            <div className="font-sans text-[11px] font-medium tracking-wider text-red-200 uppercase">
               Your exact micro-address
             </div>
-            <div className="font-mono text-3xl font-bold text-amber-300 tracking-wider">
+            <div className="font-mono text-3xl font-bold tracking-wider text-amber-300">
               {beacon.digipin}
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs font-mono text-red-100">
-              <Navigation className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+            <div className="flex items-center justify-center gap-2 font-mono text-xs text-red-100">
+              <Navigation className="h-3.5 w-3.5 shrink-0 text-amber-300" />
               <span>{beacon.coordinates}</span>
               <span>•</span>
               <span>{beacon.accuracy}</span>
@@ -138,41 +143,41 @@ export default function SosPage() {
             <a
               href={`sms:112?body=${encodeURIComponent(beaconSmsText)}`}
               id="sms-location-btn"
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-[4px] bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-semibold border border-white/25 active:scale-[0.98] transition-all cursor-pointer font-sans shadow-xs"
+              className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[4px] border border-white/25 bg-white/15 px-3 py-3 font-sans text-xs font-semibold text-white shadow-xs transition-all hover:bg-white/25 active:scale-[0.98] sm:text-sm"
             >
-              <MessageSquare className="w-4 h-4 text-amber-300 shrink-0" />
+              <MessageSquare className="h-4 w-4 shrink-0 text-amber-300" />
               <span>SMS Location to 112</span>
             </a>
             <button
               onClick={handleCopyBeacon}
               type="button"
               id="copy-beacon-btn"
-              className="p-3 rounded-[4px] bg-white/15 hover:bg-white/25 text-white border border-white/25 active:scale-[0.98] transition-all cursor-pointer shrink-0 shadow-xs"
+              className="shrink-0 cursor-pointer rounded-[4px] border border-white/25 bg-white/15 p-3 text-white shadow-xs transition-all hover:bg-white/25 active:scale-[0.98]"
               title="Copy location text"
               aria-label="Copy location text"
             >
               {copied ? (
-                <Check className="w-4 h-4 text-emerald-300" />
+                <Check className="h-4 w-4 text-emerald-300" />
               ) : (
-                <Copy className="w-4 h-4" />
+                <Copy className="h-4 w-4" />
               )}
             </button>
           </div>
         </div>
 
         {/* ─── 3. BOTTOM THUMB ZONE: 72PX DIAL 112 CTA & COMMUNITY BROADCAST ── */}
-        <div className="space-y-3 pt-3 border-t border-red-500/40 shrink-0 font-sans">
+        <div className="shrink-0 space-y-3 border-t border-red-500/40 pt-3 font-sans">
           {/* 72px Primary Amber Call 112 CTA */}
           <a
             href="tel:112"
             id="dial-112-btn"
-            className="w-full h-[72px] rounded-[4px] flex items-center justify-center gap-3 font-bold text-xl tracking-wide shadow-lg active:scale-[0.98] transition-transform font-sans cursor-pointer hover:opacity-95"
+            className="flex h-[72px] w-full cursor-pointer items-center justify-center gap-3 rounded-[4px] font-sans text-xl font-bold tracking-wide shadow-lg transition-transform hover:opacity-95 active:scale-[0.98]"
             style={{
               backgroundColor: 'var(--sos-dial-btn, #FBBF24)',
               color: 'var(--sos-dial-text, #0F172A)',
             }}
           >
-            <PhoneCall className="w-7 h-7 fill-current" />
+            <PhoneCall className="h-7 w-7 fill-current" />
             <span>DIAL 112 NOW</span>
           </a>
 
@@ -182,38 +187,40 @@ export default function SosPage() {
               type="button"
               id="alert-nearby-helpers-btn"
               onClick={handleCommunityBroadcast}
-              className="w-full py-3 px-4 rounded-[4px] bg-black/40 hover:bg-black/60 text-amber-300 border border-amber-300/40 text-xs sm:text-sm font-bold active:scale-[0.98] transition-all shadow-md flex items-center justify-center gap-2 font-sans cursor-pointer"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] border border-amber-300/40 bg-black/40 px-4 py-3 font-sans text-xs font-bold text-amber-300 shadow-md transition-all hover:bg-black/60 active:scale-[0.98] sm:text-sm"
             >
-              <Radio className="w-4 h-4 animate-pulse text-amber-300" />
+              <Radio className="h-4 w-4 animate-pulse text-amber-300" />
               <span>Alert Nearby Helpers (100m)</span>
             </button>
           )}
 
           {broadcastState === 'broadcasting' && (
-            <div className="w-full py-3 px-4 rounded-[4px] bg-black/50 border border-amber-300/40 text-amber-200 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 font-sans">
-              <span className="w-3 h-3 rounded-full bg-amber-400 animate-ping" />
+            <div className="flex w-full items-center justify-center gap-2 rounded-[4px] border border-amber-300/40 bg-black/50 px-4 py-3 font-sans text-xs font-semibold text-amber-200 sm:text-sm">
+              <span className="h-3 w-3 animate-ping rounded-full bg-amber-400" />
               <span>Broadcasting distress signal...</span>
             </div>
           )}
 
           {broadcastState === 'sent' && (
-            <div className="space-y-2 bg-black/40 border border-emerald-400/40 rounded-[4px] p-2.5 text-center font-sans animate-in fade-in duration-200">
+            <div className="animate-in fade-in space-y-2 rounded-[4px] border border-emerald-400/40 bg-black/40 p-2.5 text-center font-sans duration-200">
               <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-emerald-300">
-                <Users className="w-4 h-4 text-emerald-400" />
-                <span>Alert broadcast to {helpersCount} nearby helpers within 100m</span>
+                <Users className="h-4 w-4 text-emerald-400" />
+                <span>
+                  Alert broadcast to {helpersCount} nearby helpers within 100m
+                </span>
               </div>
               <Link
                 href={`/sos/respond/${beacon.digipin}`}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-300 hover:text-amber-200 underline font-sans"
+                className="inline-flex items-center gap-1 font-sans text-[11px] font-semibold text-amber-300 underline hover:text-amber-200"
               >
                 <span>View Community Responder Map</span>
-                <ExternalLink className="w-3 h-3" />
+                <ExternalLink className="h-3 w-3" />
               </Link>
             </div>
           )}
 
           {/* Clean Sans-Serif Emergency Notice */}
-          <p className="text-center text-xs text-zinc-200 font-sans pt-1">
+          <p className="pt-1 text-center font-sans text-xs text-zinc-200">
             National Emergency Hotline (India)
           </p>
         </div>

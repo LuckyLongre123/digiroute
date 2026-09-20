@@ -8,7 +8,12 @@ import { updateAddressPhotoInDb, type AddressPayload } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const LOCAL_STORAGE_FILE = path.join(process.cwd(), 'src', 'data', 'addresses.json');
+const LOCAL_STORAGE_FILE = path.join(
+  process.cwd(),
+  'src',
+  'data',
+  'addresses.json'
+);
 
 /**
  * POST /api/admin/sync-media
@@ -59,7 +64,10 @@ export async function POST() {
 
   // Filter only records that have a doorwayPhotoUrl
   const withMedia = addresses.filter(
-    (a) => a.doorwayPhotoUrl && typeof a.doorwayPhotoUrl === 'string' && a.doorwayPhotoUrl.trim().length > 0
+    (a) =>
+      a.doorwayPhotoUrl &&
+      typeof a.doorwayPhotoUrl === 'string' &&
+      a.doorwayPhotoUrl.trim().length > 0
   );
 
   const cleanedSlugs: string[] = [];
@@ -91,7 +99,10 @@ export async function POST() {
           isAlive = getRes.ok || getRes.status === 206 || getRes.status === 304;
         }
       } catch (checkErr) {
-        console.warn(`[sync-media] Verification failed for ${item.slug}:`, checkErr);
+        console.warn(
+          `[sync-media] Verification failed for ${item.slug}:`,
+          checkErr
+        );
         // Timeout or network failure — don't delete immediately unless 404 confirmed
         isAlive = true;
       }
@@ -103,7 +114,9 @@ export async function POST() {
       verifiedOk++;
     } else {
       // Photo 404ed on CDN: clean from database and memory cache
-      console.log(`[sync-media] Cleaning broken photo for address: ${item.slug} (${photoUrl})`);
+      console.log(
+        `[sync-media] Cleaning broken photo for address: ${item.slug} (${photoUrl})`
+      );
       await updateAddressPhotoInDb(item.slug, null);
       cleanedSlugs.push(item.slug);
     }

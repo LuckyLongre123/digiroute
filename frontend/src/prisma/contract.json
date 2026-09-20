@@ -158,12 +158,8 @@
                 "cardinality": "N:1",
                 "nullable": true,
                 "on": {
-                  "localFields": [
-                    "userId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
+                  "localFields": ["userId"],
+                  "targetFields": ["id"]
                 },
                 "to": {
                   "model": "User",
@@ -291,12 +287,8 @@
               "addresses": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "userId"
-                  ]
+                  "localFields": ["id"],
+                  "targetFields": ["userId"]
                 },
                 "to": {
                   "model": "Address",
@@ -450,16 +442,12 @@
               "foreignKeys": [
                 {
                   "source": {
-                    "columns": [
-                      "userId"
-                    ],
+                    "columns": ["userId"],
                     "namespaceId": "public",
                     "tableName": "address"
                   },
                   "target": {
-                    "columns": [
-                      "id"
-                    ],
+                    "columns": ["id"],
                     "namespaceId": "public",
                     "tableName": "user"
                   }
@@ -467,24 +455,18 @@
               ],
               "indexes": [
                 {
-                  "columns": [
-                    "userId"
-                  ],
+                  "columns": ["userId"],
                   "name": "address_userId_idx_a489d58a",
                   "prefix": "address_userId_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
-                "columns": [
-                  "id"
-                ]
+                "columns": ["id"]
               },
               "uniques": [
                 {
-                  "columns": [
-                    "slug"
-                  ]
+                  "columns": ["slug"]
                 }
               ]
             },
@@ -533,20 +515,14 @@
               "foreignKeys": [],
               "indexes": [],
               "primaryKey": {
-                "columns": [
-                  "id"
-                ]
+                "columns": ["id"]
               },
               "uniques": [
                 {
-                  "columns": [
-                    "email"
-                  ]
+                  "columns": ["email"]
                 },
                 {
-                  "columns": [
-                    "phone"
-                  ]
+                  "columns": ["phone"]
                 }
               ]
             }

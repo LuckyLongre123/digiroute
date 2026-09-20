@@ -7,43 +7,43 @@
 export default function CreateSuccessLoading() {
   return (
     <div
-      className="flex flex-col min-h-[calc(100vh-8rem)] pb-28 pt-2 space-y-4 font-sans text-foreground animate-pulse"
+      className="text-foreground flex min-h-[calc(100vh-8rem)] animate-pulse flex-col space-y-4 pt-2 pb-28 font-sans"
       style={{ fontFamily: 'var(--font-sans), sans-serif' }}
     >
       {/* 1. Success Header */}
-      <div className="flex flex-col items-center justify-center text-center pt-2 pb-1 space-y-2">
-        <div className="w-12 h-12 rounded-full bg-slate-200 border border-slate-300" />
-        <div className="space-y-1 flex flex-col items-center">
-          <div className="h-6 w-48 bg-slate-200 rounded-sm" />
-          <div className="h-3 w-64 bg-slate-100 rounded-sm" />
+      <div className="flex flex-col items-center justify-center space-y-2 pt-2 pb-1 text-center">
+        <div className="h-12 w-12 rounded-full border border-slate-300 bg-slate-200" />
+        <div className="flex flex-col items-center space-y-1">
+          <div className="h-6 w-48 rounded-sm bg-slate-200" />
+          <div className="h-3 w-64 rounded-sm bg-slate-100" />
         </div>
       </div>
 
       {/* 2. Short-Link Display Box */}
-      <div className="bg-card border border-border rounded-sm p-4 space-y-3">
-        <div className="h-3 w-28 bg-slate-200 rounded-sm" />
-        <div className="h-10 bg-slate-100 border border-slate-200 rounded-sm" />
-        <div className="flex items-center justify-between pt-1 border-t border-border/60">
-          <div className="h-3 w-32 bg-slate-100 rounded-sm" />
-          <div className="h-7 w-28 bg-slate-200 rounded-sm" />
+      <div className="bg-card border-border space-y-3 rounded-sm border p-4">
+        <div className="h-3 w-28 rounded-sm bg-slate-200" />
+        <div className="h-10 rounded-sm border border-slate-200 bg-slate-100" />
+        <div className="border-border/60 flex items-center justify-between border-t pt-1">
+          <div className="h-3 w-32 rounded-sm bg-slate-100" />
+          <div className="h-7 w-28 rounded-sm bg-slate-200" />
         </div>
       </div>
 
       {/* 3. Sharing Action Grid */}
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <div className="h-11 bg-slate-100 border border-slate-200 rounded-sm" />
-          <div className="h-11 bg-slate-300 rounded-sm" />
+          <div className="h-11 rounded-sm border border-slate-200 bg-slate-100" />
+          <div className="h-11 rounded-sm bg-slate-300" />
         </div>
-        <div className="h-12 bg-slate-800/80 rounded-sm" />
+        <div className="h-12 rounded-sm bg-slate-800/80" />
       </div>
 
       {/* 4. Bottom Thumb-Zone Actions */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border px-4 py-3.5 font-sans">
-        <div className="max-w-md md:max-w-xl lg:max-w-2xl mx-auto flex flex-col sm:flex-row gap-2.5">
-          <div className="h-11 flex-1 bg-slate-100 border border-slate-200 rounded-sm" />
-          <div className="h-11 flex-1 bg-slate-800/80 rounded-sm" />
-          <div className="h-11 flex-1 bg-slate-300 rounded-sm" />
+      <div className="bg-card border-border fixed right-0 bottom-0 left-0 z-30 border-t px-4 py-3.5 font-sans">
+        <div className="mx-auto flex max-w-md flex-col gap-2.5 sm:flex-row md:max-w-xl lg:max-w-2xl">
+          <div className="h-11 flex-1 rounded-sm border border-slate-200 bg-slate-100" />
+          <div className="h-11 flex-1 rounded-sm bg-slate-800/80" />
+          <div className="h-11 flex-1 rounded-sm bg-slate-300" />
         </div>
       </div>
     </div>

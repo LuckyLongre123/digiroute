@@ -1,8 +1,6 @@
-
 import { cookies } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
 import crypto from 'node:crypto';
-
 
 export const ADMIN_TOKEN_COOKIE = 'digiroute_admin_token';
 
@@ -14,7 +12,9 @@ export const ADMIN_TOKEN_COOKIE = 'digiroute_admin_token';
 function getAdminSecret(): Uint8Array {
   const secret =
     process.env.ADMIN_JWT_SECRET ||
-    (process.env.JWT_SECRET ? process.env.JWT_SECRET + ':admin' : 'digiroute-admin-supersecret-jwt-key-2026');
+    (process.env.JWT_SECRET
+      ? process.env.JWT_SECRET + ':admin'
+      : 'digiroute-admin-supersecret-jwt-key-2026');
   return new TextEncoder().encode(secret);
 }
 
@@ -27,7 +27,10 @@ export interface AdminTokenPayload {
 /**
  * Issue a 24-hour admin JWT and set it as an httpOnly secure cookie.
  */
-export async function createAdminSession(adminId: string, email: string): Promise<string> {
+export async function createAdminSession(
+  adminId: string,
+  email: string
+): Promise<string> {
   const secret = getAdminSecret();
   const token = await new SignJWT({ adminId, email, role: 'superadmin' })
     .setProtectedHeader({ alg: 'HS256' })
@@ -54,10 +57,14 @@ export async function createAdminSession(adminId: string, email: string): Promis
 /**
  * Verify an admin token string (does NOT require cookie context; usable in middleware/API).
  */
-export async function verifyAdminToken(token: string): Promise<AdminTokenPayload | null> {
+export async function verifyAdminToken(
+  token: string
+): Promise<AdminTokenPayload | null> {
   try {
     const secret = getAdminSecret();
-    const { payload } = await jwtVerify(token, secret, { algorithms: ['HS256'] });
+    const { payload } = await jwtVerify(token, secret, {
+      algorithms: ['HS256'],
+    });
     if (
       !payload ||
       typeof payload.adminId !== 'string' ||
@@ -125,7 +132,7 @@ export async function hashAdminPassword(password: string): Promise<string> {
  */
 export async function verifyAdminPassword(
   password: string,
-  storedHash: string,
+  storedHash: string
 ): Promise<boolean> {
   const [salt, key] = storedHash.split(':');
   if (!salt || !key) return false;

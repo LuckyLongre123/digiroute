@@ -70,7 +70,7 @@ export async function initAdminIfNeeded(): Promise<AdminRecord> {
  */
 export async function updateAdminCredentials(
   email: string,
-  passwordHash: string,
+  passwordHash: string
 ): Promise<AdminRecord> {
   await ensureAdminDir();
   const existing = await initAdminIfNeeded();

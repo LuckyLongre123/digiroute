@@ -46,7 +46,8 @@ export async function uploadToCloudinary(
     if (!response.ok) {
       const errorJson = await response.json().catch(() => null);
       const message =
-        errorJson?.error?.message || `Cloudinary upload failed with HTTP ${response.status}`;
+        errorJson?.error?.message ||
+        `Cloudinary upload failed with HTTP ${response.status}`;
       console.error('[Cloudinary] Upload failed:', message);
       return {
         success: false,
@@ -66,7 +67,10 @@ export async function uploadToCloudinary(
     console.error('[Cloudinary] Network error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Network error during Cloudinary upload',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Network error during Cloudinary upload',
     };
   }
 }

@@ -73,11 +73,9 @@ export function EditMicroAddressView({
   );
 
   // 2. Expiry Edit Field
-  const [expiryOption, setExpiryOption] = useState<'never' | '24h' | '7d' | 'custom'>(
-    !address.expiresAt
-      ? 'never'
-      : 'custom'
-  );
+  const [expiryOption, setExpiryOption] = useState<
+    'never' | '24h' | '7d' | 'custom'
+  >(!address.expiresAt ? 'never' : 'custom');
   const [customDatetime, setCustomDatetime] = useState<string>(
     toLocalDatetime(address.expiresAt)
   );
@@ -125,7 +123,13 @@ export function EditMicroAddressView({
   // 3. Save Changes: Intercept submission, upload pendingImage to Cloudinary, retrieve photoUrl, and persist
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUpdating || isUpdatingRef.current || isDeleting || isDeletingRef.current) return;
+    if (
+      isUpdating ||
+      isUpdatingRef.current ||
+      isDeleting ||
+      isDeletingRef.current
+    )
+      return;
 
     isUpdatingRef.current = true;
     setIsUpdating(true);
@@ -179,7 +183,13 @@ export function EditMicroAddressView({
 
   // Handle address deletion
   const handleDelete = async () => {
-    if (isDeleting || isDeletingRef.current || isUpdating || isUpdatingRef.current) return;
+    if (
+      isDeleting ||
+      isDeletingRef.current ||
+      isUpdating ||
+      isUpdatingRef.current
+    )
+      return;
 
     const confirmed = window.confirm(
       'Are you sure you want to permanently delete this micro-address? This action cannot be undone.'
@@ -208,87 +218,89 @@ export function EditMicroAddressView({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-150 max-w-2xl font-sans text-foreground">
+    <div className="animate-in fade-in text-foreground max-w-2xl space-y-6 font-sans duration-150">
       {/* Back Navigation & Top Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             href={backHref}
-            className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            className="hover:bg-muted text-muted-foreground hover:text-foreground rounded p-1.5 transition-colors"
             aria-label="Back to addresses"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">
+            <h1 className="text-foreground text-xl font-bold tracking-tight">
               Edit Micro-Address
             </h1>
-            <p className="text-xs font-mono text-muted-foreground">ID: {address.slug}</p>
+            <p className="text-muted-foreground font-mono text-xs">
+              ID: {address.slug}
+            </p>
           </div>
         </div>
 
         <Link
           href={`/dashboard/manage/${address.slug}/qr`}
-          className="inline-flex items-center gap-1.5 text-xs font-medium bg-secondary text-secondary-foreground px-3 py-1.5 rounded hover:bg-muted transition-colors shadow-2xs"
+          className="bg-secondary text-secondary-foreground hover:bg-muted inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium shadow-2xs transition-colors"
         >
-          <QrCode className="w-4 h-4 text-primary" />
+          <QrCode className="text-primary h-4 w-4" />
           <span>QR Badge</span>
         </Link>
       </div>
 
       <div className="space-y-5">
         {/* Factor 1: DIGIPIN & Coordinates */}
-        <div className="bg-card border border-border rounded p-4 space-y-3 shadow-2xs">
-          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        <div className="bg-card border-border space-y-3 rounded border p-4 shadow-2xs">
+          <div className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
             10-Character Sovereign DIGIPIN
           </div>
           <div className="flex items-center justify-between">
-            <div className="font-mono text-xl font-bold text-primary tracking-wider">
+            <div className="text-primary font-mono text-xl font-bold tracking-wider">
               {address.digipin}
             </div>
             <Link
               href={`/a/${address.slug}`}
               target="_blank"
-              className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-medium"
+              className="text-accent inline-flex items-center gap-1 text-xs font-medium hover:underline"
             >
               <span>Public Card</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-            <MapPin className="w-3.5 h-3.5 text-accent shrink-0" />
+          <div className="text-muted-foreground flex items-center gap-2 font-mono text-xs">
+            <MapPin className="text-accent h-3.5 w-3.5 shrink-0" />
             <span className="truncate">Coordinates: {address.coordinates}</span>
           </div>
         </div>
 
         {/* Factor 2: Visual Lock Doorway Photo Preview & Retake */}
-        <div className="bg-card border border-border rounded p-4 space-y-3 shadow-2xs">
+        <div className="bg-card border-border space-y-3 rounded border p-4 shadow-2xs">
           <div className="flex items-center justify-between">
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
               Visual Lock (Doorway Photo)
             </div>
             <button
               type="button"
               id="retake-photo-btn"
               onClick={() => setIsCameraOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:underline cursor-pointer"
+              className="text-accent inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium hover:underline"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="h-3.5 w-3.5" />
               <span>{previewUrl ? 'Retake Photo' : 'Take Photo'}</span>
             </button>
           </div>
 
           {/* Doorway image preview container */}
           {previewUrl ? (
-            <div className="relative w-full h-52 sm:h-60 rounded border border-border overflow-hidden bg-muted/40 flex items-center justify-center">
+            <div className="border-border bg-muted/40 relative flex h-52 w-full items-center justify-center overflow-hidden rounded border sm:h-60">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={previewUrl}
                 alt="Doorway visual reference"
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
               {newPhotoBlob && (
-                <div className="absolute bottom-2 left-2 px-2 py-1 rounded bg-amber-500/90 text-black text-[10px] font-mono font-bold shadow-xs">
+                <div className="absolute bottom-2 left-2 rounded bg-amber-500/90 px-2 py-1 font-mono text-[10px] font-bold text-black shadow-xs">
                   Pending Save (Local Preview)
                 </div>
               )}
@@ -296,11 +308,13 @@ export function EditMicroAddressView({
           ) : (
             <div
               onClick={() => setIsCameraOpen(true)}
-              className="w-full h-44 bg-muted/30 hover:bg-muted/50 rounded border border-dashed border-border flex flex-col items-center justify-center text-center p-4 cursor-pointer transition-colors"
+              className="bg-muted/30 hover:bg-muted/50 border-border flex h-44 w-full cursor-pointer flex-col items-center justify-center rounded border border-dashed p-4 text-center transition-colors"
             >
-              <Camera className="w-8 h-8 text-muted-foreground/60 mb-2" />
-              <p className="text-xs text-foreground font-medium">Doorway Visual Lock</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
+              <Camera className="text-muted-foreground/60 mb-2 h-8 w-8" />
+              <p className="text-foreground text-xs font-medium">
+                Doorway Visual Lock
+              </p>
+              <p className="text-muted-foreground mt-0.5 text-[11px]">
                 Click to open live camera and capture entrance reference
               </p>
             </div>
@@ -311,8 +325,8 @@ export function EditMicroAddressView({
       {/* Main Edit Form */}
       <form onSubmit={handleSave} className="space-y-5">
         {/* Factor 4: Z-AXIS & BUILDING METADATA */}
-        <div className="bg-card border border-border rounded p-4 space-y-4 shadow-2xs">
-          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
+        <div className="bg-card border-border space-y-4 rounded border p-4 shadow-2xs">
+          <div className="text-muted-foreground font-sans text-xs font-semibold tracking-wider uppercase">
             Z-Axis &amp; Building Metadata
           </div>
 
@@ -320,7 +334,7 @@ export function EditMicroAddressView({
           <div>
             <label
               htmlFor="address-label"
-              className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+              className="text-foreground mb-1.5 block font-sans text-xs font-medium"
             >
               Address Label
             </label>
@@ -331,7 +345,7 @@ export function EditMicroAddressView({
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="e.g. Home, Office, Studio"
-              className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+              className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
             />
           </div>
 
@@ -339,7 +353,7 @@ export function EditMicroAddressView({
             <div>
               <label
                 htmlFor="floor"
-                className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+                className="text-foreground mb-1.5 block font-sans text-xs font-medium"
               >
                 Floor / Level
               </label>
@@ -350,13 +364,13 @@ export function EditMicroAddressView({
                 value={floor}
                 onChange={(e) => setFloor(e.target.value)}
                 placeholder="e.g. 3rd Floor"
-                className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+                className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
               />
             </div>
             <div>
               <label
                 htmlFor="unit"
-                className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+                className="text-foreground mb-1.5 block font-sans text-xs font-medium"
               >
                 Flat / Unit No.
               </label>
@@ -367,7 +381,7 @@ export function EditMicroAddressView({
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
                 placeholder="e.g. Flat 302, Tower B"
-                className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+                className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
               />
             </div>
           </div>
@@ -375,7 +389,7 @@ export function EditMicroAddressView({
           <div>
             <label
               htmlFor="landmark"
-              className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+              className="text-foreground mb-1.5 block font-sans text-xs font-medium"
             >
               Visible Landmark
             </label>
@@ -386,27 +400,27 @@ export function EditMicroAddressView({
               value={landmark}
               onChange={(e) => setLandmark(e.target.value)}
               placeholder="e.g. Opposite Metro Pillar 42"
-              className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+              className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
             />
           </div>
 
           {/* 2. Expiry Edit Field */}
-          <div className="pt-2 border-t border-border/60">
-            <label className="block text-xs font-medium text-foreground mb-1.5 font-sans flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-accent" />
+          <div className="border-border/60 border-t pt-2">
+            <label className="text-foreground mb-1.5 block flex items-center gap-1.5 font-sans text-xs font-medium">
+              <Clock className="text-accent h-3.5 w-3.5" />
               <span>Expiry Time (expiresAt)</span>
             </label>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
+            <div className="mb-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <button
                 type="button"
                 onClick={() => {
                   setExpiryOption('never');
                   setCustomDatetime('');
                 }}
-                className={`py-1.5 px-2 text-xs rounded border transition-colors cursor-pointer text-center ${
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
                   expiryOption === 'never'
-                    ? 'border-accent bg-accent/10 font-semibold text-accent'
+                    ? 'border-accent bg-accent/10 text-accent font-semibold'
                     : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -415,9 +429,9 @@ export function EditMicroAddressView({
               <button
                 type="button"
                 onClick={() => setExpiryOption('24h')}
-                className={`py-1.5 px-2 text-xs rounded border transition-colors cursor-pointer text-center ${
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
                   expiryOption === '24h'
-                    ? 'border-accent bg-accent/10 font-semibold text-accent'
+                    ? 'border-accent bg-accent/10 text-accent font-semibold'
                     : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -426,9 +440,9 @@ export function EditMicroAddressView({
               <button
                 type="button"
                 onClick={() => setExpiryOption('7d')}
-                className={`py-1.5 px-2 text-xs rounded border transition-colors cursor-pointer text-center ${
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
                   expiryOption === '7d'
-                    ? 'border-accent bg-accent/10 font-semibold text-accent'
+                    ? 'border-accent bg-accent/10 text-accent font-semibold'
                     : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -437,9 +451,9 @@ export function EditMicroAddressView({
               <button
                 type="button"
                 onClick={() => setExpiryOption('custom')}
-                className={`py-1.5 px-2 text-xs rounded border transition-colors cursor-pointer text-center ${
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
                   expiryOption === 'custom'
-                    ? 'border-accent bg-accent/10 font-semibold text-accent'
+                    ? 'border-accent bg-accent/10 text-accent font-semibold'
                     : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -448,17 +462,17 @@ export function EditMicroAddressView({
             </div>
 
             {expiryOption === 'custom' && (
-              <div className="mt-2 animate-in fade-in duration-100">
+              <div className="animate-in fade-in mt-2 duration-100">
                 <input
                   type="datetime-local"
                   disabled={isUpdating || isDeleting}
                   value={customDatetime}
                   onChange={(e) => setCustomDatetime(e.target.value)}
-                  className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="bg-background border-input text-foreground focus:ring-accent w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                 />
               </div>
             )}
-            <p className="text-[11px] text-muted-foreground mt-1 font-sans">
+            <p className="text-muted-foreground mt-1 font-sans text-[11px]">
               Ephemeral addresses automatically expire for guest couriers.
             </p>
           </div>
@@ -470,16 +484,16 @@ export function EditMicroAddressView({
             type="submit"
             id="save-address-changes-btn"
             disabled={isUpdating || isDeleting}
-            className="w-full bg-primary text-primary-foreground font-semibold py-3 px-4 rounded hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary text-primary-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded px-4 py-3 text-sm font-semibold shadow-sm transition-all hover:opacity-95 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isUpdating ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 <span>Saving Changes...</span>
               </>
             ) : (
               <>
-                <Save className="w-4 h-4" />
+                <Save className="h-4 w-4" />
                 <span>Save Changes</span>
               </>
             )}
@@ -489,16 +503,16 @@ export function EditMicroAddressView({
             type="button"
             onClick={handleDelete}
             disabled={isUpdating || isDeleting}
-            className="w-full border border-destructive/40 text-destructive hover:bg-destructive/10 font-medium py-2 px-4 rounded transition-colors flex items-center justify-center gap-2 text-xs cursor-pointer disabled:opacity-50"
+            className="border-destructive/40 text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center justify-center gap-2 rounded border px-4 py-2 text-xs font-medium transition-colors disabled:opacity-50"
           >
             {isDeleting ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 <span>Deleting...</span>
               </>
             ) : (
               <>
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="h-3.5 w-3.5" />
                 <span>Delete Micro-Address</span>
               </>
             )}

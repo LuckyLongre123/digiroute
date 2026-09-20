@@ -5,35 +5,35 @@
  */
 export default function AddressDetailLoading() {
   return (
-    <div className="space-y-6 max-w-2xl animate-pulse">
+    <div className="max-w-2xl animate-pulse space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-muted rounded" />
+          <div className="bg-muted h-8 w-8 rounded" />
           <div className="space-y-1">
-            <div className="h-5 w-40 bg-muted rounded" />
-            <div className="h-3 w-24 bg-muted rounded" />
+            <div className="bg-muted h-5 w-40 rounded" />
+            <div className="bg-muted h-3 w-24 rounded" />
           </div>
         </div>
-        <div className="h-8 w-20 bg-muted rounded" />
+        <div className="bg-muted h-8 w-20 rounded" />
       </div>
 
-      <div className="bg-card border border-border rounded p-4 space-y-3">
-        <div className="h-3 w-32 bg-muted rounded" />
-        <div className="h-7 w-48 bg-muted rounded" />
-        <div className="h-3 w-60 bg-muted rounded" />
+      <div className="bg-card border-border space-y-3 rounded border p-4">
+        <div className="bg-muted h-3 w-32 rounded" />
+        <div className="bg-muted h-7 w-48 rounded" />
+        <div className="bg-muted h-3 w-60 rounded" />
       </div>
 
-      <div className="bg-card border border-border rounded p-4 space-y-3">
-        <div className="h-3 w-40 bg-muted rounded" />
-        <div className="h-44 w-full bg-muted rounded" />
+      <div className="bg-card border-border space-y-3 rounded border p-4">
+        <div className="bg-muted h-3 w-40 rounded" />
+        <div className="bg-muted h-44 w-full rounded" />
       </div>
 
-      <div className="bg-card border border-border rounded p-4 space-y-4">
-        <div className="h-3 w-36 bg-muted rounded" />
-        <div className="h-10 w-full bg-muted rounded" />
+      <div className="bg-card border-border space-y-4 rounded border p-4">
+        <div className="bg-muted h-3 w-36 rounded" />
+        <div className="bg-muted h-10 w-full rounded" />
         <div className="grid grid-cols-2 gap-3">
-          <div className="h-10 w-full bg-muted rounded" />
-          <div className="h-10 w-full bg-muted rounded" />
+          <div className="bg-muted h-10 w-full rounded" />
+          <div className="bg-muted h-10 w-full rounded" />
         </div>
       </div>
     </div>

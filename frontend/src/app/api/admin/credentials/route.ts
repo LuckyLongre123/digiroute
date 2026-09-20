@@ -14,7 +14,8 @@ async function handleUpdateCredentials(request: Request) {
     const body = await request.json();
     const newEmail = (body.newEmail || body.email || '').trim();
     const newPassphrase = body.newPassphrase || body.newPassword || '';
-    const currentPassword = body.currentPassphrase || body.currentPassword || '';
+    const currentPassword =
+      body.currentPassphrase || body.currentPassword || '';
 
     if (!currentPassword) {
       return NextResponse.json(
@@ -33,13 +34,22 @@ async function handleUpdateCredentials(request: Request) {
     // Verify current password against admin store
     const admin = await getAdminUser();
     if (!admin) {
-      return NextResponse.json({ error: 'Admin record not found.' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Admin record not found.' },
+        { status: 404 }
+      );
     }
 
     const { verifyAdminPassword } = await import('@/lib/adminAuth');
-    const valid = await verifyAdminPassword(currentPassword, admin.passwordHash);
+    const valid = await verifyAdminPassword(
+      currentPassword,
+      admin.passwordHash
+    );
     if (!valid) {
-      return NextResponse.json({ error: 'Current passphrase is incorrect.' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Current passphrase is incorrect.' },
+        { status: 403 }
+      );
     }
 
     let passwordHash = admin.passwordHash;
@@ -63,7 +73,10 @@ async function handleUpdateCredentials(request: Request) {
     });
   } catch (err) {
     console.error('[Admin Credentials] Error:', err);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error.' },
+      { status: 500 }
+    );
   }
 }
 

@@ -34,7 +34,7 @@ export default function AboutPage() {
       subtitle: 'Visual Lock Photo',
       icon: Camera,
       tag: 'On-Site Camera Only',
-      desc: "A live photo of your actual doorway and nameplate. Couriers see exactly what they are looking for before knocking, eliminating door-to-door guessing in identical corridors.",
+      desc: 'A live photo of your actual doorway and nameplate. Couriers see exactly what they are looking for before knocking, eliminating door-to-door guessing in identical corridors.',
     },
     {
       title: 'The Right Entry Gate',
@@ -76,44 +76,48 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="py-6 md:py-10 animate-in fade-in duration-150 space-y-10">
+    <div className="animate-in fade-in space-y-10 py-6 duration-150 md:py-10">
       {/* Back nav */}
       <div>
         <Link
           href="/"
-          className="pressable inline-flex items-center gap-2 text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="pressable text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-xs font-medium transition-colors md:text-sm"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="h-4 w-4" />
           <span>Back to Home</span>
         </Link>
       </div>
 
       {/* Hero Header */}
       <section className="space-y-3">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-accent/10 text-accent text-xs font-semibold tracking-wide">
-          <Zap className="w-3.5 h-3.5" />
+        <div className="bg-accent/10 text-accent inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-semibold tracking-wide">
+          <Zap className="h-3.5 w-3.5" />
           <span>Sovereign Indian Navigation</span>
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-foreground tracking-tight leading-tight">
+        <h1 className="text-foreground text-2xl leading-tight font-bold tracking-tight md:text-4xl">
           Stop explaining your address on phone calls.
         </h1>
-        <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-2xl">
-          No more cold food deliveries, confused couriers wandering colony lanes, or stepping out to the main road to wave someone down. DigiRoute solves the notorious &ldquo;last 50 meters&rdquo; in Indian cities.
+        <p className="text-muted-foreground max-w-2xl text-sm leading-relaxed md:text-base">
+          No more cold food deliveries, confused couriers wandering colony
+          lanes, or stepping out to the main road to wave someone down.
+          DigiRoute solves the notorious &ldquo;last 50 meters&rdquo; in Indian
+          cities.
         </p>
       </section>
 
       {/* Before / After Comparison */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Pain Point */}
-        <div className="p-5 rounded bg-card border border-border space-y-3">
-          <div className="flex items-center gap-2 text-destructive font-semibold text-xs uppercase tracking-wider">
-            <XCircle className="w-4 h-4" />
+        <div className="bg-card border-border space-y-3 rounded border p-5">
+          <div className="text-destructive flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
+            <XCircle className="h-4 w-4" />
             <span>The Status Quo: Frustration</span>
           </div>
-          <p className="font-mono text-xs text-muted-foreground bg-muted p-3 rounded leading-relaxed border border-border">
-            &ldquo;3rd right after mother dairy, opposite blue water tank, yellow building, call me when you reach gate 2...&rdquo;
+          <p className="text-muted-foreground bg-muted border-border rounded border p-3 font-mono text-xs leading-relaxed">
+            &ldquo;3rd right after mother dairy, opposite blue water tank,
+            yellow building, call me when you reach gate 2...&rdquo;
           </p>
-          <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
+          <ul className="text-muted-foreground list-inside list-disc space-y-1.5 text-xs">
             <li>3+ frantic phone calls during dinner</li>
             <li>GPS leads to a locked boundary wall</li>
             <li>Couriers get lost in identical corridors</li>
@@ -121,15 +125,16 @@ export default function AboutPage() {
         </div>
 
         {/* The DigiRoute Solution */}
-        <div className="p-5 rounded bg-card border border-accent/40 space-y-3 ring-1 ring-accent/20">
-          <div className="flex items-center gap-2 text-accent font-semibold text-xs uppercase tracking-wider">
-            <CheckCircle2 className="w-4 h-4" />
+        <div className="bg-card border-accent/40 ring-accent/20 space-y-3 rounded border p-5 ring-1">
+          <div className="text-accent flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
+            <CheckCircle2 className="h-4 w-4" />
             <span>The DigiRoute Way: Doorway Lock</span>
           </div>
-          <p className="font-mono text-xs text-foreground bg-accent/5 p-3 rounded leading-relaxed border border-accent/20">
-            One clean link with 4m GPS pin + Live Doorway Photo + Gate Entrance + Floor 4, Flat 402.
+          <p className="text-foreground bg-accent/5 border-accent/20 rounded border p-3 font-mono text-xs leading-relaxed">
+            One clean link with 4m GPS pin + Live Doorway Photo + Gate Entrance
+            + Floor 4, Flat 402.
           </p>
-          <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
+          <ul className="text-muted-foreground list-inside list-disc space-y-1.5 text-xs">
             <li>Zero phone calls needed</li>
             <li>Couriers recognize your doorway in 2 seconds</li>
             <li>Works instantly in any mobile browser</li>
@@ -140,39 +145,40 @@ export default function AboutPage() {
       {/* The 4-Factor Micro-Address Grid - No Numbered Eyebrows */}
       <section className="space-y-4">
         <div className="space-y-1">
-          <h2 className="text-lg md:text-xl font-bold text-foreground tracking-tight">
+          <h2 className="text-foreground text-lg font-bold tracking-tight md:text-xl">
             How DigiRoute Locks Your Doorstep
           </h2>
-          <p className="text-xs md:text-sm text-muted-foreground">
-            Every sovereign micro-address is formed by four deterministic factors that leave zero room for error.
+          <p className="text-muted-foreground text-xs md:text-sm">
+            Every sovereign micro-address is formed by four deterministic
+            factors that leave zero room for error.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {factors.map((factor) => {
             const Icon = factor.icon;
             return (
               <div
                 key={factor.title}
-                className="bg-card border border-border rounded p-5 flex flex-col justify-between hover:border-primary/40 transition-colors space-y-3"
+                className="bg-card border-border hover:border-primary/40 flex flex-col justify-between space-y-3 rounded border p-5 transition-colors"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-9 h-9 rounded bg-primary/10 text-primary flex items-center justify-center">
-                      <Icon className="w-5 h-5" />
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="bg-primary/10 text-primary flex h-9 w-9 items-center justify-center rounded">
+                      <Icon className="h-5 w-5" />
                     </div>
-                    <span className="text-[11px] font-semibold text-accent uppercase tracking-wider">
+                    <span className="text-accent text-[11px] font-semibold tracking-wider uppercase">
                       {factor.tag}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-foreground">
+                  <h3 className="text-foreground text-base font-bold">
                     {factor.title}
                   </h3>
-                  <p className="text-xs font-medium text-muted-foreground mb-2">
+                  <p className="text-muted-foreground mb-2 text-xs font-medium">
                     {factor.subtitle}
                   </p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground text-xs leading-relaxed">
                     {factor.desc}
                   </p>
                 </div>
@@ -185,11 +191,11 @@ export default function AboutPage() {
       {/* Conversational FAQs */}
       <section className="space-y-4 pt-2">
         <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider">
-            <HelpCircle className="w-3.5 h-3.5" />
+          <div className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
+            <HelpCircle className="h-3.5 w-3.5" />
             <span>Common Questions</span>
           </div>
-          <h2 className="text-lg md:text-xl font-bold text-foreground tracking-tight">
+          <h2 className="text-foreground text-lg font-bold tracking-tight md:text-xl">
             Frequently Asked Questions
           </h2>
         </div>
@@ -198,12 +204,10 @@ export default function AboutPage() {
           {faqs.map((faq) => (
             <div
               key={faq.q}
-              className="bg-card border border-border rounded p-4 space-y-1.5"
+              className="bg-card border-border space-y-1.5 rounded border p-4"
             >
-              <h3 className="text-sm font-semibold text-foreground">
-                {faq.q}
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h3 className="text-foreground text-sm font-semibold">{faq.q}</h3>
+              <p className="text-muted-foreground text-xs leading-relaxed">
                 {faq.a}
               </p>
             </div>
@@ -212,24 +216,25 @@ export default function AboutPage() {
       </section>
 
       {/* Final Call to Action */}
-      <section className="bg-card border border-border rounded p-6 text-center space-y-4">
-        <div className="w-10 h-10 rounded-full bg-accent/10 text-accent flex items-center justify-center mx-auto">
-          <ShieldCheck className="w-5 h-5" />
+      <section className="bg-card border-border space-y-4 rounded border p-6 text-center">
+        <div className="bg-accent/10 text-accent mx-auto flex h-10 w-10 items-center justify-center rounded-full">
+          <ShieldCheck className="h-5 w-5" />
         </div>
-        <div className="space-y-1 max-w-md mx-auto">
-          <h3 className="text-lg font-bold text-foreground tracking-tight">
+        <div className="mx-auto max-w-md space-y-1">
+          <h3 className="text-foreground text-lg font-bold tracking-tight">
             Ready to ditch confusing directions?
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Create your sovereign micro-address in under 60 seconds. No app install or registration required.
+          <p className="text-muted-foreground text-xs leading-relaxed">
+            Create your sovereign micro-address in under 60 seconds. No app
+            install or registration required.
           </p>
         </div>
         <div className="pt-1">
           <Link
             href="/create"
-            className="pressable inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground font-semibold text-sm px-6 py-3 rounded active:scale-[0.98] transition-transform duration-75 ease-out shadow-sm"
+            className="pressable bg-accent text-accent-foreground inline-flex items-center justify-center gap-2 rounded px-6 py-3 text-sm font-semibold shadow-sm transition-transform duration-75 ease-out active:scale-[0.98]"
           >
-            <Navigation className="w-4 h-4 fill-current" />
+            <Navigation className="h-4 w-4 fill-current" />
             <span>Share your location now</span>
           </Link>
         </div>

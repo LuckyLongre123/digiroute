@@ -52,10 +52,14 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 font-sans">
-      <div className="max-w-4xl mx-auto px-4 h-15 flex items-center justify-between">
+    <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/80 font-sans backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/80">
+      <div className="mx-auto flex h-15 max-w-4xl items-center justify-between px-4">
         {/* Left: DigiRoute Logo */}
-        <Link href="/" className="flex items-center group cursor-pointer" aria-label="DigiRoute Home">
+        <Link
+          href="/"
+          className="group flex cursor-pointer items-center"
+          aria-label="DigiRoute Home"
+        >
           <Image
             src="/logo-transparent.png"
             alt="DigiRoute Logo"
@@ -63,7 +67,7 @@ export function Navbar() {
             height={40}
             priority={true}
             quality={75}
-            className="w-32 md:w-36 h-auto object-contain dark:invert dark:brightness-200"
+            className="h-auto w-32 object-contain md:w-36 dark:brightness-200 dark:invert"
           />
         </Link>
 
@@ -71,7 +75,7 @@ export function Navbar() {
         <div className="flex items-center gap-2.5 sm:gap-3.5">
           <Link
             href="/about"
-            className="text-xs sm:text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors font-sans"
+            className="font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             How it works
           </Link>
@@ -81,7 +85,7 @@ export function Navbar() {
             <Link
               href="/why-join"
               id="navbar-why-join-link"
-              className="text-xs sm:text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors font-sans hidden sm:inline"
+              className="hidden font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:inline sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100"
             >
               Why register
             </Link>
@@ -91,14 +95,14 @@ export function Navbar() {
             <Link
               href="/dashboard"
               id="navbar-dashboard-btn"
-              className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs sm:text-sm font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-[0.98] transition-all font-sans shadow-2xs"
+              className="hidden items-center gap-2 rounded-lg bg-zinc-900 px-3 py-1.5 font-sans text-xs font-semibold text-white shadow-2xs transition-all hover:bg-zinc-800 active:scale-[0.98] sm:text-sm md:inline-flex dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
-              <span className="w-5 h-5 rounded-full bg-accent/20 text-accent font-bold flex items-center justify-center text-[10px] shrink-0">
+              <span className="bg-accent/20 text-accent flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">
                 {user?.name
                   ? user.name.charAt(0).toUpperCase()
                   : user?.email
-                  ? user.email.charAt(0).toUpperCase()
-                  : 'D'}
+                    ? user.email.charAt(0).toUpperCase()
+                    : 'D'}
               </span>
               <span>Dashboard</span>
             </Link>
@@ -106,7 +110,7 @@ export function Navbar() {
             <Link
               href="/login"
               id="navbar-login-btn"
-              className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent text-zinc-900 dark:text-zinc-100 text-xs sm:text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-900 active:scale-[0.98] transition-all font-sans"
+              className="inline-flex items-center justify-center rounded-lg border border-zinc-300 bg-transparent px-3.5 py-1.5 font-sans text-xs font-semibold text-zinc-900 transition-all hover:bg-zinc-100 active:scale-[0.98] sm:text-sm dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
             >
               Login
             </Link>
@@ -116,11 +120,14 @@ export function Navbar() {
           <Link
             href="/sos"
             aria-label="Emergency SOS - Dial 112"
-            className={`items-center gap-1.5 bg-destructive text-destructive-foreground text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg hover:bg-destructive/90 active:scale-[0.98] transition-all font-sans shadow-xs ${
+            className={`bg-destructive text-destructive-foreground hover:bg-destructive/90 items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-sans text-xs font-semibold shadow-xs transition-all active:scale-[0.98] sm:px-3 ${
               isAuthenticated ? 'hidden md:inline-flex' : 'inline-flex'
             }`}
           >
-            <AlertTriangle className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
+            <AlertTriangle
+              className="h-3.5 w-3.5 fill-current"
+              aria-hidden="true"
+            />
             <span>SOS</span>
           </Link>
         </div>

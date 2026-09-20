@@ -64,16 +64,86 @@ interface VersionInfo {
 }
 
 const VERSION_TABLE_M: VersionInfo[] = [
-  { version: 1, totalBytes: 26, dataBytes: 16, ecBytes: 10, blocks: 1, alignment: [] },
-  { version: 2, totalBytes: 44, dataBytes: 28, ecBytes: 16, blocks: 1, alignment: [6, 18] },
-  { version: 3, totalBytes: 70, dataBytes: 44, ecBytes: 26, blocks: 1, alignment: [6, 22] },
-  { version: 4, totalBytes: 100, dataBytes: 64, ecBytes: 36, blocks: 2, alignment: [6, 26] },
-  { version: 5, totalBytes: 134, dataBytes: 86, ecBytes: 48, blocks: 2, alignment: [6, 30] },
-  { version: 6, totalBytes: 172, dataBytes: 108, ecBytes: 64, blocks: 4, alignment: [6, 34] },
-  { version: 7, totalBytes: 196, dataBytes: 124, ecBytes: 72, blocks: 4, alignment: [6, 22, 38] },
-  { version: 8, totalBytes: 242, dataBytes: 154, ecBytes: 88, blocks: 4, alignment: [6, 24, 42] },
-  { version: 9, totalBytes: 292, dataBytes: 182, ecBytes: 110, blocks: 5, alignment: [6, 26, 46] },
-  { version: 10, totalBytes: 346, dataBytes: 216, ecBytes: 130, blocks: 5, alignment: [6, 28, 50] },
+  {
+    version: 1,
+    totalBytes: 26,
+    dataBytes: 16,
+    ecBytes: 10,
+    blocks: 1,
+    alignment: [],
+  },
+  {
+    version: 2,
+    totalBytes: 44,
+    dataBytes: 28,
+    ecBytes: 16,
+    blocks: 1,
+    alignment: [6, 18],
+  },
+  {
+    version: 3,
+    totalBytes: 70,
+    dataBytes: 44,
+    ecBytes: 26,
+    blocks: 1,
+    alignment: [6, 22],
+  },
+  {
+    version: 4,
+    totalBytes: 100,
+    dataBytes: 64,
+    ecBytes: 36,
+    blocks: 2,
+    alignment: [6, 26],
+  },
+  {
+    version: 5,
+    totalBytes: 134,
+    dataBytes: 86,
+    ecBytes: 48,
+    blocks: 2,
+    alignment: [6, 30],
+  },
+  {
+    version: 6,
+    totalBytes: 172,
+    dataBytes: 108,
+    ecBytes: 64,
+    blocks: 4,
+    alignment: [6, 34],
+  },
+  {
+    version: 7,
+    totalBytes: 196,
+    dataBytes: 124,
+    ecBytes: 72,
+    blocks: 4,
+    alignment: [6, 22, 38],
+  },
+  {
+    version: 8,
+    totalBytes: 242,
+    dataBytes: 154,
+    ecBytes: 88,
+    blocks: 4,
+    alignment: [6, 24, 42],
+  },
+  {
+    version: 9,
+    totalBytes: 292,
+    dataBytes: 182,
+    ecBytes: 110,
+    blocks: 5,
+    alignment: [6, 26, 46],
+  },
+  {
+    version: 10,
+    totalBytes: 346,
+    dataBytes: 216,
+    ecBytes: 130,
+    blocks: 5,
+    alignment: [6, 28, 50],
+  },
 ];
 
 export function generateQrMatrix(text: string): boolean[][] {
@@ -84,7 +154,9 @@ export function generateQrMatrix(text: string): boolean[][] {
   for (const info of VERSION_TABLE_M) {
     // 4 bits mode + 8 or 16 bits length + data
     const lenBits = info.version < 10 ? 8 : 16;
-    const requiredDataBytes = Math.ceil((4 + lenBits + textBytes.length * 8) / 8);
+    const requiredDataBytes = Math.ceil(
+      (4 + lenBits + textBytes.length * 8) / 8
+    );
     if (requiredDataBytes <= info.dataBytes) {
       verInfo = info;
       break;
@@ -176,8 +248,12 @@ export function generateQrMatrix(text: string): boolean[][] {
   }
 
   // Build matrix
-  const matrix: boolean[][] = Array.from({ length: size }, () => Array(size).fill(false));
-  const reserved: boolean[][] = Array.from({ length: size }, () => Array(size).fill(false));
+  const matrix: boolean[][] = Array.from({ length: size }, () =>
+    Array(size).fill(false)
+  );
+  const reserved: boolean[][] = Array.from({ length: size }, () =>
+    Array(size).fill(false)
+  );
 
   const setModule = (r: number, c: number, val: boolean) => {
     matrix[r][c] = val;
@@ -194,7 +270,11 @@ export function generateQrMatrix(text: string): boolean[][] {
         const isCore = r >= 0 && r <= 6 && c >= 0 && c <= 6;
         const isBlack =
           isCore &&
-          (r === 0 || r === 6 || c === 0 || c === 6 || (r >= 2 && r <= 4 && c >= 2 && c <= 4));
+          (r === 0 ||
+            r === 6 ||
+            c === 0 ||
+            c === 6 ||
+            (r >= 2 && r <= 4 && c >= 2 && c <= 4));
         setModule(nr, nc, isBlack);
       }
     }
@@ -219,7 +299,8 @@ export function generateQrMatrix(text: string): boolean[][] {
         for (let dr = -2; dr <= 2; dr++) {
           for (let dc = -2; dc <= 2; dc++) {
             const isBlack =
-              Math.max(Math.abs(dr), Math.abs(dc)) === 2 || (dr === 0 && dc === 0);
+              Math.max(Math.abs(dr), Math.abs(dc)) === 2 ||
+              (dr === 0 && dc === 0);
             setModule(r + dr, c + dc, isBlack);
           }
         }
@@ -392,7 +473,12 @@ export function drawQrBadgeToCanvas(
       if (matrix[r][c]) {
         const x = qrBoxX + padding + c * cellSize;
         const y = qrBoxY + padding + r * cellSize;
-        ctx.fillRect(Math.round(x), Math.round(y), Math.ceil(cellSize), Math.ceil(cellSize));
+        ctx.fillRect(
+          Math.round(x),
+          Math.round(y),
+          Math.ceil(cellSize),
+          Math.ceil(cellSize)
+        );
       }
     }
   }
@@ -405,7 +491,13 @@ export function drawQrBadgeToCanvas(
   // White excavate cutout
   ctx.fillStyle = '#FFFFFF';
   ctx.beginPath();
-  ctx.roundRect(centerLogoX - 6, centerLogoY - 6, centerLogoSize + 12, centerLogoSize + 12, 12);
+  ctx.roundRect(
+    centerLogoX - 6,
+    centerLogoY - 6,
+    centerLogoSize + 12,
+    centerLogoSize + 12,
+    12
+  );
   ctx.fill();
   ctx.strokeStyle = '#E2E8F0';
   ctx.lineWidth = 3;
@@ -421,7 +513,11 @@ export function drawQrBadgeToCanvas(
   ctx.font = `bold ${Math.round(centerLogoSize * 0.55)}px system-ui, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('D', centerLogoX + centerLogoSize / 2, centerLogoY + centerLogoSize / 2 + 1);
+  ctx.fillText(
+    'D',
+    centerLogoX + centerLogoSize / 2,
+    centerLogoY + centerLogoSize / 2 + 1
+  );
   ctx.textBaseline = 'alphabetic';
 
   // Spacing & Tag Pill (Bug 3: Generous vertical gap-5 / gap-6)
@@ -454,7 +550,11 @@ export function drawQrBadgeToCanvas(
   // Bottom Scan Instructions (Legible high-contrast text)
   ctx.fillStyle = '#334155';
   ctx.font = 'bold 18px system-ui, sans-serif';
-  ctx.fillText('Scan with any mobile camera for doorstep navigation', width / 2, height - 90);
+  ctx.fillText(
+    'Scan with any mobile camera for doorstep navigation',
+    width / 2,
+    height - 90
+  );
 
   ctx.font = 'bold 14px monospace';
   ctx.fillStyle = '#64748B';
@@ -464,7 +564,10 @@ export function drawQrBadgeToCanvas(
 /**
  * Download high-resolution JPEG file from canvas.
  */
-export function downloadCanvasAsJpg(canvas: HTMLCanvasElement, filename: string): void {
+export function downloadCanvasAsJpg(
+  canvas: HTMLCanvasElement,
+  filename: string
+): void {
   const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
   const a = document.createElement('a');
   a.href = dataUrl;
@@ -489,9 +592,15 @@ export async function shareCanvasBadge(
           return;
         }
 
-        const file = new File([blob], 'digiroute-qr-badge.jpg', { type: 'image/jpeg' });
+        const file = new File([blob], 'digiroute-qr-badge.jpg', {
+          type: 'image/jpeg',
+        });
 
-        if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
+        if (
+          typeof navigator !== 'undefined' &&
+          navigator.canShare &&
+          navigator.canShare({ files: [file] })
+        ) {
           try {
             await navigator.share({
               files: [file],

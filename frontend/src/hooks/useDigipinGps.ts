@@ -1,11 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  encode,
-  formatDigipin,
-  isWithinIndiaBounds,
-} from '@/lib/digipin';
+import { encode, formatDigipin, isWithinIndiaBounds } from '@/lib/digipin';
 import { useAddressStore } from '@/store/useAddressStore';
 
 export interface GpsCoordinates {
@@ -156,7 +152,9 @@ export function useDigipinGps({
         store.setCoordinates(newLat, newLng);
         store.setDigipin(formatted);
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Failed to encode DIGIPIN');
+        setError(
+          err instanceof Error ? err.message : 'Failed to encode DIGIPIN'
+        );
       } finally {
         setIsAcquiring(false);
       }
@@ -174,19 +172,27 @@ export function useDigipinGps({
       switch (geoError.code) {
         case geoError.PERMISSION_DENIED:
           setIsTimedOut(false);
-          setError('Location permission denied. Please allow GPS access in browser settings or enter DIGIPIN manually.');
+          setError(
+            'Location permission denied. Please allow GPS access in browser settings or enter DIGIPIN manually.'
+          );
           break;
         case geoError.POSITION_UNAVAILABLE:
           setIsTimedOut(false);
-          setError('Location information is unavailable from device satellites. Stand in an open area or enter DIGIPIN manually.');
+          setError(
+            'Location information is unavailable from device satellites. Stand in an open area or enter DIGIPIN manually.'
+          );
           break;
         case geoError.TIMEOUT:
           setIsTimedOut(true);
-          setError(`GPS satellite lock timed out (${timeoutSeconds} seconds). Satellite signals may be weak indoors. Stand near a window or enter DIGIPIN manually.`);
+          setError(
+            `GPS satellite lock timed out (${timeoutSeconds} seconds). Satellite signals may be weak indoors. Stand near a window or enter DIGIPIN manually.`
+          );
           break;
         default:
           setIsTimedOut(false);
-          setError('An unexpected error occurred while detecting location. You can enter DIGIPIN manually.');
+          setError(
+            'An unexpected error occurred while detecting location. You can enter DIGIPIN manually.'
+          );
           break;
       }
     },
@@ -208,15 +214,29 @@ export function useDigipinGps({
     timeoutTimerRef.current = setTimeout(() => {
       setIsAcquiring(false);
       setIsTimedOut(true);
-      setError(`GPS satellite lock timed out (${timeoutSeconds} seconds). Satellite signals may be weak indoors. Stand near a window or enter DIGIPIN manually.`);
+      setError(
+        `GPS satellite lock timed out (${timeoutSeconds} seconds). Satellite signals may be weak indoors. Stand near a window or enter DIGIPIN manually.`
+      );
     }, timeout + 300);
 
-    navigator.geolocation.getCurrentPosition(processPosition, handlePositionError, {
-      enableHighAccuracy,
-      timeout,
-      maximumAge,
-    });
-  }, [enableHighAccuracy, timeout, maximumAge, processPosition, handlePositionError, clearTimeoutTimer, timeoutSeconds]);
+    navigator.geolocation.getCurrentPosition(
+      processPosition,
+      handlePositionError,
+      {
+        enableHighAccuracy,
+        timeout,
+        maximumAge,
+      }
+    );
+  }, [
+    enableHighAccuracy,
+    timeout,
+    maximumAge,
+    processPosition,
+    handlePositionError,
+    clearTimeoutTimer,
+    timeoutSeconds,
+  ]);
 
   useEffect(() => {
     let timerId: NodeJS.Timeout | undefined;

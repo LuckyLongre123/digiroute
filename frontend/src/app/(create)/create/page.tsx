@@ -1,6 +1,12 @@
 'use client';
- 
-import { useState, useEffect, useRef, Suspense, useSyncExternalStore } from 'react';
+
+import {
+  useState,
+  useEffect,
+  useRef,
+  Suspense,
+  useSyncExternalStore,
+} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   LocateFixed,
@@ -18,17 +24,16 @@ import {
 
 const emptySubscribe = () => () => {};
 function useMounted() {
-  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 }
 import { toast } from 'sonner';
 import { useAddressStore } from '@/store/useAddressStore';
 import { useDigipinGps } from '@/hooks/useDigipinGps';
-import {
-  isValid,
-  decode,
-  formatDigipin,
-  cleanDigipin,
-} from '@/lib/digipin';
+import { isValid, decode, formatDigipin, cleanDigipin } from '@/lib/digipin';
 import {
   Dialog,
   DialogContent,
@@ -77,14 +82,14 @@ function CreateStepQueryHandler() {
  */
 function CreateStep1Skeleton() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-8rem)] pb-24 pt-2 space-y-5 font-sans animate-pulse">
+    <div className="flex min-h-[calc(100vh-8rem)] animate-pulse flex-col space-y-5 pt-2 pb-24 font-sans">
       <div className="space-y-1">
-        <div className="h-7 w-56 bg-muted rounded" />
-        <div className="h-4 w-72 bg-muted/60 rounded" />
+        <div className="bg-muted h-7 w-56 rounded" />
+        <div className="bg-muted/60 h-4 w-72 rounded" />
       </div>
-      <div className="border border-border rounded-xl p-5 bg-card space-y-4">
-        <div className="h-5 w-40 bg-muted rounded" />
-        <div className="h-12 w-full bg-muted/70 rounded-lg" />
+      <div className="border-border bg-card space-y-4 rounded-xl border p-5">
+        <div className="bg-muted h-5 w-40 rounded" />
+        <div className="bg-muted/70 h-12 w-full rounded-lg" />
       </div>
     </div>
   );
@@ -127,11 +132,17 @@ function CreateStep1Content() {
     (storeLat !== null && storeLng !== null)
   );
 
-  const activeDigipin = gpsDigipin || (storeDigipin ? cleanDigipin(storeDigipin) : null);
+  const activeDigipin =
+    gpsDigipin || (storeDigipin ? cleanDigipin(storeDigipin) : null);
   const activeFormattedDigipin =
-    gpsFormattedDigipin || storeDigipin || (activeDigipin ? formatDigipin(activeDigipin) : null);
+    gpsFormattedDigipin ||
+    storeDigipin ||
+    (activeDigipin ? formatDigipin(activeDigipin) : null);
   const activeCoords =
-    coords || (storeLat !== null && storeLng !== null ? { lat: storeLat, lng: storeLng } : null);
+    coords ||
+    (storeLat !== null && storeLng !== null
+      ? { lat: storeLat, lng: storeLng }
+      : null);
 
   const [hasManuallyTriggered, setHasManuallyTriggered] = useState(false);
   const hasTriggeredGps = hasManuallyTriggered || hasStoredLocation;
@@ -216,7 +227,8 @@ function CreateStep1Content() {
   };
 
   const isContinueEnabled =
-    (Boolean(activeDigipin) && Boolean(activeCoords) && !isOutOfBounds) || isManualValid;
+    (Boolean(activeDigipin) && Boolean(activeCoords) && !isOutOfBounds) ||
+    isManualValid;
 
   const handleContinue = () => {
     if (!isContinueEnabled) return;
@@ -246,60 +258,75 @@ function CreateStep1Content() {
   }
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-8rem)] pb-24 animate-in fade-in duration-150 pt-2 space-y-5 font-sans">
+    <div className="animate-in fade-in flex min-h-[calc(100vh-8rem)] flex-col space-y-5 pt-2 pb-24 font-sans duration-150">
       <Suspense fallback={<p className="sr-only">Loading...</p>}>
         <CreateStepQueryHandler />
       </Suspense>
 
       {/* Title & Microcopy */}
       <div>
-        <h1 className="text-xl md:text-2xl font-bold font-sans text-foreground tracking-tight">
+        <h1 className="text-foreground font-sans text-xl font-bold tracking-tight md:text-2xl">
           Establish Base Location
         </h1>
-        <p className="text-xs md:text-sm text-muted-foreground mt-0.5 font-sans">
-          Detect your entrance location to establish your official 10-character DIGIPIN.
+        <p className="text-muted-foreground mt-0.5 font-sans text-xs md:text-sm">
+          Detect your entrance location to establish your official 10-character
+          DIGIPIN.
         </p>
       </div>
 
       {/* Geolocation Detection Card with Clean Reactive States */}
-      <div className="bg-card border border-border rounded-xl p-5 shadow-xs space-y-4 font-sans">
+      <div className="bg-card border-border space-y-4 rounded-xl border p-5 font-sans shadow-xs">
         <div className="flex items-center gap-3.5">
           <div
-            className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors ${
               activeDigipin && !isOutOfBounds && !isAcquiring
-                ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-200 dark:border-emerald-800'
+                ? 'border border-emerald-200 bg-emerald-500/10 text-emerald-600 dark:border-emerald-800'
                 : isAcquiring
-                ? 'bg-accent/10 text-accent border border-accent/20'
-                : isOutOfBounds || gpsError
-                ? 'bg-amber-500/10 text-amber-600 border border-amber-200 dark:border-amber-800'
-                : 'bg-muted text-muted-foreground border border-border'
+                  ? 'bg-accent/10 text-accent border-accent/20 border'
+                  : isOutOfBounds || gpsError
+                    ? 'border border-amber-200 bg-amber-500/10 text-amber-600 dark:border-amber-800'
+                    : 'bg-muted text-muted-foreground border-border border'
             }`}
           >
             {isAcquiring ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : activeDigipin && !isOutOfBounds ? (
-              <Check className="w-5 h-5" />
+              <Check className="h-5 w-5" />
             ) : isOutOfBounds || gpsError ? (
-              <AlertTriangle className="w-5 h-5" />
+              <AlertTriangle className="h-5 w-5" />
             ) : (
-              <LocateFixed className="w-5 h-5" />
+              <LocateFixed className="h-5 w-5" />
             )}
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground font-sans">
+            <p className="text-foreground font-sans text-sm font-semibold">
               {isAcquiring && 'Getting your location...'}
-              {activeDigipin && !isOutOfBounds && !isAcquiring && 'DIGIPIN Generated Successfully'}
+              {activeDigipin &&
+                !isOutOfBounds &&
+                !isAcquiring &&
+                'DIGIPIN Generated Successfully'}
               {isOutOfBounds && 'Location Outside Supported Region'}
               {gpsError && !isOutOfBounds && !isAcquiring && 'Location Error'}
-              {!hasTriggeredGps && !activeDigipin && !isAcquiring && 'Ready to detect'}
+              {!hasTriggeredGps &&
+                !activeDigipin &&
+                !isAcquiring &&
+                'Ready to detect'}
             </p>
-            <p className="text-xs text-muted-foreground font-sans">
-              {isAcquiring && 'Please wait while we establish your coordinates.'}
-              {activeDigipin && !isOutOfBounds && !isAcquiring && `Doorway resolution: ±${accuracy ? Math.round(accuracy) : 4} meters.`}
-              {isOutOfBounds && 'Device coordinates are outside India Post grid bounds.'}
+            <p className="text-muted-foreground font-sans text-xs">
+              {isAcquiring &&
+                'Please wait while we establish your coordinates.'}
+              {activeDigipin &&
+                !isOutOfBounds &&
+                !isAcquiring &&
+                `Doorway resolution: ±${accuracy ? Math.round(accuracy) : 4} meters.`}
+              {isOutOfBounds &&
+                'Device coordinates are outside India Post grid bounds.'}
               {gpsError && !isOutOfBounds && !isAcquiring && gpsError}
-              {!hasTriggeredGps && !activeDigipin && !isAcquiring && 'Stand near your front entrance for highest accuracy.'}
+              {!hasTriggeredGps &&
+                !activeDigipin &&
+                !isAcquiring &&
+                'Stand near your front entrance for highest accuracy.'}
             </p>
           </div>
         </div>
@@ -311,9 +338,9 @@ function CreateStep1Content() {
               type="button"
               onClick={handleDetectLocation}
               id="detect-location-btn"
-              className="w-full h-11 bg-accent text-accent-foreground font-semibold text-sm rounded-lg flex items-center justify-center gap-2 hover:opacity-95 active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+              className="bg-accent text-accent-foreground flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98]"
             >
-              <LocateFixed className="w-4 h-4" />
+              <LocateFixed className="h-4 w-4" />
               <span>Detect My Location</span>
             </button>
           </div>
@@ -321,33 +348,34 @@ function CreateStep1Content() {
 
         {/* State 2: Acquiring / Loading */}
         {isAcquiring && (
-          <div className="p-4 rounded-lg bg-muted/40 border border-border flex items-center justify-center gap-2.5 text-xs text-muted-foreground font-sans">
-            <Loader2 className="w-4 h-4 text-accent animate-spin" />
+          <div className="bg-muted/40 border-border text-muted-foreground flex items-center justify-center gap-2.5 rounded-lg border p-4 font-sans text-xs">
+            <Loader2 className="text-accent h-4 w-4 animate-spin" />
             <span>Please wait while we establish your coordinates...</span>
           </div>
         )}
 
         {/* State 3: Out-of-Bounds Graceful Warning (Zero Crash) */}
         {isOutOfBounds && activeCoords && (
-          <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 space-y-2 text-xs font-sans">
-            <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-semibold">
-              <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
+          <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 font-sans text-xs">
+            <div className="flex items-center gap-2 font-semibold text-amber-800 dark:text-amber-300">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
               <span>Location outside supported region</span>
             </div>
-            <p className="text-amber-900/80 dark:text-amber-200/80 leading-relaxed">
-              Detected coordinates [{activeCoords.lat.toFixed(4)}°, {activeCoords.lng.toFixed(4)}°] fall outside
-              India&apos;s sovereign boundary (2.5°N to 38.5°N, 63.5°E to 99.5°E).
+            <p className="leading-relaxed text-amber-900/80 dark:text-amber-200/80">
+              Detected coordinates [{activeCoords.lat.toFixed(4)}°,{' '}
+              {activeCoords.lng.toFixed(4)}°] fall outside India&apos;s
+              sovereign boundary (2.5°N to 38.5°N, 63.5°E to 99.5°E).
             </p>
-            <div className="pt-2 flex items-center justify-between border-t border-amber-500/20">
+            <div className="flex items-center justify-between border-t border-amber-500/20 pt-2">
               <span className="text-[11px] text-amber-800/80 dark:text-amber-300/80">
                 You can enter an in-bounds DIGIPIN manually below.
               </span>
               <button
                 type="button"
                 onClick={handleDetectLocation}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-amber-900 dark:text-amber-200 hover:underline cursor-pointer"
+                className="inline-flex cursor-pointer items-center gap-1 text-xs font-semibold text-amber-900 hover:underline dark:text-amber-200"
               >
-                <RefreshCw className="w-3 h-3" />
+                <RefreshCw className="h-3 w-3" />
                 <span>Retry GPS</span>
               </button>
             </div>
@@ -356,36 +384,38 @@ function CreateStep1Content() {
 
         {/* State 4: Geolocation Timeout / Error Fallback (Strict Non-Blocking UI) */}
         {gpsError && !activeDigipin && !isAcquiring && (
-          <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 space-y-3 text-xs font-sans">
-            <div className="flex items-start gap-2.5 text-amber-800 dark:text-amber-300 font-semibold">
-              <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+          <div className="space-y-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 font-sans text-xs">
+            <div className="flex items-start gap-2.5 font-semibold text-amber-800 dark:text-amber-300">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
               <div>
                 <p className="font-bold">
-                  {isTimedOut ? 'GPS Satellite Lock Timed Out' : 'Location Detection Failed'}
+                  {isTimedOut
+                    ? 'GPS Satellite Lock Timed Out'
+                    : 'Location Detection Failed'}
                 </p>
-                <p className="text-[11px] font-normal text-amber-900/80 dark:text-amber-200/80 mt-0.5 leading-relaxed">
+                <p className="mt-0.5 text-[11px] leading-relaxed font-normal text-amber-900/80 dark:text-amber-200/80">
                   {gpsError}
                 </p>
               </div>
             </div>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-center gap-2 border-t border-amber-500/20">
+            <div className="flex flex-col items-center gap-2 border-t border-amber-500/20 pt-2 sm:flex-row">
               <button
                 type="button"
                 onClick={() => setShowManual(true)}
                 id="timeout-manual-btn"
-                className="w-full sm:w-auto flex-1 h-9 px-3 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-md font-semibold text-xs flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer font-sans"
+                className="flex h-9 w-full flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-zinc-900 px-3 font-sans text-xs font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98] sm:w-auto dark:bg-zinc-100 dark:text-zinc-900"
               >
-                <Edit3 className="w-3.5 h-3.5" />
+                <Edit3 className="h-3.5 w-3.5" />
                 <span>Enter DIGIPIN Manually</span>
               </button>
               <button
                 type="button"
                 onClick={handleDetectLocation}
                 id="timeout-retry-gps-btn"
-                className="w-full sm:w-auto h-9 px-3 border border-border bg-card text-foreground rounded-md font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-muted active:scale-[0.98] transition-all cursor-pointer font-sans"
+                className="border-border bg-card text-foreground hover:bg-muted flex h-9 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border px-3 font-sans text-xs font-semibold transition-all active:scale-[0.98] sm:w-auto"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
+                <RefreshCw className="h-3.5 w-3.5" />
                 <span>Retry GPS Lock</span>
               </button>
             </div>
@@ -394,36 +424,39 @@ function CreateStep1Content() {
 
         {/* State 5: Success - Locked DIGIPIN & Coordinates Readout */}
         {activeDigipin && !isOutOfBounds && activeCoords && !isAcquiring && (
-          <div className="p-4 rounded-lg bg-muted/40 border border-border space-y-3 font-sans">
+          <div className="bg-muted/40 border-border space-y-3 rounded-lg border p-4 font-sans">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground font-medium">Computed DIGIPIN</span>
-              <span className="font-mono text-emerald-600 font-semibold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-muted-foreground font-medium">
+                Computed DIGIPIN
+              </span>
+              <span className="flex items-center gap-1 font-mono font-semibold text-emerald-600">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
                 High Precision (±{accuracy ? Math.round(accuracy) : 4}m)
               </span>
             </div>
 
             {/* Prominent DIGIPIN Monospace Code */}
-            <div className="flex items-center justify-between bg-card border border-border px-3.5 py-2.5 rounded-lg shadow-2xs">
-              <span className="font-mono text-xl md:text-2xl font-black text-foreground tracking-widest">
+            <div className="bg-card border-border flex items-center justify-between rounded-lg border px-3.5 py-2.5 shadow-2xs">
+              <span className="text-foreground font-mono text-xl font-black tracking-widest md:text-2xl">
                 {activeFormattedDigipin}
               </span>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-accent/10 text-accent font-sans uppercase">
+              <span className="bg-accent/10 text-accent rounded px-2 py-0.5 font-sans text-[10px] font-semibold uppercase">
                 Official WGS84
               </span>
             </div>
 
             {/* Coordinates and Retry */}
-            <div className="flex items-center justify-between pt-1 border-t border-border/80 text-xs">
-              <span className="font-mono text-muted-foreground text-[11px]">
-                {activeCoords.lat.toFixed(6)}° N, {activeCoords.lng.toFixed(6)}° E
+            <div className="border-border/80 flex items-center justify-between border-t pt-1 text-xs">
+              <span className="text-muted-foreground font-mono text-[11px]">
+                {activeCoords.lat.toFixed(6)}° N, {activeCoords.lng.toFixed(6)}°
+                E
               </span>
               <button
                 type="button"
                 onClick={handleDetectLocation}
-                className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-medium font-sans cursor-pointer"
+                className="text-accent inline-flex cursor-pointer items-center gap-1 font-sans text-xs font-medium hover:underline"
               >
-                <RefreshCw className="w-3 h-3" />
+                <RefreshCw className="h-3 w-3" />
                 <span>Refresh Fix</span>
               </button>
             </div>
@@ -437,15 +470,18 @@ function CreateStep1Content() {
           <button
             type="button"
             onClick={() => setShowManual(true)}
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-medium py-1 px-1 rounded transition-colors cursor-pointer font-sans"
+            className="text-muted-foreground hover:text-foreground inline-flex cursor-pointer items-center gap-1.5 rounded px-1 py-1 font-sans text-xs font-medium transition-colors"
           >
-            <Search className="w-3.5 h-3.5" />
+            <Search className="h-3.5 w-3.5" />
             <span>Enter DIGIPIN manually</span>
           </button>
         ) : (
-          <div className="bg-card border border-border rounded-xl p-4.5 shadow-xs space-y-3 animate-in fade-in zoom-in-95 duration-150 font-sans">
+          <div className="bg-card border-border animate-in fade-in zoom-in-95 space-y-3 rounded-xl border p-4.5 font-sans shadow-xs duration-150">
             <div className="flex items-center justify-between">
-              <label htmlFor="manual-code-input" className="text-xs font-semibold text-foreground font-sans">
+              <label
+                htmlFor="manual-code-input"
+                className="text-foreground font-sans text-xs font-semibold"
+              >
                 Manual DIGIPIN Code
               </label>
               <button
@@ -455,10 +491,10 @@ function CreateStep1Content() {
                   setManualCode('');
                   setManualError('');
                 }}
-                className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
+                className="text-muted-foreground hover:text-foreground cursor-pointer p-1"
                 aria-label="Cancel manual entry"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="h-3.5 w-3.5" />
               </button>
             </div>
 
@@ -474,33 +510,35 @@ function CreateStep1Content() {
                 maxLength={14}
                 value={manualCode}
                 onChange={(e) => handleManualChange(e.target.value)}
-                className={`w-full px-3.5 py-2.5 bg-background border rounded-lg text-sm font-mono placeholder:text-muted-foreground tracking-widest uppercase transition-colors outline-none ${
+                className={`bg-background placeholder:text-muted-foreground w-full rounded-lg border px-3.5 py-2.5 font-mono text-sm tracking-widest uppercase transition-colors outline-none ${
                   cleanManual.length === 10
                     ? isManualValid
                       ? 'border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                      : 'border-destructive focus:ring-2 focus:ring-destructive/20'
-                    : 'border-zinc-300 dark:border-zinc-700 focus:border-primary focus:ring-2 focus:ring-primary/20'
+                      : 'border-destructive focus:ring-destructive/20 focus:ring-2'
+                    : 'focus:border-primary focus:ring-primary/20 border-zinc-300 focus:ring-2 dark:border-zinc-700'
                 }`}
               />
             </div>
 
             {/* Validation Feedback */}
             {cleanManual.length > 0 && cleanManual.length < 10 && (
-              <p className="text-[11px] text-muted-foreground font-sans">
-                {10 - cleanManual.length} characters remaining ({cleanManual.length}/10)
+              <p className="text-muted-foreground font-sans text-[11px]">
+                {10 - cleanManual.length} characters remaining (
+                {cleanManual.length}/10)
               </p>
             )}
 
             {cleanManual.length === 10 && isManualValid && (
-              <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
-                <Check className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+                <Check className="h-3.5 w-3.5" />
                 <span>Valid India Post DIGIPIN verified</span>
               </div>
             )}
 
             {cleanManual.length === 10 && !isManualValid && (
-              <p className="text-xs text-destructive font-medium">
-                Invalid code. Characters must only be from charset: 23456789CJKLMPFT
+              <p className="text-destructive text-xs font-medium">
+                Invalid code. Characters must only be from charset:
+                23456789CJKLMPFT
               </p>
             )}
           </div>
@@ -508,16 +546,16 @@ function CreateStep1Content() {
       </div>
 
       {/* Bottom Thumb-Zone CTA */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card/95 backdrop-blur-sm border-t border-border px-4 py-3.5 font-sans">
-        <div className="max-w-md md:max-w-xl lg:max-w-2xl mx-auto">
+      <div className="bg-card/95 border-border fixed right-0 bottom-0 left-0 z-30 border-t px-4 py-3.5 font-sans backdrop-blur-sm">
+        <div className="mx-auto max-w-md md:max-w-xl lg:max-w-2xl">
           {isContinueEnabled ? (
             <button
               type="button"
               id="create-step1-continue"
               onClick={handleContinue}
-              className="flex items-center justify-center gap-2 w-full bg-accent text-accent-foreground font-semibold text-sm md:text-base py-3.5 rounded-lg hover:opacity-95 active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+              className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] md:text-base"
             >
-              <MapPin className="w-4 h-4 fill-current" />
+              <MapPin className="h-4 w-4 fill-current" />
               <span>Lock DIGIPIN &amp; Continue</span>
             </button>
           ) : (
@@ -525,9 +563,9 @@ function CreateStep1Content() {
               type="button"
               disabled
               id="create-step1-continue"
-              className="flex items-center justify-center gap-2 w-full bg-muted text-muted-foreground font-semibold text-sm md:text-base py-3.5 rounded-lg opacity-60 cursor-not-allowed font-sans"
+              className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
             >
-              <MapPin className="w-4 h-4" />
+              <MapPin className="h-4 w-4" />
               <span>Detect location to continue</span>
             </button>
           )}
@@ -537,54 +575,57 @@ function CreateStep1Content() {
       {/* ─── Resume Previous Progress Interstitial Dialog ───────────────── */}
       <Dialog open={isResumeModalOpen} onOpenChange={setIsResumeModalOpen}>
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-5 sm:max-w-md shadow-xl font-sans transform-gpu will-change-[transform,opacity]"
+          className="border-border bg-card transform-gpu rounded-[4px] border p-5 font-sans shadow-xl will-change-[transform,opacity] sm:max-w-md"
           style={{ fontFamily: 'var(--font-sans), sans-serif' }}
           showCloseButton={false}
         >
           <DialogHeader className="gap-2 text-left font-sans">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-[4px] bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
-                <RotateCcw className="w-4 h-4 text-accent" />
+              <div className="bg-accent/10 border-accent/20 flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] border">
+                <RotateCcw className="text-accent h-4 w-4" />
               </div>
-              <DialogTitle className="text-base md:text-lg font-bold font-sans text-foreground tracking-tight">
+              <DialogTitle className="text-foreground font-sans text-base font-bold tracking-tight md:text-lg">
                 Resume Previous Progress?
               </DialogTitle>
             </div>
-            <DialogDescription className="text-xs md:text-sm text-muted-foreground leading-relaxed pt-1 font-sans">
-              You have an unfinished address creation draft. Would you like to restore your entered details or start over with a fresh session?
+            <DialogDescription className="text-muted-foreground pt-1 font-sans text-xs leading-relaxed md:text-sm">
+              You have an unfinished address creation draft. Would you like to
+              restore your entered details or start over with a fresh session?
             </DialogDescription>
           </DialogHeader>
 
           {/* Draft Summary Details */}
-          <div className="bg-muted/50 border border-border/80 rounded-[4px] p-3 text-xs space-y-1.5 font-sans my-1">
-            <div className="flex items-center justify-between text-muted-foreground">
+          <div className="bg-muted/50 border-border/80 my-1 space-y-1.5 rounded-[4px] border p-3 font-sans text-xs">
+            <div className="text-muted-foreground flex items-center justify-between">
               <span>Saved Stage:</span>
-              <span className="font-semibold text-foreground">
+              <span className="text-foreground font-semibold">
                 Step {storeCurrentStep || storeStep || 1} of 5
               </span>
             </div>
             {storeDigipin && (
-              <div className="flex items-center justify-between text-muted-foreground">
+              <div className="text-muted-foreground flex items-center justify-between">
                 <span>DIGIPIN:</span>
-                <span className="font-mono text-foreground font-semibold">{storeDigipin}</span>
+                <span className="text-foreground font-mono font-semibold">
+                  {storeDigipin}
+                </span>
               </div>
             )}
             {storeLat !== null && storeLng !== null && (
-              <div className="flex items-center justify-between text-muted-foreground">
+              <div className="text-muted-foreground flex items-center justify-between">
                 <span>Coordinates:</span>
-                <span className="font-mono text-foreground font-semibold">
+                <span className="text-foreground font-mono font-semibold">
                   {storeLat.toFixed(4)}°, {storeLng.toFixed(4)}°
                 </span>
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border mt-2 font-sans">
+          <div className="border-border mt-2 flex items-center justify-end gap-2.5 border-t pt-4 font-sans">
             <button
               type="button"
               id="resume-modal-start-over-btn"
               onClick={handleStartFresh}
-              className="px-3.5 py-2 rounded-[4px] border border-border text-xs md:text-sm font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans"
+              className="border-border text-foreground bg-background hover:bg-muted cursor-pointer rounded-[4px] border px-3.5 py-2 font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] md:text-sm"
             >
               Start Over
             </button>
@@ -592,10 +633,10 @@ function CreateStep1Content() {
               type="button"
               id="resume-modal-restore-btn"
               onClick={handleRestoreProgress}
-              className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-[4px] bg-primary text-primary-foreground text-xs md:text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-sm cursor-pointer font-sans"
+              className="bg-primary text-primary-foreground flex cursor-pointer items-center justify-center gap-1.5 rounded-[4px] px-4 py-2 font-sans text-xs font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98] md:text-sm"
             >
               <span>Restore Progress</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </DialogContent>

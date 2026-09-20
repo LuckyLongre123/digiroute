@@ -20,7 +20,11 @@ const NAV_ITEMS = [
   { href: '/admin/settings', label: 'Security & Keys', icon: Settings },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -28,9 +32,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // 1. Isolate the Login Page strictly without sidebar or admin shell
   if (pathname === '/admin/login') {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col">
-        {children}
-      </div>
+      <div className="flex min-h-screen flex-col bg-zinc-950">{children}</div>
     );
   }
 
@@ -40,14 +42,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   const navContent = (
-    <div className="flex flex-col h-full justify-between font-mono text-xs">
+    <div className="flex h-full flex-col justify-between font-mono text-xs">
       <div>
         {/* Brand Header with DigiRoute Logo */}
-        <div className="p-3.5 border-b border-zinc-800 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-zinc-800 p-3.5">
           <Link
             href="/"
             onClick={() => setIsMobileOpen(false)}
-            className="flex items-center gap-2 group cursor-pointer"
+            className="group flex cursor-pointer items-center gap-2"
             title="Return to DigiRoute Public Home"
           >
             <Image
@@ -57,26 +59,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               height={40}
               priority={true}
               quality={75}
-              className="w-28 sm:w-32 h-auto object-contain dark:invert dark:brightness-200"
+              className="h-auto w-28 object-contain sm:w-32 dark:brightness-200 dark:invert"
             />
           </Link>
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-400 border border-cyan-800/60">
+          <span className="rounded border border-cyan-800/60 bg-cyan-950/80 px-1.5 py-0.5 font-mono text-[10px] text-cyan-400">
             admin
           </span>
         </div>
 
         {/* Terminal Header */}
-        <div className="px-4 py-3.5 border-b border-zinc-800 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3.5">
           <div className="flex items-center gap-2">
             <Terminal size={14} className="text-cyan-400" />
-            <span className="font-bold text-cyan-400 tracking-wide">admin</span>
+            <span className="font-bold tracking-wide text-cyan-400">admin</span>
             <span className="text-zinc-600">:~#</span>
           </div>
           {/* Mobile drawer close button */}
           <button
             type="button"
             onClick={() => setIsMobileOpen(false)}
-            className="md:hidden p-1 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
+            className="cursor-pointer p-1 text-zinc-400 transition-colors hover:text-zinc-200 md:hidden"
             aria-label="Close navigation"
           >
             <X size={16} />
@@ -84,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Nav items */}
-        <nav className="p-3 space-y-1">
+        <nav className="space-y-1 p-3">
           {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
@@ -92,10 +94,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={href}
                 href={href}
                 onClick={() => setIsMobileOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-[3px] transition-colors ${
+                className={`flex items-center gap-2.5 rounded-[3px] px-3 py-2.5 transition-colors ${
                   active
-                    ? 'text-cyan-400 bg-cyan-400/10 font-semibold'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/80'
+                    ? 'bg-cyan-400/10 font-semibold text-cyan-400'
+                    : 'text-zinc-400 hover:bg-zinc-900/80 hover:text-zinc-200'
                 }`}
               >
                 <Icon size={14} />
@@ -107,11 +109,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Logout Action */}
-      <div className="p-3 border-t border-zinc-800">
+      <div className="border-t border-zinc-800 p-3">
         <button
           type="button"
           onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-[3px] text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer text-left"
+          className="flex w-full cursor-pointer items-center gap-2.5 rounded-[3px] px-3 py-2 text-left text-zinc-400 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
         >
           <LogOut size={14} />
           <span>Terminate Session</span>
@@ -122,11 +124,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div
-      className="dark min-h-[100dvh] flex flex-col md:flex-row bg-zinc-950 font-mono text-zinc-200"
+      className="dark flex min-h-[100dvh] flex-col bg-zinc-950 font-mono text-zinc-200 md:flex-row"
       style={{ fontFamily: 'var(--font-geist-mono), monospace' }}
     >
       {/* 3. Mobile Header with Hamburger */}
-      <header className="md:hidden flex items-center justify-between p-3 px-4 bg-zinc-950 border-b border-zinc-800 sticky top-0 z-30">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-800 bg-zinc-950 p-3 px-4 md:hidden">
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo-transparent.png"
@@ -135,9 +137,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             height={40}
             priority={true}
             quality={75}
-            className="w-24 sm:w-28 h-auto object-contain dark:invert dark:brightness-200"
+            className="h-auto w-24 object-contain sm:w-28 dark:brightness-200 dark:invert"
           />
-          <span className="text-[9px] font-mono px-1 py-0.5 rounded bg-cyan-950/80 text-cyan-400 border border-cyan-800/60">
+          <span className="rounded border border-cyan-800/60 bg-cyan-950/80 px-1 py-0.5 font-mono text-[9px] text-cyan-400">
             admin
           </span>
         </Link>
@@ -145,14 +147,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex items-center gap-2">
           <Link
             href="/"
-            className="text-[11px] text-zinc-400 hover:text-cyan-400 px-2 py-1 transition-colors"
+            className="px-2 py-1 text-[11px] text-zinc-400 transition-colors hover:text-cyan-400"
           >
             Public Site &rarr;
           </Link>
           <button
             type="button"
             onClick={() => setIsMobileOpen(true)}
-            className="p-1.5 rounded-[3px] text-zinc-400 hover:text-cyan-400 hover:bg-zinc-900 transition-colors cursor-pointer"
+            className="cursor-pointer rounded-[3px] p-1.5 text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-cyan-400"
             aria-label="Open navigation menu"
           >
             <Menu size={18} />
@@ -162,7 +164,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* 3. Mobile Slide-Over Drawer */}
       {isMobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
+        <div className="fixed inset-0 z-50 flex md:hidden">
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/80 backdrop-blur-xs transition-opacity"
@@ -171,19 +173,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           />
 
           {/* Drawer Sheet */}
-          <aside className="relative w-64 max-w-[80vw] bg-zinc-950 border-r border-zinc-800 h-full z-10 flex flex-col shadow-2xl">
+          <aside className="relative z-10 flex h-full w-64 max-w-[80vw] flex-col border-r border-zinc-800 bg-zinc-950 shadow-2xl">
             {navContent}
           </aside>
         </div>
       )}
 
       {/* 3. Desktop Persistent Sidebar */}
-      <aside className="hidden md:flex md:w-64 md:flex-col fixed left-0 top-0 h-full border-r border-zinc-800 bg-zinc-950 z-40">
+      <aside className="fixed top-0 left-0 z-40 hidden h-full border-r border-zinc-800 bg-zinc-950 md:flex md:w-64 md:flex-col">
         {navContent}
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-64 w-full overflow-auto flex flex-col min-h-[calc(100dvh-49px)] md:min-h-[100dvh]">
+      <main className="flex min-h-[calc(100dvh-49px)] w-full flex-1 flex-col overflow-auto md:ml-64 md:min-h-[100dvh]">
         {children}
       </main>
     </div>

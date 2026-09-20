@@ -31,11 +31,21 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, useState, useRef, Suspense, useSyncExternalStore } from 'react';
+import {
+  useEffect,
+  useState,
+  useRef,
+  Suspense,
+  useSyncExternalStore,
+} from 'react';
 
 const emptySubscribe = () => () => {};
 function useMounted() {
-  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 }
 
 const EXPIRY_OPTIONS = [
@@ -43,7 +53,10 @@ const EXPIRY_OPTIONS = [
   { label: '12 Hours', desc: 'Half-day guest/courier window' },
   { label: '24 Hours', desc: 'Full-day event or visitor access' },
   { label: '7 Days', desc: 'Weekly temporary window' },
-  { label: 'Never (Permanent)', desc: 'Permanent sovereign address (never expires)' },
+  {
+    label: 'Never (Permanent)',
+    desc: 'Permanent sovereign address (never expires)',
+  },
 ] as const;
 
 function formatExpiryDate(dateStr: string): string {
@@ -66,27 +79,27 @@ function formatExpiryDate(dateStr: string): string {
 function CreateSuccessSkeleton() {
   return (
     <div
-      className="flex flex-col min-h-[calc(100vh-8rem)] pb-28 pt-2 space-y-4 font-sans text-foreground animate-pulse"
+      className="text-foreground flex min-h-[calc(100vh-8rem)] animate-pulse flex-col space-y-4 pt-2 pb-28 font-sans"
       style={{ fontFamily: 'var(--font-sans), sans-serif' }}
     >
-      <div className="flex flex-col items-center justify-center text-center pt-2 pb-1 space-y-2">
-        <div className="w-12 h-12 rounded-full bg-muted border border-border" />
-        <div className="space-y-1 flex flex-col items-center">
-          <div className="h-6 w-48 bg-muted rounded" />
-          <div className="h-3 w-64 bg-muted/60 rounded" />
+      <div className="flex flex-col items-center justify-center space-y-2 pt-2 pb-1 text-center">
+        <div className="bg-muted border-border h-12 w-12 rounded-full border" />
+        <div className="flex flex-col items-center space-y-1">
+          <div className="bg-muted h-6 w-48 rounded" />
+          <div className="bg-muted/60 h-3 w-64 rounded" />
         </div>
       </div>
-      <div className="bg-card border border-border rounded-[4px] p-4 space-y-3">
-        <div className="h-3 w-28 bg-muted rounded" />
-        <div className="h-10 bg-muted/60 rounded-[4px]" />
-        <div className="h-4 w-40 bg-muted rounded" />
+      <div className="bg-card border-border space-y-3 rounded-[4px] border p-4">
+        <div className="bg-muted h-3 w-28 rounded" />
+        <div className="bg-muted/60 h-10 rounded-[4px]" />
+        <div className="bg-muted h-4 w-40 rounded" />
       </div>
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <div className="h-11 bg-muted rounded-[4px]" />
-          <div className="h-11 bg-muted rounded-[4px]" />
+          <div className="bg-muted h-11 rounded-[4px]" />
+          <div className="bg-muted h-11 rounded-[4px]" />
         </div>
-        <div className="h-12 bg-muted rounded-[4px]" />
+        <div className="bg-muted h-12 rounded-[4px]" />
       </div>
     </div>
   );
@@ -103,7 +116,8 @@ function CreateSuccessContent() {
 
   // Modals
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isUnsavedCreateModalOpen, setIsUnsavedCreateModalOpen] = useState(false);
+  const [isUnsavedCreateModalOpen, setIsUnsavedCreateModalOpen] =
+    useState(false);
   const [isChangeExpiryModalOpen, setIsChangeExpiryModalOpen] = useState(false);
 
   // Expiry state
@@ -119,13 +133,18 @@ function CreateSuccessContent() {
 
   // Fix 1: Single authoritative login toast & param cleanup with server refresh
   useEffect(() => {
-    if (searchParams.get('login') === 'success' && !loginToastFiredRef.current) {
+    if (
+      searchParams.get('login') === 'success' &&
+      !loginToastFiredRef.current
+    ) {
       loginToastFiredRef.current = true;
       toast.success('Successfully logged in!');
 
       const params = new URLSearchParams(searchParams.toString());
       params.delete('login');
-      const cleanUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      const cleanUrl = params.toString()
+        ? `${pathname}?${params.toString()}`
+        : pathname;
 
       router.replace(cleanUrl);
       router.refresh();
@@ -134,9 +153,9 @@ function CreateSuccessContent() {
 
   // Real-time server session synchronization
   const storeIsAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [authStatus, setAuthStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>(
-    storeIsAuthenticated ? 'authenticated' : 'loading'
-  );
+  const [authStatus, setAuthStatus] = useState<
+    'loading' | 'authenticated' | 'unauthenticated'
+  >(storeIsAuthenticated ? 'authenticated' : 'loading');
 
   useEffect(() => {
     getSessionAction()
@@ -153,7 +172,8 @@ function CreateSuccessContent() {
       });
   }, []);
 
-  const isAuthenticated = authStatus === 'authenticated' || storeIsAuthenticated;
+  const isAuthenticated =
+    authStatus === 'authenticated' || storeIsAuthenticated;
   const isLiveTracking = useAddressStore((state) => state.isLiveTracking);
   const canAccessLiveRadar = Boolean(isAuthenticated && isLiveTracking);
   const digipin = useAddressStore((state) => state.digipin);
@@ -165,10 +185,17 @@ function CreateSuccessContent() {
   const addressId = storeSlug || '';
   const slug =
     storeSlug ||
-    `dg-${(digipin || 'address').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || '7x9k2m4p1q8z'}`;
+    `dg-${
+      (digipin || 'address')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+        .slice(0, 12) || '7x9k2m4p1q8z'
+    }`;
   const code = digipin?.trim() || '4M8K-9P2L-1X';
 
-  const [expiresAt, setExpiresAt] = useState<string | null>(() => storeExpiresAt || null);
+  const [expiresAt, setExpiresAt] = useState<string | null>(
+    () => storeExpiresAt || null
+  );
   const [addressUserId, setAddressUserId] = useState<string | null>(null);
   const [isExpiredOrInvalid, setIsExpiredOrInvalid] = useState(false);
 
@@ -192,7 +219,9 @@ function CreateSuccessContent() {
               useAddressStore.getState().setExpiresAt(res.address.expiresAt);
             }
             if (res.address.isEphemeral !== undefined) {
-              useAddressStore.getState().setIsEphemeral(res.address.isEphemeral);
+              useAddressStore
+                .getState()
+                .setIsEphemeral(res.address.isEphemeral);
             }
             if (res.address.userId) {
               setAddressUserId(res.address.userId);
@@ -222,7 +251,8 @@ function CreateSuccessContent() {
     if (isSaving || isAlreadySavedToAccount) return;
 
     // Verify real-time auth before deciding to prompt login modal
-    let userAuthed = authStatus === 'authenticated' || useAuthStore.getState().isAuthenticated;
+    let userAuthed =
+      authStatus === 'authenticated' || useAuthStore.getState().isAuthenticated;
     if (!userAuthed) {
       try {
         const sessionRes = await getSessionAction();
@@ -255,7 +285,9 @@ function CreateSuccessContent() {
         if (result.address?.expiresAt !== undefined) {
           setExpiresAt(result.address.expiresAt);
           useAddressStore.getState().setExpiresAt(result.address.expiresAt);
-          useAddressStore.getState().setIsEphemeral(Boolean(result.address.expiresAt));
+          useAddressStore
+            .getState()
+            .setIsEphemeral(Boolean(result.address.expiresAt));
         }
         useAddressStore.getState().setSaveToAccount(true);
         useAddressStore.getState().setIsSaved(true);
@@ -360,7 +392,8 @@ function CreateSuccessContent() {
   const handleSaveToAccountFromCreateAnother = async () => {
     if (isSaving || isAlreadySavedToAccount) return;
 
-    let userAuthed = authStatus === 'authenticated' || useAuthStore.getState().isAuthenticated;
+    let userAuthed =
+      authStatus === 'authenticated' || useAuthStore.getState().isAuthenticated;
     if (!userAuthed) {
       try {
         const sessionRes = await getSessionAction();
@@ -391,7 +424,9 @@ function CreateSuccessContent() {
         if (result.address?.expiresAt !== undefined) {
           setExpiresAt(result.address.expiresAt);
           useAddressStore.getState().setExpiresAt(result.address.expiresAt);
-          useAddressStore.getState().setIsEphemeral(Boolean(result.address.expiresAt));
+          useAddressStore
+            .getState()
+            .setIsEphemeral(Boolean(result.address.expiresAt));
         }
         useAddressStore.getState().setSaveToAccount(true);
         useAddressStore.getState().setIsSaved(true);
@@ -415,19 +450,19 @@ function CreateSuccessContent() {
 
   return (
     <div
-      className="flex flex-col min-h-[calc(100vh-8rem)] pb-28 animate-in fade-in duration-150 pt-2 space-y-4 font-sans text-foreground"
+      className="animate-in fade-in text-foreground flex min-h-[calc(100vh-8rem)] flex-col space-y-4 pt-2 pb-28 font-sans duration-150"
       style={{ fontFamily: 'var(--font-sans), sans-serif' }}
     >
       {/* 1. Success Header */}
-      <div className="flex flex-col items-center justify-center text-center pt-2 pb-1 space-y-2 font-sans">
-        <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-xs">
-          <CheckCircle2 className="w-6 h-6 stroke-[2.5]" />
+      <div className="flex flex-col items-center justify-center space-y-2 pt-2 pb-1 text-center font-sans">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600 shadow-xs">
+          <CheckCircle2 className="h-6 w-6 stroke-[2.5]" />
         </div>
         <div className="space-y-0.5 font-sans">
-          <h1 className="text-xl md:text-2xl font-bold font-sans text-foreground tracking-tight">
+          <h1 className="text-foreground font-sans text-xl font-bold tracking-tight md:text-2xl">
             Micro-Address Live
           </h1>
-          <p className="text-xs md:text-sm text-muted-foreground font-sans">
+          <p className="text-muted-foreground font-sans text-xs md:text-sm">
             Your sovereign doorstep link is generated and ready to share.
           </p>
         </div>
@@ -435,11 +470,12 @@ function CreateSuccessContent() {
 
       {/* Expiry Banner: Dynamic based on expiresAt state */}
       {hasExpiration ? (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200/90 dark:border-amber-800/60 rounded-[4px] text-amber-950 dark:text-amber-200 font-sans shadow-xs text-xs">
+        <div className="flex flex-col justify-between gap-2.5 rounded-[4px] border border-amber-200/90 bg-amber-50/90 p-3 font-sans text-xs text-amber-950 shadow-xs sm:flex-row sm:items-center dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-200">
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0" />
+            <Clock className="h-4 w-4 shrink-0 text-amber-700 dark:text-amber-400" />
             <span>
-              <strong>Ephemeral link:</strong> Expires on {formatExpiryDate(expiresAt!)}.
+              <strong>Ephemeral link:</strong> Expires on{' '}
+              {formatExpiryDate(expiresAt!)}.
             </span>
           </div>
           <button
@@ -447,15 +483,15 @@ function CreateSuccessContent() {
             id="success-change-expiry-btn"
             onClick={() => setIsChangeExpiryModalOpen(true)}
             disabled={isSaving || isUpdatingExpiry}
-            className="text-xs font-bold text-amber-900 dark:text-amber-300 hover:text-amber-950 dark:hover:text-amber-100 underline underline-offset-2 shrink-0 cursor-pointer self-start sm:self-auto hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="shrink-0 cursor-pointer self-start text-xs font-bold text-amber-900 underline underline-offset-2 hover:text-amber-950 hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50 sm:self-auto dark:text-amber-300 dark:hover:text-amber-100"
           >
             [Change Expiry]
           </button>
         </div>
       ) : (
-        <div className="flex items-center justify-between gap-2.5 p-3 bg-emerald-50/90 dark:bg-emerald-950/30 border border-emerald-200/90 dark:border-emerald-800/60 rounded-[4px] text-emerald-950 dark:text-emerald-200 font-sans shadow-xs text-xs">
+        <div className="flex items-center justify-between gap-2.5 rounded-[4px] border border-emerald-200/90 bg-emerald-50/90 p-3 font-sans text-xs text-emerald-950 shadow-xs dark:border-emerald-800/60 dark:bg-emerald-950/30 dark:text-emerald-200">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
             <span>
               <strong>Permanent sovereign link:</strong> Never expires.
             </span>
@@ -465,7 +501,7 @@ function CreateSuccessContent() {
             id="success-change-expiry-btn"
             onClick={() => setIsChangeExpiryModalOpen(true)}
             disabled={isSaving || isUpdatingExpiry}
-            className="text-xs font-medium text-emerald-800 dark:text-emerald-300 hover:text-emerald-950 dark:hover:text-emerald-100 underline underline-offset-2 shrink-0 cursor-pointer self-start sm:self-auto hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="shrink-0 cursor-pointer self-start text-xs font-medium text-emerald-800 underline underline-offset-2 hover:text-emerald-950 hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50 sm:self-auto dark:text-emerald-300 dark:hover:text-emerald-100"
           >
             [Change Expiry]
           </button>
@@ -473,31 +509,33 @@ function CreateSuccessContent() {
       )}
 
       {/* 2. Prominent Short-Link Display Box */}
-      <div className="bg-card border border-border rounded-[4px] p-4 shadow-xs space-y-3 font-sans">
-        <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-sans">
+      <div className="bg-card border-border space-y-3 rounded-[4px] border p-4 font-sans shadow-xs">
+        <div className="text-muted-foreground flex items-center justify-between font-sans text-[11px] font-semibold tracking-wider uppercase">
           <span className="flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-accent" />
+            <MapPin className="text-accent h-3.5 w-3.5" />
             <span>Sovereign Link</span>
           </span>
         </div>
 
-        <div className="flex items-center justify-between bg-muted/60 border border-border rounded-[4px] px-3.5 py-3 font-mono text-xs md:text-sm text-foreground select-all break-all shadow-2xs">
-          <span className="font-semibold text-primary">{shareUrl}</span>
+        <div className="bg-muted/60 border-border text-foreground flex items-center justify-between rounded-[4px] border px-3.5 py-3 font-mono text-xs break-all shadow-2xs select-all md:text-sm">
+          <span className="text-primary font-semibold">{shareUrl}</span>
         </div>
 
         {/* Fix 2: Strict "Save to Account" UI State Lock */}
-        <div className="flex items-center justify-between pt-1 border-t border-border/60">
-          <span className="text-[11px] text-muted-foreground font-sans">
-            {hasExpiration ? 'Ephemeral micro-address' : 'Permanent sovereign address'}
+        <div className="border-border/60 flex items-center justify-between border-t pt-1">
+          <span className="text-muted-foreground font-sans text-[11px]">
+            {hasExpiration
+              ? 'Ephemeral micro-address'
+              : 'Permanent sovereign address'}
           </span>
 
           {isSaving ? (
             <button
               type="button"
               disabled
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-border bg-muted text-xs font-semibold text-muted-foreground cursor-not-allowed shadow-2xs font-sans opacity-75"
+              className="border-border bg-muted text-muted-foreground inline-flex cursor-not-allowed items-center gap-1.5 rounded-[4px] border px-3 py-1.5 font-sans text-xs font-semibold opacity-75 shadow-2xs"
             >
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
               <span>Saving...</span>
             </button>
           ) : isAlreadySavedToAccount ? (
@@ -505,7 +543,7 @@ function CreateSuccessContent() {
               type="button"
               disabled
               aria-disabled="true"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-emerald-300/80 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold cursor-not-allowed shadow-2xs font-sans select-none opacity-95"
+              className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-[4px] border border-emerald-300/80 bg-emerald-50 px-3 py-1.5 font-sans text-xs font-semibold text-emerald-700 opacity-95 shadow-2xs select-none dark:bg-emerald-950/30 dark:text-emerald-400"
             >
               <span>✅ Saved to Account</span>
             </button>
@@ -514,11 +552,13 @@ function CreateSuccessContent() {
               type="button"
               id="success-save-permanently-btn"
               onClick={handleSaveToAccount}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground active:scale-[0.98] transition-[transform,opacity] duration-150 shadow-2xs cursor-pointer font-sans"
+              className="border-border bg-card hover:bg-muted text-foreground inline-flex cursor-pointer items-center gap-1.5 rounded-[4px] border px-3 py-1.5 font-sans text-xs font-semibold shadow-2xs transition-[transform,opacity] duration-150 active:scale-[0.98]"
             >
-              <BookmarkCheck className="w-3.5 h-3.5 text-accent" />
+              <BookmarkCheck className="text-accent h-3.5 w-3.5" />
               <span>Save to Account</span>
-              {authStatus === 'unauthenticated' && <Lock className="text-zinc-400 shrink-0 ml-0.5" size={13} />}
+              {authStatus === 'unauthenticated' && (
+                <Lock className="ml-0.5 shrink-0 text-zinc-400" size={13} />
+              )}
             </button>
           )}
         </div>
@@ -531,16 +571,16 @@ function CreateSuccessContent() {
             type="button"
             id="success-copy-link-btn"
             onClick={handleCopy}
-            className="flex items-center justify-center gap-2 py-3 px-3 rounded-[4px] bg-card border border-border text-foreground font-semibold text-xs md:text-sm hover:border-primary/50 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-xs cursor-pointer font-sans"
+            className="bg-card border-border text-foreground hover:border-primary/50 flex cursor-pointer items-center justify-center gap-2 rounded-[4px] border px-3 py-3 font-sans text-xs font-semibold shadow-xs transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] md:text-sm"
           >
             {copied ? (
               <>
-                <Check className="w-4 h-4 text-emerald-600" />
+                <Check className="h-4 w-4 text-emerald-600" />
                 <span>Copied!</span>
               </>
             ) : (
               <>
-                <Copy className="w-4 h-4" />
+                <Copy className="h-4 w-4" />
                 <span>Copy Link</span>
               </>
             )}
@@ -550,16 +590,16 @@ function CreateSuccessContent() {
             type="button"
             id="success-share-btn"
             onClick={handleShare}
-            className="flex items-center justify-center gap-2 py-3 px-3 rounded-[4px] bg-primary text-primary-foreground font-semibold text-xs md:text-sm hover:opacity-95 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-xs cursor-pointer font-sans"
+            className="bg-primary text-primary-foreground flex cursor-pointer items-center justify-center gap-2 rounded-[4px] px-3 py-3 font-sans text-xs font-semibold shadow-xs transition-[transform,opacity] duration-150 ease-out hover:opacity-95 active:scale-[0.98] md:text-sm"
           >
             {shared ? (
               <>
-                <Check className="w-4 h-4 text-accent" />
+                <Check className="text-accent h-4 w-4" />
                 <span>Shared!</span>
               </>
             ) : (
               <>
-                <Share2 className="w-4 h-4" />
+                <Share2 className="h-4 w-4" />
                 <span>Share Link</span>
               </>
             )}
@@ -570,9 +610,9 @@ function CreateSuccessContent() {
         <Link
           href={`/create/qr?slug=${slug}`}
           id="success-generate-qr-badge-btn"
-          className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-[4px] bg-zinc-900 hover:bg-zinc-850 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-zinc-100 dark:text-zinc-900 font-semibold text-sm active:scale-[0.98] transition-all shadow-sm cursor-pointer font-sans"
+          className="hover:bg-zinc-850 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-zinc-900 px-4 py-3.5 font-sans text-sm font-semibold text-zinc-100 shadow-sm transition-all active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
-          <QrCode className="w-4 h-4 text-accent" />
+          <QrCode className="text-accent h-4 w-4" />
           <span>Generate QR Badge</span>
         </Link>
       </div>
@@ -581,34 +621,34 @@ function CreateSuccessContent() {
       <Link
         href={`/track/${slug}`}
         id="dev-force-open-radar-btn"
-        className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 text-center mt-8 w-full block transition-colors font-mono cursor-pointer"
+        className="mt-8 block w-full cursor-pointer text-center font-mono text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
       >
         Dev: Force Open Radar &rarr;
       </Link>
 
       {/* 4. Bottom Thumb-Zone Actions */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border px-4 py-3.5 font-sans">
-        <div className="max-w-md md:max-w-xl lg:max-w-2xl mx-auto flex flex-col sm:flex-row gap-2.5 items-start font-sans">
+      <div className="bg-card border-border fixed right-0 bottom-0 left-0 z-30 border-t px-4 py-3.5 font-sans">
+        <div className="mx-auto flex max-w-md flex-col items-start gap-2.5 font-sans sm:flex-row md:max-w-xl lg:max-w-2xl">
           <button
             type="button"
             id="success-create-another-btn"
             onClick={handleCreateAnotherClick}
             disabled={isSaving || isUpdatingExpiry}
-            className="flex-1 w-full flex items-center justify-center gap-2 py-3 rounded-[4px] border border-border bg-card hover:bg-muted text-foreground font-semibold text-xs md:text-sm active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-xs cursor-pointer font-sans disabled:opacity-50 disabled:cursor-not-allowed"
+            className="border-border bg-card hover:bg-muted text-foreground flex w-full flex-1 cursor-pointer items-center justify-center gap-2 rounded-[4px] border py-3 font-sans text-xs font-semibold shadow-xs transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
           >
-            <Plus className="w-4 h-4 text-muted-foreground" />
+            <Plus className="text-muted-foreground h-4 w-4" />
             <span>Create Another</span>
           </button>
 
           {/* Live Radar CTA Section */}
-          <div className="flex-1 w-full flex flex-col items-center">
+          <div className="flex w-full flex-1 flex-col items-center">
             {canAccessLiveRadar ? (
               <Link
                 href={`/track/${slug}`}
                 id="success-open-radar-btn"
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-[4px] border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-100 font-semibold text-xs md:text-sm active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-xs cursor-pointer font-sans"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] border border-zinc-700 bg-zinc-900 py-3 font-sans text-xs font-semibold text-zinc-100 shadow-xs transition-[transform,opacity] duration-150 ease-out hover:bg-zinc-800 active:scale-[0.98] md:text-sm"
               >
-                <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <Radio className="h-4 w-4 animate-pulse text-emerald-400" />
                 <span>Open Live Radar</span>
               </Link>
             ) : (
@@ -618,15 +658,15 @@ function CreateSuccessContent() {
                 id="success-open-radar-btn"
                 aria-disabled="true"
                 title="Available for logged-in users with active tracking."
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-[4px] border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-500 font-semibold text-xs md:text-sm opacity-50 cursor-not-allowed shadow-none font-sans"
+                className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-[4px] border border-zinc-300 bg-zinc-100 py-3 font-sans text-xs font-semibold text-zinc-400 opacity-50 shadow-none md:text-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500"
               >
-                <Radio className="w-4 h-4 text-zinc-400 dark:text-zinc-500" />
+                <Radio className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
                 <span>Open Live Radar</span>
               </button>
             )}
 
             {!canAccessLiveRadar && (
-              <span className="text-[10px] text-muted-foreground font-sans tracking-tight text-center mt-1">
+              <span className="text-muted-foreground mt-1 text-center font-sans text-[10px] tracking-tight">
                 Available for logged-in users with active tracking.
               </span>
             )}
@@ -637,7 +677,7 @@ function CreateSuccessContent() {
             target="_blank"
             rel="noopener noreferrer"
             id="success-test-public-link-btn"
-            className="flex-1 w-full flex items-center justify-center gap-2 py-3 rounded-[4px] bg-accent text-accent-foreground font-semibold text-xs md:text-sm hover:opacity-95 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-sm cursor-pointer font-sans"
+            className="bg-accent text-accent-foreground flex w-full flex-1 cursor-pointer items-center justify-center gap-2 rounded-[4px] py-3 font-sans text-xs font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-95 active:scale-[0.98] md:text-sm"
           >
             <span>View Live Address</span>
             <ExternalLink size={16} />
@@ -648,29 +688,30 @@ function CreateSuccessContent() {
       {/* 5. Interstitial Login Modal for "Save to Account" */}
       <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-5 sm:max-w-md shadow-xl font-sans transform-gpu will-change-[transform,opacity]"
+          className="border-border bg-card transform-gpu rounded-[4px] border p-5 font-sans shadow-xl will-change-[transform,opacity] sm:max-w-md"
           style={{ fontFamily: 'var(--font-sans), sans-serif' }}
           showCloseButton={true}
         >
           <DialogHeader className="gap-2 text-left font-sans">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-[4px] bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
-                <Lock className="w-4 h-4 text-accent" />
+              <div className="bg-accent/10 border-accent/20 flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] border">
+                <Lock className="text-accent h-4 w-4" />
               </div>
-              <DialogTitle className="text-base md:text-lg font-bold font-sans text-foreground tracking-tight">
+              <DialogTitle className="text-foreground font-sans text-base font-bold tracking-tight md:text-lg">
                 Unlock this feature
               </DialogTitle>
             </div>
-            <DialogDescription className="text-xs md:text-sm text-muted-foreground leading-relaxed pt-1 font-sans">
-              Sign in to save this address permanently to your account. Your current link will be claimed immediately.
+            <DialogDescription className="text-muted-foreground pt-1 font-sans text-xs leading-relaxed md:text-sm">
+              Sign in to save this address permanently to your account. Your
+              current link will be claimed immediately.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border mt-2 font-sans">
+          <div className="border-border mt-2 flex items-center justify-end gap-2.5 border-t pt-4 font-sans">
             <button
               type="button"
               onClick={() => setIsAuthModalOpen(false)}
-              className="px-3.5 py-2 rounded-[4px] border border-border text-xs md:text-sm font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans"
+              className="border-border text-foreground bg-background hover:bg-muted cursor-pointer rounded-[4px] border px-3.5 py-2 font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] md:text-sm"
             >
               Cancel
             </button>
@@ -681,36 +722,40 @@ function CreateSuccessContent() {
                 setIsAuthModalOpen(false);
                 router.push('/login?callbackUrl=/create/success?login=success');
               }}
-              className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-[4px] bg-accent text-accent-foreground text-xs md:text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-sm cursor-pointer font-sans"
+              className="bg-accent text-accent-foreground flex cursor-pointer items-center justify-center gap-1.5 rounded-[4px] px-4 py-2 font-sans text-xs font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98] md:text-sm"
             >
               <span>Continue to Login</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* 6. Unsaved State Warning Modal for "Create Another" */}
-      <Dialog open={isUnsavedCreateModalOpen} onOpenChange={setIsUnsavedCreateModalOpen}>
+      <Dialog
+        open={isUnsavedCreateModalOpen}
+        onOpenChange={setIsUnsavedCreateModalOpen}
+      >
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-5 sm:max-w-md shadow-xl font-sans transform-gpu will-change-[transform,opacity]"
+          className="border-border bg-card transform-gpu rounded-[4px] border p-5 font-sans shadow-xl will-change-[transform,opacity] sm:max-w-md"
           style={{ fontFamily: 'var(--font-sans), sans-serif' }}
           showCloseButton={true}
         >
           <DialogHeader className="gap-2 text-left font-sans">
-            <DialogTitle className="text-base md:text-lg font-bold font-sans text-foreground tracking-tight">
+            <DialogTitle className="text-foreground font-sans text-base font-bold tracking-tight md:text-lg">
               Create new without saving?
             </DialogTitle>
-            <DialogDescription className="text-xs md:text-sm text-muted-foreground leading-relaxed pt-1 font-sans">
-              Your current micro-address hasn&apos;t been saved to an account. Starting a new one will discard this link permanently.
+            <DialogDescription className="text-muted-foreground pt-1 font-sans text-xs leading-relaxed md:text-sm">
+              Your current micro-address hasn&apos;t been saved to an account.
+              Starting a new one will discard this link permanently.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border mt-2 font-sans">
+          <div className="border-border mt-2 flex items-center justify-end gap-2.5 border-t pt-4 font-sans">
             <button
               type="button"
               onClick={() => setIsUnsavedCreateModalOpen(false)}
-              className="px-3.5 py-2 rounded-[4px] border border-border text-xs md:text-sm font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans"
+              className="border-border text-foreground bg-background hover:bg-muted cursor-pointer rounded-[4px] border px-3.5 py-2 font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] md:text-sm"
             >
               Cancel
             </button>
@@ -718,7 +763,7 @@ function CreateSuccessContent() {
               type="button"
               id="discard-and-start-fresh-btn"
               onClick={handleDiscardAndCreateAnother}
-              className="px-3.5 py-2 rounded-[4px] border border-destructive/40 text-destructive hover:bg-destructive/10 text-xs md:text-sm font-medium active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out cursor-pointer font-sans"
+              className="border-destructive/40 text-destructive hover:bg-destructive/10 cursor-pointer rounded-[4px] border px-3.5 py-2 font-sans text-xs font-medium transition-[transform,opacity] duration-150 ease-out active:scale-[0.98] md:text-sm"
             >
               Discard &amp; Start Fresh
             </button>
@@ -727,11 +772,11 @@ function CreateSuccessContent() {
               id="save-to-account-from-create-another-btn"
               onClick={handleSaveToAccountFromCreateAnother}
               disabled={isSaving}
-              className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-[4px] bg-primary text-primary-foreground text-xs md:text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-sm cursor-pointer font-sans disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-primary text-primary-foreground flex cursor-pointer items-center justify-center gap-1.5 rounded-[4px] px-4 py-2 font-sans text-xs font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   <span>Saving...</span>
                 </>
               ) : (
@@ -743,19 +788,23 @@ function CreateSuccessContent() {
       </Dialog>
 
       {/* 7. Change Expiry Modal (Fix 4: Clean radio list with 5 options) */}
-      <Dialog open={isChangeExpiryModalOpen} onOpenChange={setIsChangeExpiryModalOpen}>
+      <Dialog
+        open={isChangeExpiryModalOpen}
+        onOpenChange={setIsChangeExpiryModalOpen}
+      >
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-5 sm:max-w-md shadow-xl font-sans transform-gpu will-change-[transform,opacity]"
+          className="border-border bg-card transform-gpu rounded-[4px] border p-5 font-sans shadow-xl will-change-[transform,opacity] sm:max-w-md"
           style={{ fontFamily: 'var(--font-sans), sans-serif' }}
           showCloseButton={true}
         >
           <DialogHeader className="gap-2 text-left font-sans">
-            <DialogTitle className="text-base md:text-lg font-bold font-sans text-foreground tracking-tight flex items-center gap-2">
-              <Clock className="w-4 h-4 text-accent" />
+            <DialogTitle className="text-foreground flex items-center gap-2 font-sans text-base font-bold tracking-tight md:text-lg">
+              <Clock className="text-accent h-4 w-4" />
               <span>Change Link Expiry</span>
             </DialogTitle>
-            <DialogDescription className="text-xs md:text-sm text-muted-foreground leading-relaxed pt-1 font-sans">
-              Choose how long this sovereign doorstep link remains active before expiring.
+            <DialogDescription className="text-muted-foreground pt-1 font-sans text-xs leading-relaxed md:text-sm">
+              Choose how long this sovereign doorstep link remains active before
+              expiring.
             </DialogDescription>
           </DialogHeader>
 
@@ -768,41 +817,49 @@ function CreateSuccessContent() {
                   type="button"
                   disabled={isUpdatingExpiry}
                   onClick={() => handleSelectExpiry(opt.label)}
-                  className={`w-full flex items-center justify-between p-3 rounded-[4px] border text-left cursor-pointer transition-all ${
+                  className={`flex w-full cursor-pointer items-center justify-between rounded-[4px] border p-3 text-left transition-all ${
                     isSelected
-                      ? 'border-accent bg-accent/10 font-semibold text-foreground'
+                      ? 'border-accent bg-accent/10 text-foreground font-semibold'
                       : 'border-border bg-background hover:bg-muted text-foreground/80'
-                  } ${isUpdatingExpiry ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  } ${isUpdatingExpiry ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
                   <div className="flex items-center gap-2.5">
                     <div
-                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                        isSelected ? 'border-accent bg-accent' : 'border-border bg-background'
+                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                        isSelected
+                          ? 'border-accent bg-accent'
+                          : 'border-border bg-background'
                       }`}
                     >
-                      {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-accent-foreground" />}
+                      {isSelected && (
+                        <div className="bg-accent-foreground h-1.5 w-1.5 rounded-full" />
+                      )}
                     </div>
                     <div>
-                      <span className="text-xs font-semibold block text-foreground">{opt.label}</span>
-                      <span className="text-[11px] text-muted-foreground">{opt.desc}</span>
+                      <span className="text-foreground block text-xs font-semibold">
+                        {opt.label}
+                      </span>
+                      <span className="text-muted-foreground text-[11px]">
+                        {opt.desc}
+                      </span>
                     </div>
                   </div>
                   {isUpdatingExpiry && isSelected ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-accent" />
+                    <Loader2 className="text-accent h-4 w-4 animate-spin" />
                   ) : isSelected ? (
-                    <Check className="w-4 h-4 text-accent" />
+                    <Check className="text-accent h-4 w-4" />
                   ) : null}
                 </button>
               );
             })}
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border mt-2 font-sans">
+          <div className="border-border mt-2 flex items-center justify-end gap-2.5 border-t pt-4 font-sans">
             <button
               type="button"
               disabled={isUpdatingExpiry}
               onClick={() => setIsChangeExpiryModalOpen(false)}
-              className="px-3.5 py-2 rounded-[4px] border border-border text-xs md:text-sm font-medium text-foreground bg-background hover:bg-muted active:scale-[0.98] transition-all cursor-pointer font-sans disabled:opacity-50"
+              className="border-border text-foreground bg-background hover:bg-muted cursor-pointer rounded-[4px] border px-3.5 py-2 font-sans text-xs font-medium transition-all active:scale-[0.98] disabled:opacity-50 md:text-sm"
             >
               Cancel
             </button>

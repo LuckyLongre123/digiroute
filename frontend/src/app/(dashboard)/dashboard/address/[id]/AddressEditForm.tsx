@@ -37,7 +37,13 @@ export default function AddressEditForm({
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     // CRUCIAL LOGIC GUARD: Early return prevents double-submission
-    if (isUpdating || isUpdatingRef.current || isDeleting || isDeletingRef.current) return;
+    if (
+      isUpdating ||
+      isUpdatingRef.current ||
+      isDeleting ||
+      isDeletingRef.current
+    )
+      return;
 
     isUpdatingRef.current = true;
     setIsUpdating(true);
@@ -67,9 +73,17 @@ export default function AddressEditForm({
 
   const handleDelete = async () => {
     // CRUCIAL LOGIC GUARD: Early return prevents double-submission
-    if (isDeleting || isDeletingRef.current || isUpdating || isUpdatingRef.current) return;
+    if (
+      isDeleting ||
+      isDeletingRef.current ||
+      isUpdating ||
+      isUpdatingRef.current
+    )
+      return;
 
-    const confirmed = window.confirm('Are you sure you want to permanently delete this micro-address? This action cannot be undone.');
+    const confirmed = window.confirm(
+      'Are you sure you want to permanently delete this micro-address? This action cannot be undone.'
+    );
     if (!confirmed) return;
 
     isDeletingRef.current = true;
@@ -96,15 +110,15 @@ export default function AddressEditForm({
   return (
     <form onSubmit={handleSave} className="space-y-5 font-sans">
       {/* Factor 4: Secondary Metadata (Floor, Unit, Landmark) */}
-      <div className="bg-card border border-border rounded p-4 space-y-4">
-        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-sans">
+      <div className="bg-card border-border space-y-4 rounded border p-4">
+        <div className="text-muted-foreground font-sans text-xs font-semibold tracking-wider uppercase">
           Z-Axis & Building Metadata
         </div>
 
         <div>
           <label
             htmlFor="address-label"
-            className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+            className="text-foreground mb-1.5 block font-sans text-xs font-medium"
           >
             Address Label
           </label>
@@ -114,7 +128,7 @@ export default function AddressEditForm({
             disabled={isUpdating || isDeleting}
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+            className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
           />
         </div>
 
@@ -122,7 +136,7 @@ export default function AddressEditForm({
           <div>
             <label
               htmlFor="floor"
-              className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+              className="text-foreground mb-1.5 block font-sans text-xs font-medium"
             >
               Floor / Level
             </label>
@@ -132,13 +146,13 @@ export default function AddressEditForm({
               disabled={isUpdating || isDeleting}
               value={floor}
               onChange={(e) => setFloor(e.target.value)}
-              className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+              className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
             />
           </div>
           <div>
             <label
               htmlFor="unit"
-              className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+              className="text-foreground mb-1.5 block font-sans text-xs font-medium"
             >
               Flat / Unit No.
             </label>
@@ -148,7 +162,7 @@ export default function AddressEditForm({
               disabled={isUpdating || isDeleting}
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+              className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
             />
           </div>
         </div>
@@ -156,7 +170,7 @@ export default function AddressEditForm({
         <div>
           <label
             htmlFor="landmark"
-            className="block text-xs font-medium text-foreground mb-1.5 font-sans"
+            className="text-foreground mb-1.5 block font-sans text-xs font-medium"
           >
             Visual Landmark
           </label>
@@ -166,27 +180,27 @@ export default function AddressEditForm({
             disabled={isUpdating || isDeleting}
             value={landmark}
             onChange={(e) => setLandmark(e.target.value)}
-            className="w-full bg-background border border-input rounded px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:bg-muted disabled:cursor-not-allowed"
+            className="bg-background border-input text-foreground focus:ring-accent disabled:bg-muted w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed"
           />
         </div>
       </div>
 
       {/* Action Buttons: Update & Delete */}
-      <div className="pt-2 space-y-3 font-sans">
+      <div className="space-y-3 pt-2 font-sans">
         <button
           type="submit"
           id="save-address-btn"
           disabled={isUpdating || isDeleting}
-          className="w-full h-11 bg-accent text-accent-foreground font-semibold text-sm rounded flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+          className="bg-accent text-accent-foreground flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded text-sm font-semibold shadow-xs transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
         >
           {isUpdating ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-accent-foreground" />
+              <Loader2 className="text-accent-foreground h-4 w-4 animate-spin" />
               <span>Saving changes...</span>
             </>
           ) : (
             <>
-              <Save className="w-4 h-4" />
+              <Save className="h-4 w-4" />
               <span>Save Changes</span>
             </>
           )}
@@ -197,16 +211,16 @@ export default function AddressEditForm({
           id="delete-address-btn"
           onClick={handleDelete}
           disabled={isUpdating || isDeleting}
-          className="w-full h-10 border border-destructive/30 text-destructive hover:bg-destructive/10 text-xs font-semibold rounded flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 font-sans"
+          className="border-destructive/30 text-destructive hover:bg-destructive/10 flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded border font-sans text-xs font-semibold transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
         >
           {isDeleting ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               <span>Deleting...</span>
             </>
           ) : (
             <>
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="h-4 w-4" />
               <span>Delete Micro-Address</span>
             </>
           )}

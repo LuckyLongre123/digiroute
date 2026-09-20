@@ -45,7 +45,8 @@ function LoginForm() {
       const result = await loginAction({ email, password });
 
       if (!result.success || !result.user) {
-        const errorText = result.error || 'Invalid credentials. Please try again.';
+        const errorText =
+          result.error || 'Invalid credentials. Please try again.';
         setErrorMessage(errorText);
         toast.error(errorText);
         isSubmittingRef.current = false;
@@ -64,7 +65,10 @@ function LoginForm() {
       }
 
       // If returning to create success screen, append login=success for single authoritative toast
-      if (targetUrl.includes('/create/success') && !targetUrl.includes('login=success')) {
+      if (
+        targetUrl.includes('/create/success') &&
+        !targetUrl.includes('login=success')
+      ) {
         const separator = targetUrl.includes('?') ? '&' : '?';
         targetUrl = `${targetUrl}${separator}login=success`;
       } else if (!targetUrl.includes('/create/success')) {
@@ -76,7 +80,8 @@ function LoginForm() {
       router.refresh();
     } catch (err) {
       console.error('[Login] Submission error:', err);
-      const errText = 'Network connection issue. Please check your internet and retry.';
+      const errText =
+        'Network connection issue. Please check your internet and retry.';
       setErrorMessage(errText);
       toast.error(errText);
       isSubmittingRef.current = false;
@@ -85,19 +90,19 @@ function LoginForm() {
   };
 
   return (
-    <div className="bg-white border border-zinc-300 rounded-[4px] p-6 sm:p-7 shadow-lg animate-in fade-in duration-150 font-sans">
+    <div className="animate-in fade-in rounded-[4px] border border-zinc-300 bg-white p-6 font-sans shadow-lg duration-150 sm:p-7">
       <div className="mb-5">
-        <h1 className="text-xl font-bold text-zinc-900 tracking-tight">
+        <h1 className="text-xl font-bold tracking-tight text-zinc-900">
           Welcome back
         </h1>
-        <p className="text-xs text-zinc-600 mt-1 font-normal">
+        <p className="mt-1 text-xs font-normal text-zinc-600">
           Sign in to access your addresses and permanent QR badges
         </p>
       </div>
 
       {errorMessage && (
-        <div className="mb-4 p-3 rounded-[4px] bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2 animate-in fade-in duration-150">
-          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
+        <div className="animate-in fade-in mb-4 flex items-start gap-2 rounded-[4px] border border-red-200 bg-red-50 p-3 text-xs text-red-700 duration-150">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
           <span className="leading-relaxed">{errorMessage}</span>
         </div>
       )}
@@ -106,12 +111,12 @@ function LoginForm() {
         <div>
           <label
             htmlFor="email"
-            className="block text-xs font-semibold text-zinc-800 mb-1.5"
+            className="mb-1.5 block text-xs font-semibold text-zinc-800"
           >
             Email Address
           </label>
           <div className="relative">
-            <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
             <input
               id="email"
               type="email"
@@ -121,13 +126,13 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
               autoComplete="email"
-              className="w-full rounded-[4px] pl-9 pr-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 border border-zinc-300 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none bg-white disabled:bg-zinc-100 disabled:cursor-not-allowed"
+              className="focus:border-accent focus:ring-accent w-full rounded-[4px] border border-zinc-300 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:bg-zinc-100"
             />
           </div>
         </div>
 
         <div>
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="mb-1.5 flex items-center justify-between">
             <label
               htmlFor="password"
               className="text-xs font-semibold text-zinc-800"
@@ -136,7 +141,7 @@ function LoginForm() {
             </label>
           </div>
           <div className="relative">
-            <Lock className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
             <input
               id="password"
               type="password"
@@ -146,7 +151,7 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               autoComplete="current-password"
-              className="w-full rounded-[4px] pl-9 pr-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 border border-zinc-300 focus:border-accent focus:ring-1 focus:ring-accent focus:outline-none bg-white disabled:bg-zinc-100 disabled:cursor-not-allowed"
+              className="focus:border-accent focus:ring-accent w-full rounded-[4px] border border-zinc-300 bg-white py-2 pr-3 pl-9 text-sm text-zinc-900 placeholder:text-zinc-400 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:bg-zinc-100"
             />
           </div>
         </div>
@@ -155,28 +160,28 @@ function LoginForm() {
           type="submit"
           disabled={isLoading}
           id="login-submit-btn"
-          className="w-full mt-2 h-10 bg-accent text-accent-foreground font-semibold text-xs sm:text-sm rounded-[4px] flex items-center justify-center gap-2 active:scale-[0.98] hover:bg-accent/90 shadow-xs transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+          className="bg-accent text-accent-foreground hover:bg-accent/90 mt-2 flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] text-xs font-semibold shadow-xs transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 sm:text-sm"
         >
           {isLoading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
               <span>Signing in...</span>
             </>
           ) : (
             <>
               <span>Sign In</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="h-4 w-4" />
             </>
           )}
         </button>
       </form>
 
-      <div className="mt-6 pt-4 border-t border-zinc-200 text-center">
+      <div className="mt-6 border-t border-zinc-200 pt-4 text-center">
         <p className="text-xs text-zinc-600">
           Don&apos;t have an account?{' '}
           <Link
             href={registerLink}
-            className="font-semibold text-accent hover:underline"
+            className="text-accent font-semibold hover:underline"
           >
             Create account
           </Link>
@@ -190,8 +195,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="p-6 text-center text-xs text-zinc-500 bg-white rounded-[4px] border border-zinc-300 shadow-md">
-          <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2 text-accent" />
+        <div className="rounded-[4px] border border-zinc-300 bg-white p-6 text-center text-xs text-zinc-500 shadow-md">
+          <Loader2 className="text-accent mx-auto mb-2 h-5 w-5 animate-spin" />
           <span>Loading login form...</span>
         </div>
       }

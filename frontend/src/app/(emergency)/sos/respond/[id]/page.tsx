@@ -70,27 +70,27 @@ export default function CommunityResponderPage({ params }: PageProps) {
   ];
 
   return (
-    <div className="relative w-full h-[100dvh] font-sans bg-background text-foreground overflow-hidden select-none">
+    <div className="bg-background text-foreground relative h-[100dvh] w-full overflow-hidden font-sans select-none">
       {/* ─── 1. FLOATING URGENT DISPATCH HEADER ────────────────────────────── */}
-      <header className="absolute top-0 left-0 right-0 z-30 h-12 bg-white/90 backdrop-blur-md border-b border-zinc-200/80 px-4 flex items-center justify-between shadow-2xs font-sans">
+      <header className="absolute top-0 right-0 left-0 z-30 flex h-12 items-center justify-between border-b border-zinc-200/80 bg-white/90 px-4 font-sans shadow-2xs backdrop-blur-md">
         <div className="flex items-center gap-2.5">
           <Link
             href="/sos"
-            className="p-1 -ml-1 text-zinc-600 hover:text-zinc-900 rounded hover:bg-zinc-100 active:scale-[0.98] transition-colors"
+            className="-ml-1 rounded p-1 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 active:scale-[0.98]"
             aria-label="Back to SOS"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-            <span className="font-bold text-xs sm:text-sm tracking-wide text-zinc-900 uppercase font-sans">
+            <span className="h-2 w-2 animate-ping rounded-full bg-red-500" />
+            <span className="font-sans text-xs font-bold tracking-wide text-zinc-900 uppercase sm:text-sm">
               Community SOS Dispatch
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-50 border border-red-200 text-[10px] font-mono text-red-700 font-semibold uppercase">
-          <Radio className="w-3 h-3 text-red-500 animate-pulse" />
+        <div className="flex items-center gap-1.5 rounded border border-red-200 bg-red-50 px-2 py-0.5 font-mono text-[10px] font-semibold text-red-700 uppercase">
+          <Radio className="h-3 w-3 animate-pulse text-red-500" />
           <span>Active Signal</span>
         </div>
       </header>
@@ -104,50 +104,55 @@ export default function CommunityResponderPage({ params }: PageProps) {
           start={[helperLat, helperLng]}
           end={[victimLat, victimLng]}
           profile="walking"
-          routePath={[[helperLat, helperLng], [victimLat, victimLng]]}
+          routePath={[
+            [helperLat, helperLng],
+            [victimLat, victimLng],
+          ]}
           centerOffsetPercent={{ x: 0, y: -16 }} // Offsets center upward so markers sit in top ~55%
-          className="w-full h-full"
+          className="h-full w-full"
         />
 
         {/* Top-Right Compass / Heading Chip */}
         <div className="absolute top-14 right-3 z-20">
-          <div className="bg-white/90 backdrop-blur-sm border border-zinc-200 px-2.5 py-1.5 rounded-[4px] text-[11px] font-semibold text-zinc-800 flex items-center gap-1.5 shadow-2xs">
-            <Compass className="w-3.5 h-3.5 text-red-600 animate-spin-slow" />
+          <div className="flex items-center gap-1.5 rounded-[4px] border border-zinc-200 bg-white/90 px-2.5 py-1.5 text-[11px] font-semibold text-zinc-800 shadow-2xs backdrop-blur-sm">
+            <Compass className="animate-spin-slow h-3.5 w-3.5 text-red-600" />
             <span>Facing North</span>
           </div>
         </div>
       </div>
 
       {/* ─── 3. CLEAN FLOATING BOTTOM SHEET CARD (HOVERING AT BOTTOM EDGE) ───── */}
-      <div className="absolute bottom-3 left-3 right-3 z-30 max-w-md mx-auto font-sans">
-        <div className="bg-white/95 backdrop-blur-md border border-zinc-200/90 border-t-2 border-t-red-500 rounded-[4px] p-3.5 sm:p-4 shadow-xl space-y-3 font-sans">
+      <div className="absolute right-3 bottom-3 left-3 z-30 mx-auto max-w-md font-sans">
+        <div className="space-y-3 rounded-[4px] border border-t-2 border-zinc-200/90 border-t-red-500 bg-white/95 p-3.5 font-sans shadow-xl backdrop-blur-md sm:p-4">
           {/* Urgent Alert Banner */}
           <div className="space-y-0.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-red-600 uppercase tracking-wide">
-              <ShieldAlert className="w-3.5 h-3.5 shrink-0 fill-current" />
+            <div className="flex items-center gap-1.5 text-xs font-bold tracking-wide text-red-600 uppercase">
+              <ShieldAlert className="h-3.5 w-3.5 shrink-0 fill-current" />
               <span>Community SOS Alert</span>
             </div>
-            <h2 className="text-sm sm:text-base font-bold text-zinc-900 font-sans tracking-tight leading-tight">
+            <h2 className="font-sans text-sm leading-tight font-bold tracking-tight text-zinc-900 sm:text-base">
               Someone needs help 80 meters away.
             </h2>
           </div>
 
           {/* Telemetry Summary */}
-          <div className="bg-zinc-50 p-2.5 rounded-[4px] border border-zinc-200/80 flex items-center justify-between text-xs">
+          <div className="flex items-center justify-between rounded-[4px] border border-zinc-200/80 bg-zinc-50 p-2.5 text-xs">
             <div>
-              <span className="text-zinc-500 text-[10px] font-medium block">
+              <span className="block text-[10px] font-medium text-zinc-500">
                 Distance to victim
               </span>
-              <div className="text-sm font-bold text-red-600 mt-0.5 flex items-center gap-1">
+              <div className="mt-0.5 flex items-center gap-1 text-sm font-bold text-red-600">
                 <span>{distanceMeters} meters</span>
-                <span className="text-zinc-500 font-normal text-xs">• ~1 min run</span>
+                <span className="text-xs font-normal text-zinc-500">
+                  • ~1 min run
+                </span>
               </div>
             </div>
             <div className="text-right">
-              <span className="font-mono text-xs font-bold text-primary block">
+              <span className="text-primary block font-mono text-xs font-bold">
                 {digipin}
               </span>
-              <span className="text-[10px] text-zinc-500 font-mono">
+              <span className="font-mono text-[10px] text-zinc-500">
                 {victimLat.toFixed(4)}° N, {victimLng.toFixed(4)}° E
               </span>
             </div>
@@ -159,11 +164,11 @@ export default function CommunityResponderPage({ params }: PageProps) {
             target="_blank"
             rel="noopener noreferrer"
             id="navigate-to-victim-btn"
-            className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-accent text-accent-foreground font-bold text-sm rounded-[4px] shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer font-sans"
+            className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] px-4 py-3 font-sans text-sm font-bold shadow-sm transition-all hover:opacity-95 active:scale-[0.98]"
           >
-            <Navigation className="w-4 h-4 fill-current" />
+            <Navigation className="h-4 w-4 fill-current" />
             <span>Navigate to Victim</span>
-            <ExternalLink className="w-3.5 h-3.5 ml-0.5 opacity-80" />
+            <ExternalLink className="ml-0.5 h-3.5 w-3.5 opacity-80" />
           </a>
 
           {/* Secondary Action Row: Call 112 & Acknowledge Assistance */}
@@ -171,9 +176,9 @@ export default function CommunityResponderPage({ params }: PageProps) {
             <a
               href="tel:112"
               id="call-112-from-responder-btn"
-              className="flex items-center justify-center gap-1.5 py-2 px-2 bg-zinc-100 hover:bg-zinc-200/80 text-zinc-800 text-xs font-semibold rounded-[4px] border border-zinc-200 active:scale-[0.98] transition-all"
+              className="flex items-center justify-center gap-1.5 rounded-[4px] border border-zinc-200 bg-zinc-100 px-2 py-2 text-xs font-semibold text-zinc-800 transition-all hover:bg-zinc-200/80 active:scale-[0.98]"
             >
-              <PhoneCall className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <PhoneCall className="h-3.5 w-3.5 shrink-0 text-amber-600" />
               <span>Call 112 Hotline</span>
             </a>
 
@@ -181,14 +186,18 @@ export default function CommunityResponderPage({ params }: PageProps) {
               type="button"
               onClick={() => setHasAcknowledged(!hasAcknowledged)}
               id="acknowledge-assisting-btn"
-              className={`flex items-center justify-center gap-1.5 py-2 px-2 text-xs font-semibold rounded-[4px] border active:scale-[0.98] transition-all cursor-pointer ${
+              className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-[4px] border px-2 py-2 text-xs font-semibold transition-all active:scale-[0.98] ${
                 hasAcknowledged
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                  : 'bg-white hover:bg-zinc-50 text-zinc-800 border-zinc-200'
+                  ? 'border-emerald-300 bg-emerald-50 text-emerald-800'
+                  : 'border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-50'
               }`}
             >
-              <CheckCircle2 className={`w-3.5 h-3.5 ${hasAcknowledged ? 'text-emerald-600' : 'text-zinc-400'}`} />
-              <span>{hasAcknowledged ? 'Assisting Active' : 'I am Assisting'}</span>
+              <CheckCircle2
+                className={`h-3.5 w-3.5 ${hasAcknowledged ? 'text-emerald-600' : 'text-zinc-400'}`}
+              />
+              <span>
+                {hasAcknowledged ? 'Assisting Active' : 'I am Assisting'}
+              </span>
             </button>
           </div>
         </div>

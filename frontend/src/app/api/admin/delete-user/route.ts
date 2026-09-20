@@ -5,7 +5,12 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { AddressPayload } from '@/lib/prisma';
 
-const LOCAL_STORAGE_FILE = path.join(process.cwd(), 'src', 'data', 'addresses.json');
+const LOCAL_STORAGE_FILE = path.join(
+  process.cwd(),
+  'src',
+  'data',
+  'addresses.json'
+);
 
 /**
  * DELETE /api/admin/delete-user
@@ -23,14 +28,20 @@ export async function DELETE(request: Request) {
     const { userId } = body;
 
     if (!userId) {
-      return NextResponse.json({ error: 'userId is required.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'userId is required.' },
+        { status: 400 }
+      );
     }
 
     // Delete all addresses belonging to this user first
     try {
       await db.orm.public.Address.where({ userId }).delete();
     } catch (err) {
-      console.warn('[Admin Delete User] Could not delete addresses from DB:', err);
+      console.warn(
+        '[Admin Delete User] Could not delete addresses from DB:',
+        err
+      );
     }
 
     // Delete the user
@@ -45,7 +56,11 @@ export async function DELETE(request: Request) {
       const content = await fs.readFile(LOCAL_STORAGE_FILE, 'utf-8');
       const list = JSON.parse(content) as AddressPayload[];
       const filtered = list.filter((a) => a.userId !== userId);
-      await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(filtered, null, 2), 'utf-8');
+      await fs.writeFile(
+        LOCAL_STORAGE_FILE,
+        JSON.stringify(filtered, null, 2),
+        'utf-8'
+      );
     } catch {
       // ignore
     }
@@ -53,6 +68,9 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[Admin Delete User] Error:', err);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error.' },
+      { status: 500 }
+    );
   }
 }

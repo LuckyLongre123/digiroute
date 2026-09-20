@@ -7,7 +7,11 @@ import { QRCodeSVG } from 'qrcode.react';
 
 const emptySubscribe = () => () => {};
 function useMounted() {
-  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 }
 
 export interface QrAddressRecord {
@@ -29,7 +33,9 @@ export function PrintableQrBadgeView({
   backHref,
 }: PrintableQrBadgeViewProps) {
   const mounted = useMounted();
-  const [activeFormat, setActiveFormat] = useState<'card' | 'doorway' | 'a4'>('doorway');
+  const [activeFormat, setActiveFormat] = useState<'card' | 'doorway' | 'a4'>(
+    'doorway'
+  );
   const [isDownloaded, setIsDownloaded] = useState(false);
 
   const baseUrl =
@@ -41,7 +47,8 @@ export function PrintableQrBadgeView({
   const resolvedBackHref = backHref || `/dashboard/manage/${address.slug}`;
 
   const unitDetails =
-    [address.flat, address.floor].filter(Boolean).join(', ') || 'Doorway Verified';
+    [address.flat, address.floor].filter(Boolean).join(', ') ||
+    'Doorway Verified';
 
   const badgeFormats = [
     {
@@ -92,52 +99,52 @@ export function PrintableQrBadgeView({
 
   if (!mounted) {
     return (
-      <div className="space-y-6 animate-pulse max-w-2xl font-sans">
-        <div className="h-8 w-48 bg-muted rounded" />
-        <div className="h-80 bg-muted rounded" />
+      <div className="max-w-2xl animate-pulse space-y-6 font-sans">
+        <div className="bg-muted h-8 w-48 rounded" />
+        <div className="bg-muted h-80 rounded" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-150 max-w-2xl font-sans text-foreground">
+    <div className="animate-in fade-in text-foreground max-w-2xl space-y-6 font-sans duration-150">
       {/* Header & Back */}
       <div className="flex items-center gap-3">
         <Link
           href={resolvedBackHref}
-          className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+          className="hover:bg-muted text-muted-foreground hover:text-foreground rounded p-1.5 transition-colors"
           aria-label="Back to address"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-foreground tracking-tight">
+          <h1 className="text-foreground text-xl font-bold tracking-tight">
             Printable QR Badge
           </h1>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Entrance dispatch badge for couriers and visitors
           </p>
         </div>
       </div>
 
       {/* Printable Badge Preview Box */}
-      <div className="bg-card border border-border rounded p-6 shadow-sm flex flex-col items-center text-center space-y-4">
+      <div className="bg-card border-border flex flex-col items-center space-y-4 rounded border p-6 text-center shadow-sm">
         {/* Printable Card Simulation */}
         <div
           id="printable-badge-card"
-          className="w-full max-w-xs border-2 border-primary rounded p-5 bg-white text-slate-900 shadow-md flex flex-col items-center space-y-3"
+          className="border-primary flex w-full max-w-xs flex-col items-center space-y-3 rounded border-2 bg-white p-5 text-slate-900 shadow-md"
         >
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-bold text-[#1A3A6B] tracking-tight">
+            <span className="text-xs font-bold tracking-tight text-[#1A3A6B]">
               DigiRoute™
             </span>
-            <span className="text-[10px] bg-emerald-50 text-emerald-800 font-semibold px-1.5 py-0.5 rounded border border-emerald-300">
+            <span className="rounded border border-emerald-300 bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800">
               Verified Doorway
             </span>
           </div>
 
           {/* Real QR Code using qrcode.react */}
-          <div className="w-40 h-40 border-2 border-slate-900 rounded p-2.5 bg-slate-50 flex items-center justify-center shadow-2xs">
+          <div className="flex h-40 w-40 items-center justify-center rounded border-2 border-slate-900 bg-slate-50 p-2.5 shadow-2xs">
             <QRCodeSVG
               id="sovereign-qr-svg"
               value={shareUrl}
@@ -147,28 +154,29 @@ export function PrintableQrBadgeView({
             />
           </div>
 
-          <div className="text-center space-y-1">
-            <div className="font-mono text-base font-bold text-slate-900 tracking-wider">
+          <div className="space-y-1 text-center">
+            <div className="font-mono text-base font-bold tracking-wider text-slate-900">
               {address.digipin}
             </div>
-            <div className="text-xs text-slate-700 font-medium">
+            <div className="text-xs font-medium text-slate-700">
               {unitDetails}
             </div>
           </div>
 
-          <div className="text-[9px] font-mono text-slate-400 uppercase tracking-wider pt-1 border-t border-slate-200 w-full text-center">
+          <div className="w-full border-t border-slate-200 pt-1 text-center font-mono text-[9px] tracking-wider text-slate-400 uppercase">
             Scan to navigate directly to doorway
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground">
-          Live Doorway Badge: High-contrast reference formatted for physical printing
+        <p className="text-muted-foreground text-xs">
+          Live Doorway Badge: High-contrast reference formatted for physical
+          printing
         </p>
       </div>
 
       {/* Format Selection */}
       <div className="space-y-3">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <label className="text-muted-foreground block text-xs font-semibold tracking-wider uppercase">
           Select Print Format
         </label>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -179,20 +187,24 @@ export function PrintableQrBadgeView({
                 key={fmt.id}
                 type="button"
                 onClick={() => setActiveFormat(fmt.id)}
-                className={`p-3 rounded border text-left cursor-pointer transition-colors ${
+                className={`cursor-pointer rounded border p-3 text-left transition-colors ${
                   isActive
-                    ? 'border-accent bg-accent/5 ring-1 ring-accent'
+                    ? 'border-accent bg-accent/5 ring-accent ring-1'
                     : 'border-border bg-card hover:border-border/80'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-foreground">{fmt.name}</span>
-                  {isActive && <Check className="w-3.5 h-3.5 text-accent" />}
+                  <span className="text-foreground text-xs font-bold">
+                    {fmt.name}
+                  </span>
+                  {isActive && <Check className="text-accent h-3.5 w-3.5" />}
                 </div>
-                <div className="text-[11px] font-mono text-muted-foreground mt-0.5">
+                <div className="text-muted-foreground mt-0.5 font-mono text-[11px]">
                   {fmt.dimensions}
                 </div>
-                <div className="text-[11px] text-muted-foreground mt-1">{fmt.desc}</div>
+                <div className="text-muted-foreground mt-1 text-[11px]">
+                  {fmt.desc}
+                </div>
               </button>
             );
           })}
@@ -200,29 +212,29 @@ export function PrintableQrBadgeView({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 pt-2">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
         <button
           type="button"
           onClick={handlePrint}
-          className="flex-1 bg-primary text-primary-foreground font-semibold py-2.5 px-4 rounded hover:opacity-95 transition-all flex items-center justify-center gap-2 text-xs shadow-sm cursor-pointer"
+          className="bg-primary text-primary-foreground flex flex-1 cursor-pointer items-center justify-center gap-2 rounded px-4 py-2.5 text-xs font-semibold shadow-sm transition-all hover:opacity-95"
         >
-          <Printer className="w-4 h-4" />
+          <Printer className="h-4 w-4" />
           <span>Print Doorway Badge</span>
         </button>
 
         <button
           type="button"
           onClick={handleDownload}
-          className="flex-1 border border-border bg-card hover:bg-muted/50 text-foreground font-semibold py-2.5 px-4 rounded transition-all flex items-center justify-center gap-2 text-xs shadow-sm cursor-pointer"
+          className="border-border bg-card hover:bg-muted/50 text-foreground flex flex-1 cursor-pointer items-center justify-center gap-2 rounded border px-4 py-2.5 text-xs font-semibold shadow-sm transition-all"
         >
           {isDownloaded ? (
             <>
-              <Check className="w-4 h-4 text-emerald-600" />
+              <Check className="h-4 w-4 text-emerald-600" />
               <span>SVG Downloaded!</span>
             </>
           ) : (
             <>
-              <Download className="w-4 h-4" />
+              <Download className="h-4 w-4" />
               <span>Download SVG Badge</span>
             </>
           )}

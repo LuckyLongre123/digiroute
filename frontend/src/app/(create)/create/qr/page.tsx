@@ -1,19 +1,23 @@
 'use client';
 
-import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import {
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const emptySubscribe = () => () => {};
 function useMounted() {
-  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 }
-import {
-  ArrowLeft,
-  Download,
-  Share2,
-  Check,
-  Edit2,
-} from 'lucide-react';
+import { ArrowLeft, Download, Share2, Check, Edit2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAddressStore } from '@/store/useAddressStore';
 import {
@@ -24,24 +28,24 @@ import {
 
 function QrBadgeSkeleton() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] pb-24 pt-4 px-4 space-y-6 font-sans text-foreground max-w-xl mx-auto animate-pulse">
+    <div className="text-foreground mx-auto flex min-h-[calc(100vh-4rem)] max-w-xl animate-pulse flex-col space-y-6 px-4 pt-4 pb-24 font-sans">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-lg bg-muted border border-border" />
+        <div className="bg-muted border-border h-9 w-9 rounded-lg border" />
         <div className="space-y-1">
-          <div className="h-6 w-44 bg-muted rounded" />
-          <div className="h-3 w-60 bg-muted/60 rounded" />
+          <div className="bg-muted h-6 w-44 rounded" />
+          <div className="bg-muted/60 h-3 w-60 rounded" />
         </div>
       </div>
       <div className="space-y-2">
-        <div className="h-3 w-28 bg-muted rounded" />
+        <div className="bg-muted h-3 w-28 rounded" />
         <div className="grid grid-cols-3 gap-2.5">
-          <div className="h-14 bg-muted rounded-lg border border-border" />
-          <div className="h-14 bg-muted rounded-lg border border-border" />
-          <div className="h-14 bg-muted rounded-lg border border-border" />
+          <div className="bg-muted border-border h-14 rounded-lg border" />
+          <div className="bg-muted border-border h-14 rounded-lg border" />
+          <div className="bg-muted border-border h-14 rounded-lg border" />
         </div>
       </div>
-      <div className="bg-muted/40 border border-border rounded-xl p-6 flex flex-col items-center justify-center space-y-4">
-        <div className="w-full max-w-[360px] h-80 bg-muted/80 rounded-xl" />
+      <div className="bg-muted/40 border-border flex flex-col items-center justify-center space-y-4 rounded-xl border p-6">
+        <div className="bg-muted/80 h-80 w-full max-w-[360px] rounded-xl" />
       </div>
     </div>
   );
@@ -73,7 +77,9 @@ function CreateQrBadgeContent() {
     storeMetadata?.customTag || storeMetadata?.label || 'HOME'
   );
   const [isEditingTag, setIsEditingTag] = useState(false);
-  const [activeFormat, setActiveFormat] = useState<'card' | 'sticker' | 'a4'>('sticker');
+  const [activeFormat, setActiveFormat] = useState<'card' | 'sticker' | 'a4'>(
+    'sticker'
+  );
   const [isDownloaded, setIsDownloaded] = useState(false);
   const [isShared, setIsShared] = useState(false);
 
@@ -199,7 +205,8 @@ function CreateQrBadgeContent() {
     },
   ];
 
-  const currentPreset = badgeFormats.find((f) => f.id === activeFormat) || badgeFormats[1];
+  const currentPreset =
+    badgeFormats.find((f) => f.id === activeFormat) || badgeFormats[1];
 
   // Prevent hydration mismatch by rendering skeleton until component is mounted
   if (!mounted) {
@@ -207,22 +214,22 @@ function CreateQrBadgeContent() {
   }
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] pb-24 animate-in fade-in duration-150 pt-4 px-4 space-y-6 font-sans text-foreground max-w-xl mx-auto">
+    <div className="animate-in fade-in text-foreground mx-auto flex min-h-[calc(100vh-4rem)] max-w-xl flex-col space-y-6 px-4 pt-4 pb-24 font-sans duration-150">
       {/* Top Header with Safe Back Navigation */}
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={handleBack}
-          className="p-2 rounded-lg border border-border bg-card hover:bg-muted text-foreground transition-colors cursor-pointer"
+          className="border-border bg-card hover:bg-muted text-foreground cursor-pointer rounded-lg border p-2 transition-colors"
           aria-label="Back to success step"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="h-4 w-4" />
         </button>
         <div>
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
+          <h1 className="text-foreground text-xl font-bold tracking-tight md:text-2xl">
             Printable QR Badge
           </h1>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             High-contrast doorway QR badge with verified DIGIPIN
           </p>
         </div>
@@ -230,7 +237,7 @@ function CreateQrBadgeContent() {
 
       {/* Preset Format Selector */}
       <div className="space-y-2">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <label className="text-muted-foreground block text-xs font-semibold tracking-wider uppercase">
           Print Preset Format
         </label>
         <div className="grid grid-cols-3 gap-2.5">
@@ -239,14 +246,14 @@ function CreateQrBadgeContent() {
               key={fmt.id}
               type="button"
               onClick={() => setActiveFormat(fmt.id)}
-              className={`p-2.5 rounded-lg border text-left cursor-pointer transition-all ${
+              className={`cursor-pointer rounded-lg border p-2.5 text-left transition-all ${
                 activeFormat === fmt.id
-                  ? 'border-accent bg-accent/10 ring-1 ring-accent text-accent'
+                  ? 'border-accent bg-accent/10 ring-accent text-accent ring-1'
                   : 'border-border bg-card hover:border-border/80 text-foreground'
               }`}
             >
               <div className="text-xs font-bold">{fmt.name}</div>
-              <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
+              <div className="text-muted-foreground mt-0.5 font-mono text-[10px]">
                 {fmt.dimensions}
               </div>
             </button>
@@ -255,28 +262,28 @@ function CreateQrBadgeContent() {
       </div>
 
       {/* Live Badge Preview Card with Dynamic Padding, Width, and Scale */}
-      <div className="bg-muted/40 border border-border rounded-xl p-4 sm:p-6 shadow-xs flex flex-col items-center justify-center space-y-4 overflow-hidden">
+      <div className="bg-muted/40 border-border flex flex-col items-center justify-center space-y-4 overflow-hidden rounded-xl border p-4 shadow-xs sm:p-6">
         <div
           id="printable-qr-badge-card"
-          className={`w-full ${currentPreset.maxWidth} ${currentPreset.padding} ${currentPreset.scaleClass} bg-white text-slate-950 rounded-xl border-2 border-slate-200 shadow-xl transition-all duration-300 flex flex-col items-center text-center`}
+          className={`w-full ${currentPreset.maxWidth} ${currentPreset.padding} ${currentPreset.scaleClass} flex flex-col items-center rounded-xl border-2 border-slate-200 bg-white text-center text-slate-950 shadow-xl transition-all duration-300`}
         >
           {/* Brand Header */}
-          <div className="w-full pb-3 border-b-2 border-slate-200">
+          <div className="w-full border-b-2 border-slate-200 pb-3">
             <div className="flex items-center justify-center gap-2">
-              <span className="text-2xl sm:text-3xl font-black tracking-tight text-[#1A3A6B]">
+              <span className="text-2xl font-black tracking-tight text-[#1A3A6B] sm:text-3xl">
                 DigiRoute
               </span>
-              <span className="text-2xl sm:text-3xl font-black tracking-tight text-[#EA580C]">
+              <span className="text-2xl font-black tracking-tight text-[#EA580C] sm:text-3xl">
                 Doorway
               </span>
             </div>
-            <p className="text-[11px] font-mono font-bold tracking-widest text-slate-500 uppercase mt-0.5">
+            <p className="mt-0.5 font-mono text-[11px] font-bold tracking-widest text-slate-500 uppercase">
               Official Micro-Address Badge
             </p>
           </div>
 
           {/* QR Code Container with Center App Logo */}
-          <div className="my-5 p-3 sm:p-4 rounded-2xl border-2 border-slate-900 bg-slate-50 shadow-inner flex items-center justify-center">
+          <div className="my-5 flex items-center justify-center rounded-2xl border-2 border-slate-900 bg-slate-50 p-3 shadow-inner sm:p-4">
             <QRCodeSVG
               value={shareUrl}
               size={currentPreset.qrSize}
@@ -296,12 +303,12 @@ function CreateQrBadgeContent() {
             {/* Editable Tag with Pencil Icon */}
             <div className="flex items-center justify-center gap-1.5">
               {isEditingTag ? (
-                <div className="inline-flex items-center gap-1.5 bg-orange-50 border border-orange-300 rounded-full px-2.5 py-1">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-orange-300 bg-orange-50 px-2.5 py-1">
                   <input
                     type="text"
                     value={tag}
                     onChange={(e) => setTag(e.target.value.toUpperCase())}
-                    className="text-xs font-bold text-orange-700 bg-transparent uppercase tracking-wider outline-none w-24 text-center font-mono"
+                    className="w-24 bg-transparent text-center font-mono text-xs font-bold tracking-wider text-orange-700 uppercase outline-none"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleSaveTag();
@@ -311,23 +318,23 @@ function CreateQrBadgeContent() {
                   <button
                     type="button"
                     onClick={handleSaveTag}
-                    className="text-orange-700 hover:text-orange-950 cursor-pointer"
+                    className="cursor-pointer text-orange-700 hover:text-orange-950"
                     title="Save tag"
                   >
-                    <Check className="w-3.5 h-3.5" />
+                    <Check className="h-3.5 w-3.5" />
                   </button>
                 </div>
               ) : (
-                <div className="inline-flex items-center gap-2 bg-orange-100 border border-orange-200 text-orange-700 px-3 py-1 rounded-full text-xs font-bold tracking-wider font-mono shadow-xs">
+                <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-100 px-3 py-1 font-mono text-xs font-bold tracking-wider text-orange-700 shadow-xs">
                   <span>{tag || 'HOME'}</span>
                   <button
                     type="button"
                     onClick={() => setIsEditingTag(true)}
-                    className="text-orange-600 hover:text-orange-900 transition-colors cursor-pointer"
+                    className="cursor-pointer text-orange-600 transition-colors hover:text-orange-900"
                     aria-label="Edit badge tag"
                     title="Rename tag"
                   >
-                    <Edit2 className="w-3 h-3" />
+                    <Edit2 className="h-3 w-3" />
                   </button>
                 </div>
               )}
@@ -335,22 +342,22 @@ function CreateQrBadgeContent() {
 
             {/* DIGIPIN Code */}
             <div className="space-y-0.5">
-              <div className="text-xl sm:text-2xl font-mono font-black text-slate-900 tracking-widest">
+              <div className="font-mono text-xl font-black tracking-widest text-slate-900 sm:text-2xl">
                 {digipin}
               </div>
               {unit && (
-                <div className="text-xs sm:text-sm font-semibold text-slate-700">
+                <div className="text-xs font-semibold text-slate-700 sm:text-sm">
                   {unit}
                 </div>
               )}
             </div>
 
             {/* High Legibility Footer Copy: Strictly Powered by DIGIPIN */}
-            <div className="pt-2 border-t border-slate-100 space-y-1">
-              <p className="text-xs sm:text-sm font-bold text-slate-800">
+            <div className="space-y-1 border-t border-slate-100 pt-2">
+              <p className="text-xs font-bold text-slate-800 sm:text-sm">
                 Scan with any mobile camera for doorstep navigation
               </p>
-              <p className="text-[10px] sm:text-xs font-bold font-mono text-slate-500 uppercase">
+              <p className="font-mono text-[10px] font-bold text-slate-500 uppercase sm:text-xs">
                 Powered by DIGIPIN
               </p>
             </div>
@@ -362,20 +369,20 @@ function CreateQrBadgeContent() {
       <canvas ref={canvasRef} className="hidden" />
 
       {/* Primary Action Buttons: Download JPG and Share QR */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+      <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-2">
         <button
           type="button"
           onClick={handleDownloadJpg}
-          className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-accent text-accent-foreground font-semibold text-sm hover:opacity-95 active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+          className="bg-accent text-accent-foreground flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-3 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98]"
         >
           {isDownloaded ? (
             <>
-              <Check className="w-4 h-4 text-emerald-700" />
+              <Check className="h-4 w-4 text-emerald-700" />
               <span>Downloaded!</span>
             </>
           ) : (
             <>
-              <Download className="w-4 h-4" />
+              <Download className="h-4 w-4" />
               <span>Download Printable JPG</span>
             </>
           )}
@@ -384,16 +391,16 @@ function CreateQrBadgeContent() {
         <button
           type="button"
           onClick={handleShareQr}
-          className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg border border-border bg-card text-foreground font-semibold text-sm hover:bg-muted active:scale-[0.98] transition-all shadow-xs cursor-pointer font-sans"
+          className="border-border bg-card text-foreground hover:bg-muted flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-4 py-3 font-sans text-sm font-semibold shadow-xs transition-all active:scale-[0.98]"
         >
           {isShared ? (
             <>
-              <Check className="w-4 h-4 text-accent" />
+              <Check className="text-accent h-4 w-4" />
               <span>Badge Shared!</span>
             </>
           ) : (
             <>
-              <Share2 className="w-4 h-4" />
+              <Share2 className="h-4 w-4" />
               <span>Share QR Badge</span>
             </>
           )}

@@ -7,7 +7,12 @@ import {
 } from './engine';
 
 // Helper to compute distance between two lat/lng in meters
-function haversineMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+function haversineMeters(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
   const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -32,7 +37,9 @@ function runTests() {
   console.log(`✓ Baseline [${baselineLat}, ${baselineLng}] => ${baselineCode}`);
 
   if (baselineCode !== '39J-M99-P923') {
-    throw new Error(`Baseline test FAILED: Expected '39J-M99-P923', got '${baselineCode}'`);
+    throw new Error(
+      `Baseline test FAILED: Expected '39J-M99-P923', got '${baselineCode}'`
+    );
   }
 
   // 2. Decode Baseline and verify roundtrip precision
@@ -47,14 +54,16 @@ function runTests() {
     `✓ Decoded Baseline Center: [${decodedBaseline.center.lat}, ${decodedBaseline.center.lng}] (Error: ${baselineError.toFixed(2)}m)`
   );
   if (baselineError > 3.0) {
-    throw new Error(`Baseline roundtrip error exceeded 3m: ${baselineError.toFixed(2)}m`);
+    throw new Error(
+      `Baseline roundtrip error exceeded 3m: ${baselineError.toFixed(2)}m`
+    );
   }
 
   // 3. Metropolitan Anchor Cities Verification
   console.log('\n--- 2. Metropolitan Anchors Verification ---');
   const testCities = [
     { name: 'New Delhi (India Gate)', lat: 28.6129, lng: 77.2295 },
-    { name: 'Mumbai (Gateway of India)', lat: 18.9220, lng: 72.8347 },
+    { name: 'Mumbai (Gateway of India)', lat: 18.922, lng: 72.8347 },
     { name: 'Bengaluru (Vidhana Soudha)', lat: 12.9797, lng: 77.5907 },
     { name: 'Kolkata (Victoria Memorial)', lat: 22.5448, lng: 88.3426 },
     { name: 'Leh (Ladakh)', lat: 34.1526, lng: 77.5771 },
@@ -98,7 +107,7 @@ function runTests() {
   console.log('\n--- 3. Out-of-Bounds Rejection ---');
   const outOfBounds = [
     { name: 'London', lat: 51.5074, lng: -0.1278 },
-    { name: 'New York', lat: 40.7128, lng: -74.0060 },
+    { name: 'New York', lat: 40.7128, lng: -74.006 },
     { name: 'Tokyo', lat: 35.6762, lng: 139.6503 },
     { name: 'Indian Ocean South', lat: 1.0, lng: 77.0 },
     { name: 'Tibet North', lat: 39.0, lng: 80.0 },
@@ -107,7 +116,9 @@ function runTests() {
   for (const loc of outOfBounds) {
     const within = isWithinIndiaBounds(loc.lat, loc.lng);
     if (within) {
-      throw new Error(`Expected ${loc.name} to be out of bounds, but got true.`);
+      throw new Error(
+        `Expected ${loc.name} to be out of bounds, but got true.`
+      );
     }
 
     let threw = false;
@@ -118,7 +129,9 @@ function runTests() {
     }
 
     if (!threw) {
-      throw new Error(`Expected encode(${loc.lat}, ${loc.lng}) for ${loc.name} to throw an error.`);
+      throw new Error(
+        `Expected encode(${loc.lat}, ${loc.lng}) for ${loc.name} to throw an error.`
+      );
     }
     console.log(`✓ Correctly rejected out-of-bounds location: ${loc.name}`);
   }
@@ -126,13 +139,19 @@ function runTests() {
   // 5. Test Format Masking & Validation
   console.log('\n--- 4. Format Masking & Validation ---');
   if (!isValid('39J-M99-P923')) {
-    throw new Error("Valid formatted code '39J-M99-P923' failed isValid() check");
+    throw new Error(
+      "Valid formatted code '39J-M99-P923' failed isValid() check"
+    );
   }
   if (!isValid('39JM99P923')) {
-    throw new Error("Valid unformatted code '39JM99P923' failed isValid() check");
+    throw new Error(
+      "Valid unformatted code '39JM99P923' failed isValid() check"
+    );
   }
   if (isValid('2345678901')) {
-    throw new Error('Code with 0 and 1 passed isValid() check when it should fail');
+    throw new Error(
+      'Code with 0 and 1 passed isValid() check when it should fail'
+    );
   }
   if (isValid('2345')) {
     throw new Error('Short code passed isValid() check');
@@ -140,7 +159,9 @@ function runTests() {
 
   const formatted = formatDigipin('39JM99P923');
   if (formatted !== '39J-M99-P923') {
-    throw new Error(`Format error: expected '39J-M99-P923', got '${formatted}'`);
+    throw new Error(
+      `Format error: expected '39J-M99-P923', got '${formatted}'`
+    );
   }
   console.log(`✓ Official 3-3-4 formatting verified: ${formatted}`);
 
@@ -162,7 +183,9 @@ function runTests() {
   );
 
   if (avgPerOp > 0.5) {
-    throw new Error(`Performance exceeded 0.5ms threshold: ${avgPerOp.toFixed(4)}ms`);
+    throw new Error(
+      `Performance exceeded 0.5ms threshold: ${avgPerOp.toFixed(4)}ms`
+    );
   }
 
   console.log('\n=== ALL DIGIPIN ENGINE TESTS PASSED SUCCESSFULLY ===');

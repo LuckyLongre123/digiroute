@@ -15,28 +15,29 @@ interface ErrorProps {
  */
 export default function RecipientError({ error, reset }: ErrorProps) {
   return (
-    <div className="bg-card border border-border rounded p-6 shadow-sm text-center space-y-4 animate-in fade-in duration-150">
-      <div className="w-12 h-12 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mx-auto">
-        <AlertCircle className="w-6 h-6" />
+    <div className="bg-card border-border animate-in fade-in space-y-4 rounded border p-6 text-center shadow-sm duration-150">
+      <div className="bg-destructive/10 text-destructive mx-auto flex h-12 w-12 items-center justify-center rounded-full">
+        <AlertCircle className="h-6 w-6" />
       </div>
 
       <div>
-        <h2 className="text-base font-bold text-foreground">
+        <h2 className="text-foreground text-base font-bold">
           Failed to load address card
         </h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          The micro-address could not be resolved. It may have expired or been removed.
+        <p className="text-muted-foreground mt-1 text-xs">
+          The micro-address could not be resolved. It may have expired or been
+          removed.
         </p>
       </div>
 
       {error?.message && (
-        <div className="w-full text-left bg-destructive/10 dark:bg-red-950/30 border border-destructive/20 dark:border-red-900/50 rounded p-3 text-xs font-mono text-destructive dark:text-red-400 break-words max-h-36 overflow-y-auto my-2">
-          <span className="font-sans font-semibold text-[11px] uppercase tracking-wider block text-destructive/80 dark:text-red-400/80 mb-1">
+        <div className="bg-destructive/10 border-destructive/20 text-destructive my-2 max-h-36 w-full overflow-y-auto rounded border p-3 text-left font-mono text-xs break-words dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400">
+          <span className="text-destructive/80 mb-1 block font-sans text-[11px] font-semibold tracking-wider uppercase dark:text-red-400/80">
             Error Details
           </span>
           <code>{error.message}</code>
           {error.digest && (
-            <div className="text-[10px] text-muted-foreground mt-1">
+            <div className="text-muted-foreground mt-1 text-[10px]">
               Digest: {error.digest}
             </div>
           )}
@@ -48,17 +49,17 @@ export default function RecipientError({ error, reset }: ErrorProps) {
           onClick={reset}
           id="recipient-error-retry-btn"
           type="button"
-          className="w-full h-11 bg-accent text-accent-foreground font-semibold text-sm rounded flex items-center justify-center gap-2 active:scale-[0.98] transition-transform duration-75 ease-out shadow-sm cursor-pointer"
+          className="bg-accent text-accent-foreground flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded text-sm font-semibold shadow-sm transition-transform duration-75 ease-out active:scale-[0.98]"
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className="h-4 w-4" />
           <span>Try Again</span>
         </button>
         <Link
           href="/"
           id="recipient-error-home-btn"
-          className="w-full h-11 bg-secondary text-secondary-foreground font-medium text-sm rounded flex items-center justify-center gap-2 active:scale-[0.98] transition-transform duration-75 ease-out cursor-pointer"
+          className="bg-secondary text-secondary-foreground flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded text-sm font-medium transition-transform duration-75 ease-out active:scale-[0.98]"
         >
-          <Home className="w-4 h-4" />
+          <Home className="h-4 w-4" />
           <span>Return to Home</span>
         </Link>
       </div>

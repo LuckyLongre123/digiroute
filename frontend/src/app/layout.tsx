@@ -20,7 +20,14 @@ export const metadata: Metadata = {
   title: 'DigiRoute — Sovereign Micro-Addressing',
   description:
     'Solve the last 50 meters. Create a precise 4-factor micro-address using DIGIPIN, doorway photo, map pin, and floor details. Shareable in seconds.',
-  keywords: ['DIGIPIN', 'micro-address', 'India Post', 'last mile', 'delivery', 'navigation'],
+  keywords: [
+    'DIGIPIN',
+    'micro-address',
+    'India Post',
+    'last mile',
+    'delivery',
+    'navigation',
+  ],
   authors: [{ name: 'DigiRoute' }],
   manifest: '/site.webmanifest',
   icons: {
@@ -35,7 +42,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'DigiRoute — Sovereign Micro-Addressing',
-    description: 'Solve the last 50 meters with a precise, shareable micro-address.',
+    description:
+      'Solve the last 50 meters with a precise, shareable micro-address.',
     type: 'website',
     locale: 'en_IN',
   },
@@ -68,13 +76,15 @@ export default function RootLayout({
           duration={4000}
           toastOptions={{
             classNames: {
-              toast: 'bg-zinc-950 border border-zinc-800 text-zinc-100 shadow-2xl rounded-xl',
+              toast:
+                'bg-zinc-950 border border-zinc-800 text-zinc-100 shadow-2xl rounded-xl',
               title: 'text-base font-medium',
               description: 'text-zinc-400',
               actionButton: 'bg-orange-600 text-white hover:bg-orange-700',
               cancelButton: 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700',
-              closeButton: 'bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-300'
-            }
+              closeButton:
+                'bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-300',
+            },
           }}
         />
         {/* Admin Keyboard Trigger — Ctrl+Shift+A → /admin/login (invisible) */}

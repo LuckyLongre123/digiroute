@@ -3,7 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { updateAddressExpiryInDb } from '@/lib/prisma';
 
-export async function updateAddressExpiry(addressId: string, expiryValue: string) {
+export async function updateAddressExpiry(
+  addressId: string,
+  expiryValue: string
+) {
   try {
     if (!addressId || typeof addressId !== 'string') {
       return { success: false, error: 'Missing address identifier.' };
@@ -20,13 +23,24 @@ export async function updateAddressExpiry(addressId: string, expiryValue: string
     } else if (normalized.includes('12 hour') || normalized === '12h') {
       expiresAt = new Date(now + 12 * 60 * 60 * 1000).toISOString();
       isEphemeral = true;
-    } else if (normalized.includes('24 hour') || normalized === '24h' || normalized.includes('1 day')) {
+    } else if (
+      normalized.includes('24 hour') ||
+      normalized === '24h' ||
+      normalized.includes('1 day')
+    ) {
       expiresAt = new Date(now + 24 * 60 * 60 * 1000).toISOString();
       isEphemeral = true;
-    } else if (normalized.includes('7 day') || normalized === '7d' || normalized.includes('1 week')) {
+    } else if (
+      normalized.includes('7 day') ||
+      normalized === '7d' ||
+      normalized.includes('1 week')
+    ) {
       expiresAt = new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString();
       isEphemeral = true;
-    } else if (normalized.includes('never') || normalized.includes('permanent')) {
+    } else if (
+      normalized.includes('never') ||
+      normalized.includes('permanent')
+    ) {
       expiresAt = null;
       isEphemeral = false;
     } else {
@@ -35,7 +49,11 @@ export async function updateAddressExpiry(addressId: string, expiryValue: string
       isEphemeral = true;
     }
 
-    const updated = await updateAddressExpiryInDb(addressId, expiresAt, isEphemeral);
+    const updated = await updateAddressExpiryInDb(
+      addressId,
+      expiresAt,
+      isEphemeral
+    );
     if (!updated) {
       return { success: false, error: 'Address not found in database.' };
     }

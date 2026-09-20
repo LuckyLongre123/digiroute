@@ -35,7 +35,10 @@ export async function updateAddressAction(input: UpdateAddressInput) {
     });
 
     if (!updated) {
-      return { success: false, error: 'Address not found or permission denied.' };
+      return {
+        success: false,
+        error: 'Address not found or permission denied.',
+      };
     }
 
     revalidatePath('/dashboard');

@@ -29,7 +29,8 @@ export default async function DashboardPage() {
     id: addr.id || addr.slug,
     label: addr.label || 'Saved Location',
     digipin: addr.digipin,
-    unit: [addr.floor, addr.flat].filter(Boolean).join(', ') || 'Doorway Entrance',
+    unit:
+      [addr.floor, addr.flat].filter(Boolean).join(', ') || 'Doorway Entrance',
     landmark: addr.landmark || '',
     slug: addr.slug,
     isPermanent: !addr.isEphemeral,
@@ -44,14 +45,14 @@ export default async function DashboardPage() {
   }));
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-150">
+    <div className="animate-in fade-in space-y-6 duration-150">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+          <h1 className="text-foreground text-2xl font-bold tracking-tight">
             Address Book
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-muted-foreground mt-0.5 text-xs">
             Your permanent, high-precision sovereign micro-addresses
           </p>
         </div>
@@ -59,32 +60,33 @@ export default async function DashboardPage() {
         <Link
           href="/create"
           id="dashboard-create-btn"
-          className="inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground font-semibold text-sm px-4 py-2.5 rounded active:scale-[0.98] transition-all cursor-pointer"
+          className="bg-accent text-accent-foreground inline-flex cursor-pointer items-center justify-center gap-2 rounded px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98]"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
           <span>Create Address</span>
         </Link>
       </div>
 
       {/* Addresses List or Empty State */}
       {addresses.length === 0 ? (
-        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-6 sm:p-8 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mx-auto text-muted-foreground">
-            <MapPin className="w-6 h-6 text-zinc-500" />
+        <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-6 text-center shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="text-muted-foreground mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
+            <MapPin className="h-6 w-6 text-zinc-500" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-foreground tracking-tight">
+            <h2 className="text-foreground text-base font-semibold tracking-tight">
               No saved addresses. Create your first micro-address.
             </h2>
-            <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-              Safeguard your doorstep with a 10-character DIGIPIN, Visual Lock, and Entrance Pin.
+            <p className="text-muted-foreground mx-auto mt-1 max-w-sm text-xs">
+              Safeguard your doorstep with a 10-character DIGIPIN, Visual Lock,
+              and Entrance Pin.
             </p>
           </div>
           <Link
             href="/create"
-            className="inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2.5 rounded-lg active:scale-[0.98] transition-all cursor-pointer"
+            className="bg-accent text-accent-foreground inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98]"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             <span>Create Address</span>
           </Link>
         </div>

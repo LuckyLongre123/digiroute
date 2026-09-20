@@ -56,7 +56,7 @@ function UserNode({ data }: { data: NodeData }) {
   const u = data.record as UserRecord;
   return (
     <div
-      className="relative px-3 py-2.5 rounded-[4px] text-xs font-mono min-w-[150px] cursor-pointer"
+      className="relative min-w-[150px] cursor-pointer rounded-[4px] px-3 py-2.5 font-mono text-xs"
       style={{
         backgroundColor: '#0c1a2e',
         border: '1px solid #1d4ed8',
@@ -64,20 +64,26 @@ function UserNode({ data }: { data: NodeData }) {
         boxShadow: '0 0 12px rgba(59,130,246,0.3)',
       }}
     >
-      <div className="text-[10px] uppercase tracking-wider mb-1" style={{ color: '#3b82f6' }}>
+      <div
+        className="mb-1 text-[10px] tracking-wider uppercase"
+        style={{ color: '#3b82f6' }}
+      >
         User
       </div>
-      <div className="font-semibold truncate max-w-[130px]" title={u.email}>
+      <div className="max-w-[130px] truncate font-semibold" title={u.email}>
         {u.name || u.email?.split('@')[0] || 'Anonymous'}
       </div>
-      <div className="truncate max-w-[130px] mt-0.5 opacity-60 text-[10px]" title={u.email}>
+      <div
+        className="mt-0.5 max-w-[130px] truncate text-[10px] opacity-60"
+        title={u.email}
+      >
         {u.email || 'no email'}
       </div>
       {/* ReactFlow Source Handle for connecting edges to Addresses */}
       <Handle
         type="source"
         position={Position.Right}
-        className="!w-2 !h-2 !bg-cyan-400 !border-none"
+        className="!h-2 !w-2 !border-none !bg-cyan-400"
       />
     </div>
   );
@@ -87,7 +93,7 @@ function AddressNode({ data }: { data: NodeData }) {
   const a = data.record as AddressRecord;
   return (
     <div
-      className="relative px-3 py-2.5 rounded-[4px] text-xs font-mono min-w-[150px] cursor-pointer"
+      className="relative min-w-[150px] cursor-pointer rounded-[4px] px-3 py-2.5 font-mono text-xs"
       style={{
         backgroundColor: '#0a1a1a',
         border: a.isEphemeral ? '1px solid #f59e0b' : '1px solid #0e7490',
@@ -101,17 +107,19 @@ function AddressNode({ data }: { data: NodeData }) {
       <Handle
         type="target"
         position={Position.Left}
-        className="!w-2 !h-2 !bg-cyan-400 !border-none"
+        className="!h-2 !w-2 !border-none !bg-cyan-400"
       />
       <div
-        className="text-[10px] uppercase tracking-wider mb-1"
+        className="mb-1 text-[10px] tracking-wider uppercase"
         style={{ color: a.isEphemeral ? '#f59e0b' : '#22d3ee' }}
       >
         {a.isEphemeral ? 'Guest Addr' : 'Address'}
       </div>
       <div className="font-mono font-bold">{a.digipin}</div>
       {a.label && (
-        <div className="mt-0.5 opacity-60 text-[10px] truncate max-w-[130px]">{a.label}</div>
+        <div className="mt-0.5 max-w-[130px] truncate text-[10px] opacity-60">
+          {a.label}
+        </div>
       )}
     </div>
   );
@@ -125,7 +133,7 @@ const nodeTypes: Record<string, any> = {
 
 function buildGraph(
   users: UserRecord[],
-  addresses: AddressRecord[],
+  addresses: AddressRecord[]
 ): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
 
@@ -211,7 +219,10 @@ export default function AdminOverviewPage() {
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [stats, setStats] = useState({ users: 0, addresses: 0, guests: 0 });
-  const [selected, setSelected] = useState<{ type: 'user' | 'address'; record: UserRecord | AddressRecord } | null>(null);
+  const [selected, setSelected] = useState<{
+    type: 'user' | 'address';
+    record: UserRecord | AddressRecord;
+  } | null>(null);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   // Debounce search input by 300ms
@@ -225,7 +236,10 @@ export default function AdminOverviewPage() {
   const fetchData = useCallback(async () => {
     setError(null);
     try {
-      const res = await fetch('/api/admin/data', { credentials: 'include', cache: 'no-store' });
+      const res = await fetch('/api/admin/data', {
+        credentials: 'include',
+        cache: 'no-store',
+      });
       if (res.status === 401) {
         router.push('/admin/login');
         router.refresh();
@@ -252,7 +266,10 @@ export default function AdminOverviewPage() {
     let cancelled = false;
     async function load() {
       try {
-        const res = await fetch('/api/admin/data', { credentials: 'include', cache: 'no-store' });
+        const res = await fetch('/api/admin/data', {
+          credentials: 'include',
+          cache: 'no-store',
+        });
         if (res.status === 401) {
           router.push('/admin/login');
           router.refresh();
@@ -299,7 +316,9 @@ export default function AdminOverviewPage() {
       });
 
       const matchedUserIds = new Set(displayUsers.map((u) => u.id));
-      displayAddresses = allAddresses.filter((a) => a.userId && matchedUserIds.has(a.userId));
+      displayAddresses = allAddresses.filter(
+        (a) => a.userId && matchedUserIds.has(a.userId)
+      );
     }
 
     const { nodes: n, edges: e } = buildGraph(displayUsers, displayAddresses);
@@ -334,7 +353,10 @@ export default function AdminOverviewPage() {
     fetchData();
   };
 
-  const handleUpdate = async (slug: string, updates: Record<string, unknown>) => {
+  const handleUpdate = async (
+    slug: string,
+    updates: Record<string, unknown>
+  ) => {
     await fetch('/api/admin/update-address', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -345,7 +367,11 @@ export default function AdminOverviewPage() {
 
   const handleUpdateUser = async (
     userId: string,
-    updates: { name?: string | null; email?: string | null; phone?: string | null }
+    updates: {
+      name?: string | null;
+      email?: string | null;
+      phone?: string | null;
+    }
   ) => {
     const res = await fetch('/api/admin/update-user', {
       method: 'PATCH',
@@ -360,45 +386,45 @@ export default function AdminOverviewPage() {
   };
 
   return (
-    <div className="flex-1 h-full w-full flex flex-col min-h-0 overflow-hidden">
+    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden">
       {/* Top bar */}
       <header
-        className="flex flex-wrap items-center gap-3 sm:gap-5 px-4 sm:px-5 py-2.5 sm:py-3 border-b shrink-0"
+        className="flex shrink-0 flex-wrap items-center gap-3 border-b px-4 py-2.5 sm:gap-5 sm:px-5 sm:py-3"
         style={{ backgroundColor: '#09090b', borderColor: '#27272a' }}
       >
-        <span className="text-xs font-mono" style={{ color: '#22d3ee' }}>
+        <span className="font-mono text-xs" style={{ color: '#22d3ee' }}>
           /overview
         </span>
 
         {/* User Search Filter Input */}
         <div className="relative flex items-center">
-          <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
           <input
             type="text"
             value={userSearchTerm}
             onChange={(e) => setUserSearchTerm(e.target.value)}
             placeholder="Search users (name, email, ID)..."
-            className="bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder:text-zinc-500 font-mono text-[11px] px-2.5 py-1 pl-7 pr-7 rounded focus:border-cyan-400 focus:outline-none w-52 sm:w-64 transition-colors"
+            className="w-52 rounded border border-zinc-800 bg-zinc-900 px-2.5 py-1 pr-7 pl-7 font-mono text-[11px] text-zinc-100 transition-colors placeholder:text-zinc-500 focus:border-cyan-400 focus:outline-none sm:w-64"
           />
           {userSearchTerm && (
             <button
               type="button"
               onClick={() => setUserSearchTerm('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 transition-colors cursor-pointer"
+              className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-zinc-500 transition-colors hover:text-zinc-200"
               title="Clear user search"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-5 ml-auto flex-wrap">
+        <div className="ml-auto flex flex-wrap items-center gap-3 sm:gap-5">
           <StatPill label="Users" value={stats.users} color="#3b82f6" />
           <StatPill label="Addresses" value={stats.addresses} color="#22d3ee" />
           <StatPill label="Guests" value={stats.guests} color="#f59e0b" />
           <button
             onClick={fetchData}
-            className="px-2.5 py-1 text-[10px] font-mono rounded-[3px] transition-colors cursor-pointer"
+            className="cursor-pointer rounded-[3px] px-2.5 py-1 font-mono text-[10px] transition-colors"
             style={{ color: '#71717a', border: '1px solid #27272a' }}
             onMouseEnter={(e) => {
               const el = e.currentTarget;
@@ -417,35 +443,43 @@ export default function AdminOverviewPage() {
       </header>
 
       {/* Graph */}
-      <div className="w-full h-[calc(100vh-120px)] min-h-[500px] relative">
+      <div className="relative h-[calc(100vh-120px)] min-h-[500px] w-full">
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center z-10"
-            style={{ backgroundColor: '#09090b' }}>
-            <div className="text-xs font-mono" style={{ color: '#22d3ee' }}>
+          <div
+            className="absolute inset-0 z-10 flex items-center justify-center"
+            style={{ backgroundColor: '#09090b' }}
+          >
+            <div className="font-mono text-xs" style={{ color: '#22d3ee' }}>
               <span className="animate-pulse">loading graph...</span>
             </div>
           </div>
         )}
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center z-10"
-            style={{ backgroundColor: '#09090b' }}>
-            <p className="text-xs font-mono" style={{ color: '#f87171' }}>{error}</p>
+          <div
+            className="absolute inset-0 z-10 flex items-center justify-center"
+            style={{ backgroundColor: '#09090b' }}
+          >
+            <p className="font-mono text-xs" style={{ color: '#f87171' }}>
+              {error}
+            </p>
           </div>
         )}
         {!loading && !error && nodes.length === 0 && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center p-4"
-            style={{ backgroundColor: '#09090b' }}>
-            <Search className="w-8 h-8 text-zinc-600 mb-2" />
-            <p className="text-sm font-mono text-zinc-400">
+          <div
+            className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center"
+            style={{ backgroundColor: '#09090b' }}
+          >
+            <Search className="mb-2 h-8 w-8 text-zinc-600" />
+            <p className="font-mono text-sm text-zinc-400">
               No users found matching &ldquo;{debouncedSearchTerm}&rdquo;
             </p>
-            <p className="text-xs font-mono text-zinc-600 mt-1">
+            <p className="mt-1 font-mono text-xs text-zinc-600">
               Try searching by name, email, or user ID.
             </p>
             <button
               type="button"
               onClick={() => setUserSearchTerm('')}
-              className="mt-3 px-3 py-1 text-xs font-mono text-cyan-400 border border-cyan-400/40 hover:bg-cyan-400/10 rounded cursor-pointer transition-colors"
+              className="mt-3 cursor-pointer rounded border border-cyan-400/40 px-3 py-1 font-mono text-xs text-cyan-400 transition-colors hover:bg-cyan-400/10"
             >
               $ clear filter
             </button>
@@ -461,7 +495,11 @@ export default function AdminOverviewPage() {
             nodeTypes={nodeTypes}
             fitView
             fitViewOptions={{ padding: 0.2 }}
-            style={{ backgroundColor: '#09090b', width: '100%', height: '100%' }}
+            style={{
+              backgroundColor: '#09090b',
+              width: '100%',
+              height: '100%',
+            }}
             proOptions={{ hideAttribution: true }}
           >
             <Background
@@ -478,7 +516,10 @@ export default function AdminOverviewPage() {
               }}
             />
             <MiniMap
-              style={{ backgroundColor: '#18181b', border: '1px solid #27272a' }}
+              style={{
+                backgroundColor: '#18181b',
+                border: '1px solid #27272a',
+              }}
               nodeColor={(n) =>
                 (n.data as NodeData).type === 'user' ? '#1d4ed8' : '#0e7490'
               }
@@ -516,11 +557,14 @@ function StatPill({
 }) {
   return (
     <div className="flex items-center gap-1.5">
-      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
-      <span className="text-[10px] font-mono" style={{ color: '#71717a' }}>
+      <div
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ backgroundColor: color }}
+      />
+      <span className="font-mono text-[10px]" style={{ color: '#71717a' }}>
         {label}
       </span>
-      <span className="text-xs font-mono font-bold" style={{ color }}>
+      <span className="font-mono text-xs font-bold" style={{ color }}>
         {value}
       </span>
     </div>

@@ -16,7 +16,8 @@ export interface MapMarkerItem {
   pulse?: boolean;
 }
 
-export type LocationPoint = string | [number, number] | { lat: number; lng: number };
+export type LocationPoint =
+  string | [number, number] | { lat: number; lng: number };
 
 export interface AccuracyCircleProps {
   center: [number, number] | { lat: number; lng: number };
@@ -192,16 +193,23 @@ export function MapplsMap({
       // Click event listener on map instance
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       map.addListener('click', (e: any) => {
-        const coords = e?.lngLat || e?.latlng || e?.latLng || (e?.lng && e?.lat ? e : null);
+        const coords =
+          e?.lngLat || e?.latlng || e?.latLng || (e?.lng && e?.lat ? e : null);
         if (coords) {
           const lat = Number((coords.lat ?? coords[1]).toFixed(6));
-          const lng = Number((coords.lng ?? coords.lon ?? coords[0]).toFixed(6));
+          const lng = Number(
+            (coords.lng ?? coords.lon ?? coords[0]).toFixed(6)
+          );
 
           if (!isNaN(lat) && !isNaN(lng)) {
             if (draggableMarkerRef.current) {
-              if (typeof draggableMarkerRef.current.setPosition === 'function') {
+              if (
+                typeof draggableMarkerRef.current.setPosition === 'function'
+              ) {
                 draggableMarkerRef.current.setPosition({ lat, lng });
-              } else if (typeof draggableMarkerRef.current.setLngLat === 'function') {
+              } else if (
+                typeof draggableMarkerRef.current.setLngLat === 'function'
+              ) {
                 draggableMarkerRef.current.setLngLat([lng, lat]);
               }
             }
@@ -322,7 +330,13 @@ export function MapplsMap({
         circleRef.current = null;
       }
     };
-  }, [isSdkLoaded, circleRadius, circleCenterLat, circleCenterLng, accuracyCircle]);
+  }, [
+    isSdkLoaded,
+    circleRadius,
+    circleCenterLat,
+    circleCenterLng,
+    accuracyCircle,
+  ]);
 
   const hasDraggableMarker = Boolean(draggableMarker);
   const draggablePosLat = draggableMarker
@@ -359,8 +373,12 @@ export function MapplsMap({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         marker.addListener('dragend', (e: any) => {
           const pos =
-            (typeof marker.getPosition === 'function' ? marker.getPosition() : null) ||
-            (typeof marker.getLngLat === 'function' ? marker.getLngLat() : null) ||
+            (typeof marker.getPosition === 'function'
+              ? marker.getPosition()
+              : null) ||
+            (typeof marker.getLngLat === 'function'
+              ? marker.getLngLat()
+              : null) ||
             e?.target?._lngLat ||
             e?.lngLat;
 
@@ -413,7 +431,8 @@ export function MapplsMap({
 
   // 5. Real markers for non-draggable points (e.g. destinations, emergency beacons)
   useEffect(() => {
-    if (!mapRef.current || !window.mappls?.Marker || markers.length === 0) return;
+    if (!mapRef.current || !window.mappls?.Marker || markers.length === 0)
+      return;
 
     // Clean up previous markers
     standardMarkersRef.current.forEach((inst) => {
@@ -449,11 +468,18 @@ export function MapplsMap({
 
   // 6. Polyline for routing paths (if provided)
   useEffect(() => {
-    if (!mapRef.current || !window.mappls?.Polyline || !routePath || routePath.length < 2) return;
+    if (
+      !mapRef.current ||
+      !window.mappls?.Polyline ||
+      !routePath ||
+      routePath.length < 2
+    )
+      return;
 
     if (polylineRef.current) {
       try {
-        if (typeof polylineRef.current.remove === 'function') polylineRef.current.remove();
+        if (typeof polylineRef.current.remove === 'function')
+          polylineRef.current.remove();
       } catch {}
       polylineRef.current = null;
     }
@@ -474,7 +500,8 @@ export function MapplsMap({
     return () => {
       if (polylineRef.current) {
         try {
-          if (typeof polylineRef.current.remove === 'function') polylineRef.current.remove();
+          if (typeof polylineRef.current.remove === 'function')
+            polylineRef.current.remove();
         } catch {}
         polylineRef.current = null;
       }
@@ -482,24 +509,34 @@ export function MapplsMap({
   }, [isSdkLoaded, routePath]);
 
   return (
-    <div className={`relative w-full h-full overflow-hidden font-sans select-none ${className}`}>
+    <div
+      className={`relative h-full w-full overflow-hidden font-sans select-none ${className}`}
+    >
       {/* ─── REAL MAPPLS VECTOR CONTAINER ─────────────────────────────────── */}
       <div
         id={containerId}
-        className="w-full h-full absolute inset-0"
-        style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        className="absolute inset-0 h-full w-full"
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
       />
 
       {/* ─── MISSING OR INVALID API KEY ERROR CARD ─────────────────────────── */}
       {!apiKey && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-900 p-6 text-center font-sans border border-border">
-          <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center mb-3 border border-amber-500/20">
-            <AlertTriangle className="w-5 h-5" />
+        <div className="border-border absolute inset-0 z-20 flex flex-col items-center justify-center border bg-zinc-50 p-6 text-center font-sans dark:bg-zinc-900">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-600">
+            <AlertTriangle className="h-5 w-5" />
           </div>
-          <p className="text-sm font-bold text-foreground font-sans">
+          <p className="text-foreground font-sans text-sm font-bold">
             Mappls API key missing or invalid. Please configure .env
           </p>
-          <p className="text-xs text-muted-foreground mt-1.5 font-mono max-w-sm">
+          <p className="text-muted-foreground mt-1.5 max-w-sm font-mono text-xs">
             Ensure NEXT_PUBLIC_MAPPLS_API_KEY is set in .env.local
           </p>
         </div>
@@ -507,32 +544,33 @@ export function MapplsMap({
 
       {/* ─── SDK LOAD ERROR STATE ──────────────────────────────────────────── */}
       {loadError && apiKey && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-900 p-6 text-center font-sans border border-border">
-          <div className="w-10 h-10 rounded-lg bg-red-500/10 text-red-600 flex items-center justify-center mb-3 border border-red-500/20">
-            <AlertTriangle className="w-5 h-5" />
+        <div className="border-border absolute inset-0 z-20 flex flex-col items-center justify-center border bg-zinc-50 p-6 text-center font-sans dark:bg-zinc-900">
+          <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-red-500/20 bg-red-500/10 text-red-600">
+            <AlertTriangle className="h-5 w-5" />
           </div>
-          <p className="text-sm font-bold text-foreground font-sans">
+          <p className="text-foreground font-sans text-sm font-bold">
             Mappls SDK failed to load
           </p>
-          <p className="text-xs text-muted-foreground mt-1.5 font-mono max-w-sm">
-            Please verify network connectivity and Mappls console whitelist permissions.
+          <p className="text-muted-foreground mt-1.5 max-w-sm font-mono text-xs">
+            Please verify network connectivity and Mappls console whitelist
+            permissions.
           </p>
         </div>
       )}
 
       {/* ─── LOADING VECTOR TILES PLACEHOLDER (NO FAKE GRID) ───────────────── */}
       {!isSdkLoaded && !loadError && apiKey && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900 text-zinc-500 font-sans">
-          <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2.5" />
-          <span className="text-xs font-medium text-muted-foreground font-sans">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-zinc-100 font-sans text-zinc-500 dark:bg-zinc-900">
+          <div className="border-accent mb-2.5 h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
+          <span className="text-muted-foreground font-sans text-xs font-medium">
             Loading Mappls Vector Tiles...
           </span>
         </div>
       )}
 
       {/* ─── MAP PROVIDER ATTRIBUTION CHIP ─────────────────────────────────── */}
-      <div className="absolute bottom-2 right-2 z-20 pointer-events-none">
-        <span className="text-[9px] font-mono text-zinc-400 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xs px-1.5 py-0.5 rounded border border-zinc-200/60 dark:border-zinc-800/60">
+      <div className="pointer-events-none absolute right-2 bottom-2 z-20">
+        <span className="rounded border border-zinc-200/60 bg-white/80 px-1.5 py-0.5 font-mono text-[9px] text-zinc-400 backdrop-blur-xs dark:border-zinc-800/60 dark:bg-zinc-900/80">
           Mappls Vector SDK 3.0
         </span>
       </div>

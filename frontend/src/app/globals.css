@@ -59,18 +59,48 @@
     /* Mobile app-like native feel */
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
-    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      var(--font-sans),
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
     @apply bg-background text-foreground;
   }
-  h1, h2, h3, h4, h5, h6, p, span, button, input, textarea, select, label {
-    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  button,
+  input,
+  textarea,
+  select,
+  label {
+    font-family:
+      var(--font-sans),
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
   }
   * {
     @apply border-border outline-ring/50;
   }
   html {
     @apply font-sans;
-    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      var(--font-sans),
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
     scrollbar-gutter: stable;
     overflow-y: scroll;
   }
@@ -91,51 +121,61 @@
    ============================================================ */
 :root {
   /* --- Base Surfaces --- */
-  --background: oklch(0.985 0.003 240);    /* #F8FAFC — eye-care soft slate, zero glare */
-  --foreground: oklch(0.16 0.02 250);      /* #0F172A — slate-900, maximum legibility */
+  --background: oklch(
+    0.985 0.003 240
+  ); /* #F8FAFC — eye-care soft slate, zero glare */
+  --foreground: oklch(
+    0.16 0.02 250
+  ); /* #0F172A — slate-900, maximum legibility */
 
   /* --- Card Surfaces --- */
-  --card: oklch(1 0 0);                    /* #FFFFFF — solid white on soft base */
+  --card: oklch(1 0 0); /* #FFFFFF — solid white on soft base */
   --card-foreground: oklch(0.16 0.02 250); /* #0F172A */
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.16 0.02 250);
 
   /* --- Brand: Sovereign Navy (Primary) --- */
-  --primary: oklch(0.35 0.18 250);         /* #1A3A6B — sovereign navy */
-  --primary-foreground: oklch(0.99 0 0);   /* #FFFFFF — pure white on navy */
+  --primary: oklch(0.35 0.18 250); /* #1A3A6B — sovereign navy */
+  --primary-foreground: oklch(0.99 0 0); /* #FFFFFF — pure white on navy */
 
   /* --- Brand: India Saffron (Accent) --- */
   /* Strict 10% budget: CTAs, active step indicator, map pin, DIGIPIN badge, focus ring */
-  --accent: oklch(0.65 0.22 40);           /* #FF6B00 — india saffron */
-  --accent-foreground: oklch(0.99 0 0);    /* #FFFFFF — white on saffron */
+  --accent: oklch(0.65 0.22 40); /* #FF6B00 — india saffron */
+  --accent-foreground: oklch(0.99 0 0); /* #FFFFFF — white on saffron */
 
   /* --- Secondary Surfaces --- */
-  --secondary: oklch(0.94 0.008 240);      /* #F1F5F9 — secondary buttons, badge backings */
-  --secondary-foreground: oklch(0.35 0.18 250); /* #1A3A6B — navy text on secondary */
+  --secondary: oklch(
+    0.94 0.008 240
+  ); /* #F1F5F9 — secondary buttons, badge backings */
+  --secondary-foreground: oklch(
+    0.35 0.18 250
+  ); /* #1A3A6B — navy text on secondary */
 
   /* --- Muted / Disabled --- */
-  --muted: oklch(0.95 0.005 240);          /* #F1F5F9 — skeleton pulse base */
-  --muted-foreground: oklch(0.48 0.02 250);/* #64748B — helper text, timestamps, captions */
+  --muted: oklch(0.95 0.005 240); /* #F1F5F9 — skeleton pulse base */
+  --muted-foreground: oklch(
+    0.48 0.02 250
+  ); /* #64748B — helper text, timestamps, captions */
 
   /* --- Structural Borders & Inputs --- */
-  --border: oklch(0.90 0.008 240);         /* #E2E8F0 — card borders, dividers */
-  --input: oklch(0.90 0.008 240);          /* #E2E8F0 — form field outlines */
+  --border: oklch(0.9 0.008 240); /* #E2E8F0 — card borders, dividers */
+  --input: oklch(0.9 0.008 240); /* #E2E8F0 — form field outlines */
 
   /* --- Focus & Ring (Saffron for 508 Accessibility) --- */
-  --ring: oklch(0.65 0.22 40);             /* #FF6B00 — saffron focus ring */
+  --ring: oklch(0.65 0.22 40); /* #FF6B00 — saffron focus ring */
 
   /* --- Destructive --- */
-  --destructive: oklch(0.55 0.24 27);      /* #DC2626 — errors, delete, cancel */
+  --destructive: oklch(0.55 0.24 27); /* #DC2626 — errors, delete, cancel */
   --destructive-foreground: oklch(0.99 0 0);
 
   /* --- Precision Radius: 4px Sharp Tool Feel --- */
-  --radius: 0.25rem;                        /* 4px */
+  --radius: 0.25rem; /* 4px */
 
   /* --- Chart Palette (muted, non-intrusive) --- */
   --chart-1: oklch(0.35 0.18 250);
   --chart-2: oklch(0.65 0.22 40);
   --chart-3: oklch(0.48 0.02 250);
-  --chart-4: oklch(0.70 0.12 150);
+  --chart-4: oklch(0.7 0.12 150);
   --chart-5: oklch(0.55 0.15 200);
 
   /* --- Sidebar (uses primary palette) --- */
@@ -145,24 +185,26 @@
   --sidebar-primary-foreground: oklch(0.99 0 0);
   --sidebar-accent: oklch(0.94 0.008 240);
   --sidebar-accent-foreground: oklch(0.35 0.18 250);
-  --sidebar-border: oklch(0.90 0.008 240);
+  --sidebar-border: oklch(0.9 0.008 240);
   --sidebar-ring: oklch(0.65 0.22 40);
 
   /* ============================================================
      Emergency SOS Tokens — Applied to (emergency) layout ONLY
      High-contrast, sunlight-readable for outdoor crisis use
      ============================================================ */
-  --sos-bg: oklch(0.38 0.26 27);           /* #B91C1C — full-screen crimson background */
-  --sos-text: oklch(0.99 0 0);             /* #FFFFFF — maximum contrast emergency text */
-  --sos-dial-btn: oklch(0.85 0.18 70);     /* #FBBF24 — amber, sunlight-readable */
-  --sos-dial-text: oklch(0.15 0.02 250);   /* #0F172A — dark text on amber button */
+  --sos-bg: oklch(0.38 0.26 27); /* #B91C1C — full-screen crimson background */
+  --sos-text: oklch(0.99 0 0); /* #FFFFFF — maximum contrast emergency text */
+  --sos-dial-btn: oklch(0.85 0.18 70); /* #FBBF24 — amber, sunlight-readable */
+  --sos-dial-text: oklch(
+    0.15 0.02 250
+  ); /* #0F172A — dark text on amber button */
 
   /* ============================================================
      DIGIPIN Display Tokens
      10-char sovereign code displayed in monospace pill
      ============================================================ */
-  --digipin-bg: oklch(0.35 0.18 250);      /* #1A3A6B — navy pill background */
-  --digipin-text: oklch(0.65 0.22 40);     /* #FF6B00 — saffron monospace code */
+  --digipin-bg: oklch(0.35 0.18 250); /* #1A3A6B — navy pill background */
+  --digipin-text: oklch(0.65 0.22 40); /* #FF6B00 — saffron monospace code */
 }
 
 /* Dark mode — deferred post-V1, maintains accessibility minimums */
@@ -208,7 +250,9 @@
 
 /* Pressable: button press feedback — 75ms, no delay */
 .pressable {
-  transition: transform 75ms ease-out, opacity 75ms ease-out;
+  transition:
+    transform 75ms ease-out,
+    opacity 75ms ease-out;
 }
 .pressable:active {
   transform: scale(0.98);
@@ -217,8 +261,14 @@
 
 /* Page entrance fade — used on route mount */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .animate-route-enter {
   animation: fade-in 150ms ease-out forwards;
@@ -239,8 +289,12 @@
 
 /* Skeleton shimmer for loading states */
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 .skeleton-shimmer {
   background: linear-gradient(
@@ -313,16 +367,16 @@ div[class*='mappls-tooltip'] {
    Theme: Zinc-950 + Electric Cyan + Geist Mono
    ============================================================ */
 :root {
-  --admin-bg:       #09090b;  /* zinc-950 — primary admin surface */
-  --admin-surface:  #18181b;  /* zinc-900 — elevated admin surface */
-  --admin-border:   #27272a;  /* zinc-800 — admin border */
-  --admin-accent:   #22d3ee;  /* cyan-400 — electric cyan highlight */
-  --admin-muted:    #71717a;  /* zinc-500 — muted text */
-  --admin-error:    #f87171;  /* red-400 */
-  --admin-warn:     #f59e0b;  /* amber-500 */
-  --admin-success:  #4ade80;  /* green-400 */
-  --admin-user:     #3b82f6;  /* blue-500 — user node color */
-  --admin-addr:     #06b6d4;  /* cyan-500 — address node color */
+  --admin-bg: #09090b; /* zinc-950 — primary admin surface */
+  --admin-surface: #18181b; /* zinc-900 — elevated admin surface */
+  --admin-border: #27272a; /* zinc-800 — admin border */
+  --admin-accent: #22d3ee; /* cyan-400 — electric cyan highlight */
+  --admin-muted: #71717a; /* zinc-500 — muted text */
+  --admin-error: #f87171; /* red-400 */
+  --admin-warn: #f59e0b; /* amber-500 */
+  --admin-success: #4ade80; /* green-400 */
+  --admin-user: #3b82f6; /* blue-500 — user node color */
+  --admin-addr: #06b6d4; /* cyan-500 — address node color */
 }
 
 /* ReactFlow admin theme overrides */
@@ -353,8 +407,3 @@ div[class*='mappls-tooltip'] {
 .react-flow__edge-path {
   stroke: #3f3f46 !important;
 }
-
-
-
-
-

@@ -14,10 +14,10 @@ const RecipientMapplsMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-full bg-slate-200 dark:bg-zinc-800 animate-pulse relative flex items-center justify-center">
+      <div className="relative flex h-full w-full animate-pulse items-center justify-center bg-slate-200 dark:bg-zinc-800">
         <div className="flex flex-col items-center gap-2 text-slate-400 dark:text-zinc-500">
-          <div className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin mb-3 shadow-sm" />
-          <span className="text-[11px] font-mono tracking-wider uppercase opacity-60">
+          <div className="border-accent mb-3 h-8 w-8 animate-spin rounded-full border-3 border-t-transparent shadow-sm" />
+          <span className="font-mono text-[11px] tracking-wider uppercase opacity-60">
             Initializing Map &amp; GPS
           </span>
         </div>
@@ -45,7 +45,7 @@ import {
   Navigation,
   RefreshCw,
   ShieldAlert,
-  X
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -104,7 +104,12 @@ function findDurationInObject(obj: any): unknown {
     obj.travel_time ??
     obj.travelTime ??
     obj.eta;
-  if (direct !== undefined && direct !== null && direct !== 0 && direct !== '') {
+  if (
+    direct !== undefined &&
+    direct !== null &&
+    direct !== 0 &&
+    direct !== ''
+  ) {
     return direct;
   }
 
@@ -130,7 +135,12 @@ function findDurationInObject(obj: any): unknown {
         leg.time ??
         leg.time_text ??
         leg.timeText;
-      if (legDur !== undefined && legDur !== null && legDur !== 0 && legDur !== '') {
+      if (
+        legDur !== undefined &&
+        legDur !== null &&
+        legDur !== 0 &&
+        legDur !== ''
+      ) {
         return legDur;
       }
     }
@@ -153,7 +163,12 @@ function findDistanceInObject(obj: any): unknown {
     obj.length ??
     obj.length_text ??
     obj.lengthText;
-  if (direct !== undefined && direct !== null && direct !== 0 && direct !== '') {
+  if (
+    direct !== undefined &&
+    direct !== null &&
+    direct !== 0 &&
+    direct !== ''
+  ) {
     return direct;
   }
 
@@ -177,7 +192,12 @@ function findDistanceInObject(obj: any): unknown {
         leg.distanceText ??
         leg.length ??
         leg.length_text;
-      if (legDist !== undefined && legDist !== null && legDist !== 0 && legDist !== '') {
+      if (
+        legDist !== undefined &&
+        legDist !== null &&
+        legDist !== 0 &&
+        legDist !== ''
+      ) {
         return legDist;
       }
     }
@@ -196,8 +216,12 @@ function parseDurationSeconds(raw: unknown, distanceMeters?: number): number {
     if (typeof raw === 'string') {
       const s = raw.trim().toLowerCase();
       const hrMatch = s.match(/(\d+(?:\.\d+)?)\s*(?:hr|hrs|hour|hours|h)/);
-      const minMatch = s.match(/(\d+(?:\.\d+)?)\s*(?:min|mins|minute|minutes|m)(?!.*(?:hr|hrs|hour|hours|h))/);
-      const secMatch = s.match(/(\d+(?:\.\d+)?)\s*(?:sec|secs|second|seconds|s)/);
+      const minMatch = s.match(
+        /(\d+(?:\.\d+)?)\s*(?:min|mins|minute|minutes|m)(?!.*(?:hr|hrs|hour|hours|h))/
+      );
+      const secMatch = s.match(
+        /(\d+(?:\.\d+)?)\s*(?:sec|secs|second|seconds|s)/
+      );
 
       if (hrMatch || minMatch || secMatch) {
         const hours = hrMatch ? parseFloat(hrMatch[1]) : 0;
@@ -357,7 +381,12 @@ interface AddressData {
 /**
  * Haversine formula to calculate aerial distance in meters between two coordinates.
  */
-function calculateDistanceMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+function calculateDistanceMeters(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
   const R = 6371e3;
   const phi1 = (lat1 * Math.PI) / 180;
   const phi2 = (lat2 * Math.PI) / 180;
@@ -366,7 +395,10 @@ function calculateDistanceMeters(lat1: number, lon1: number, lat2: number, lon2:
 
   const a =
     Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
-    Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    Math.cos(phi1) *
+      Math.cos(phi2) *
+      Math.sin(deltaLambda / 2) *
+      Math.sin(deltaLambda / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return Math.round(R * c);
@@ -398,12 +430,16 @@ export default function RecipientPage({ params }: PageProps) {
   const [isExpired, setIsExpired] = useState(false);
 
   // Viewer Real-Time GPS Location & Permission State
-  const [viewerLocation, setViewerLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [viewerLocation, setViewerLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [isLocating, setIsLocating] = useState(true);
   const [isPermissionDenied, setIsPermissionDenied] = useState(false);
 
   // Mappls Dynamic Route Data
-  const [mapplsRouteData, setMapplsRouteData] = useState<MapplsRouteData | null>(null);
+  const [mapplsRouteData, setMapplsRouteData] =
+    useState<MapplsRouteData | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleRouteCalculated = useCallback((data: any) => {
@@ -521,7 +557,10 @@ export default function RecipientPage({ params }: PageProps) {
 
         setIsLoading(false);
       } catch (err) {
-        console.error('[Recipient] Failed to load address record, testing raw DIGIPIN fallback:', err);
+        console.error(
+          '[Recipient] Failed to load address record, testing raw DIGIPIN fallback:',
+          err
+        );
         if (tryRawDigipinFallback()) return;
         setIsNotFound(true);
         setIsLoading(false);
@@ -551,7 +590,11 @@ export default function RecipientPage({ params }: PageProps) {
         setIsLocating(false);
       },
       (err) => {
-        console.warn('[Geolocation] Viewer location access error:', err.code, err.message);
+        console.warn(
+          '[Geolocation] Viewer location access error:',
+          err.code,
+          err.message
+        );
         if (err.code === 1 || err.code === err.PERMISSION_DENIED) {
           setIsPermissionDenied(true);
         }
@@ -567,7 +610,11 @@ export default function RecipientPage({ params }: PageProps) {
     gpsRequestedRef.current = true;
 
     // Direct permission status inspection if Permissions API is available
-    if (typeof navigator !== 'undefined' && 'permissions' in navigator && navigator.permissions?.query) {
+    if (
+      typeof navigator !== 'undefined' &&
+      'permissions' in navigator &&
+      navigator.permissions?.query
+    ) {
       navigator.permissions
         .query({ name: 'geolocation' })
         .then((permissionStatus) => {
@@ -602,17 +649,20 @@ export default function RecipientPage({ params }: PageProps) {
   // Early Return: 410 Expired (only evaluated once fetch completes)
   if (!isLoading && isExpired) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-background font-sans text-foreground">
-        <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mb-3 shadow-xs">
-          <Clock className="w-6 h-6" />
+      <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-4 text-center font-sans">
+        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-rose-200 bg-rose-50 text-rose-600 shadow-xs">
+          <Clock className="h-6 w-6" />
         </div>
-        <h1 className="text-xl font-bold text-foreground mb-1">Micro-Address Expired</h1>
-        <p className="text-sm text-muted-foreground max-w-sm mb-6 leading-relaxed">
-          This temporary guest address has expired. Please contact the resident for an updated link.
+        <h1 className="text-foreground mb-1 text-xl font-bold">
+          Micro-Address Expired
+        </h1>
+        <p className="text-muted-foreground mb-6 max-w-sm text-sm leading-relaxed">
+          This temporary guest address has expired. Please contact the resident
+          for an updated link.
         </p>
         <Link
           href="/create"
-          className="px-4 py-2.5 rounded-[4px] bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-xs cursor-pointer"
+          className="bg-primary text-primary-foreground cursor-pointer rounded-[4px] px-4 py-2.5 text-sm font-semibold shadow-xs transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98]"
         >
           Create New Micro-Address
         </Link>
@@ -623,17 +673,20 @@ export default function RecipientPage({ params }: PageProps) {
   // Early Return: Strict 404 Not Found (only evaluated once fetch completes)
   if (!isLoading && (isNotFound || !addressData)) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-background font-sans text-foreground">
-        <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-border flex items-center justify-center text-zinc-600 dark:text-zinc-300 mb-3 shadow-xs">
-          <MapPin className="w-6 h-6 text-zinc-500" />
+      <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-4 text-center font-sans">
+        <div className="border-border mb-3 flex h-12 w-12 items-center justify-center rounded-full border bg-zinc-100 text-zinc-600 shadow-xs dark:bg-zinc-800 dark:text-zinc-300">
+          <MapPin className="h-6 w-6 text-zinc-500" />
         </div>
-        <h1 className="text-xl font-bold text-foreground mb-1">Micro-Address Not Found</h1>
-        <p className="text-sm text-muted-foreground max-w-sm mb-6 leading-relaxed">
-          The sovereign micro-address link you requested does not exist or may have been typed incorrectly.
+        <h1 className="text-foreground mb-1 text-xl font-bold">
+          Micro-Address Not Found
+        </h1>
+        <p className="text-muted-foreground mb-6 max-w-sm text-sm leading-relaxed">
+          The sovereign micro-address link you requested does not exist or may
+          have been typed incorrectly.
         </p>
         <Link
           href="/"
-          className="px-4 py-2.5 rounded-[4px] bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-[transform,opacity] duration-150 ease-out shadow-xs cursor-pointer"
+          className="bg-primary text-primary-foreground cursor-pointer rounded-[4px] px-4 py-2.5 text-sm font-semibold shadow-xs transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98]"
         >
           Go to Home
         </Link>
@@ -643,12 +696,23 @@ export default function RecipientPage({ params }: PageProps) {
 
   // Strictly Resolved Database Attributes (Safe during progressive load)
   const code = addressData?.digipin ?? '';
-  const destLat = addressData?.location?.lat ?? addressData?.entranceLat ?? addressData?.baseLat ?? 0;
-  const destLng = addressData?.location?.lng ?? addressData?.entranceLng ?? addressData?.baseLng ?? 0;
+  const destLat =
+    addressData?.location?.lat ??
+    addressData?.entranceLat ??
+    addressData?.baseLat ??
+    0;
+  const destLng =
+    addressData?.location?.lng ??
+    addressData?.entranceLng ??
+    addressData?.baseLng ??
+    0;
   const floor = addressData?.floor?.trim() || '';
   const flat = addressData?.flat?.trim() || '';
-  const hints = addressData?.routingNotes?.trim() || addressData?.landmark?.trim() || '';
-  const hasZAxisData = Boolean(!addressData?.isRawDigipin && (floor || flat || hints));
+  const hints =
+    addressData?.routingNotes?.trim() || addressData?.landmark?.trim() || '';
+  const hasZAxisData = Boolean(
+    !addressData?.isRawDigipin && (floor || flat || hints)
+  );
 
   // Distance computation from real viewer GPS (straight-line Haversine fallback)
   let distanceMeters: number | null = null;
@@ -668,20 +732,24 @@ export default function RecipientPage({ params }: PageProps) {
     effectiveMapplsRouteData !== null
       ? formatRoutingDistance(effectiveMapplsRouteData.distanceMeters)
       : distanceMeters !== null
-      ? formatRoutingDistance(distanceMeters)
-      : 'Destination Pin Locked';
+        ? formatRoutingDistance(distanceMeters)
+        : 'Destination Pin Locked';
 
   const effectiveDistance =
     effectiveMapplsRouteData !== null
       ? effectiveMapplsRouteData.distanceMeters
       : distanceMeters;
 
-  const isWalkingDistance = effectiveDistance !== null && effectiveDistance < 500;
+  const isWalkingDistance =
+    effectiveDistance !== null && effectiveDistance < 500;
   const travelModeLabel = isWalkingDistance ? 'walk' : 'drive';
 
   // Determine realistic duration in seconds
   let effectiveDurationSeconds: number | null = null;
-  if (effectiveMapplsRouteData !== null && effectiveMapplsRouteData.durationSeconds > 60) {
+  if (
+    effectiveMapplsRouteData !== null &&
+    effectiveMapplsRouteData.durationSeconds > 60
+  ) {
     effectiveDurationSeconds = effectiveMapplsRouteData.durationSeconds;
   } else if (effectiveDistance !== null && effectiveDistance > 0) {
     // Realistic travel duration: Walking: 1.3 m/s (~4.7 km/h), Driving: 11.1 m/s (~40 km/h)
@@ -713,7 +781,9 @@ export default function RecipientPage({ params }: PageProps) {
             setIsVerifyingPasscode(false);
             return;
           }
-          setAuthError(verifyRes.error || 'Incorrect passcode. Please try again.');
+          setAuthError(
+            verifyRes.error || 'Incorrect passcode. Please try again.'
+          );
           setIsVerifyingPasscode(false);
           return;
         }
@@ -740,7 +810,10 @@ export default function RecipientPage({ params }: PageProps) {
     setAuthError('');
 
     if (viewerLocation) {
-      const effectiveDist = mapplsRouteData !== null ? Math.round(mapplsRouteData.distanceMeters) : (distanceMeters ?? 0);
+      const effectiveDist =
+        mapplsRouteData !== null
+          ? Math.round(mapplsRouteData.distanceMeters)
+          : (distanceMeters ?? 0);
       addOrUpdateViewer({
         id: `viewer-${Date.now()}`,
         name: 'Recipient',
@@ -776,13 +849,15 @@ export default function RecipientPage({ params }: PageProps) {
     touchStartY.current = null;
   };
 
-  
-
   return (
-    <div className="relative w-full h-[100dvh] font-sans bg-background text-foreground overflow-hidden select-none">
+    <div className="bg-background text-foreground relative h-[100dvh] w-full overflow-hidden font-sans select-none">
       {/* 1. Header */}
-      <header className="absolute top-0 left-0 right-0 z-40 h-12 bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200/60 dark:border-zinc-800/60 px-4 flex items-center justify-between shadow-xs font-sans">
-        <Link href="/" className="flex items-center group cursor-pointer" aria-label="DigiRoute Home">
+      <header className="absolute top-0 right-0 left-0 z-40 flex h-12 items-center justify-between border-b border-zinc-200/60 bg-white/85 px-4 font-sans shadow-xs backdrop-blur-md dark:border-zinc-800/60 dark:bg-zinc-950/85">
+        <Link
+          href="/"
+          className="group flex cursor-pointer items-center"
+          aria-label="DigiRoute Home"
+        >
           <Image
             src="/logo-transparent.png"
             alt="DigiRoute Logo"
@@ -790,20 +865,20 @@ export default function RecipientPage({ params }: PageProps) {
             height={40}
             priority={true}
             quality={75}
-            className="w-24 sm:w-28 h-auto object-contain dark:invert dark:brightness-200"
+            className="h-auto w-24 object-contain sm:w-28 dark:brightness-200 dark:invert"
           />
         </Link>
 
         <nav className="flex items-center gap-4">
           <Link
             href="/"
-            className="text-xs sm:text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors font-sans"
+            className="font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             Home
           </Link>
           <Link
             href="/about"
-            className="text-xs sm:text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100 transition-colors font-sans"
+            className="font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             About
           </Link>
@@ -811,101 +886,121 @@ export default function RecipientPage({ params }: PageProps) {
       </header>
 
       {/* 2. Security Interstitial Modal if Passcode Protected */}
-      {!isLoading && !isUnlocked && Boolean(addressData?.hasPasscode || addressData?.passcode) && (
-        <div
-          className={`fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-4 transition-[transform,opacity] duration-300 ease-out ${
-            isExitingInterstitial
-              ? 'opacity-0 -translate-y-4 pointer-events-none'
-              : 'opacity-100 translate-y-0'
-          }`}
-        >
-          <div className="w-full max-w-sm bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-sm p-6 shadow-xl space-y-4 font-sans">
-            <div className="text-center space-y-1.5">
-              <Lock className="w-6 h-6 text-[#FF6B00] dark:text-orange-400 mx-auto mb-2 shrink-0" strokeWidth={2} />
-              <h1 className="text-lg font-bold text-slate-900 dark:text-slate-50 font-sans tracking-tight">
-                Secure Micro-Address
-              </h1>
-              <p className="text-xs text-slate-600 dark:text-slate-400 font-sans">
-                This micro-address is protected by a resident passcode.
-              </p>
-            </div>
-
-            <form onSubmit={handleUnlock} className="space-y-3.5 pt-1">
-              <div>
-                <label
-                  htmlFor="passcode-input"
-                  className="block text-xs font-semibold text-slate-900 dark:text-slate-100 mb-1 font-sans"
-                >
-                  Enter Passcode
-                </label>
-                <div className="relative flex items-center">
-                  <input
-                    id="passcode-input"
-                    type={showPasscode ? 'text' : 'password'}
-                    required
-                    value={passcode}
-                    onChange={(e) => {
-                      setPasscode(e.target.value);
-                      if (authError) setAuthError('');
-                    }}
-                    placeholder="******"
-                    className="w-full px-3 py-2.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-sm text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#FF6B00] focus:border-[#FF6B00] transition-colors duration-150 font-sans"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPasscode(!showPasscode)}
-                    className="absolute right-3 p-1 rounded-sm text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
-                    aria-label={showPasscode ? 'Hide passcode' : 'Show passcode'}
-                  >
-                    {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+      {!isLoading &&
+        !isUnlocked &&
+        Boolean(addressData?.hasPasscode || addressData?.passcode) && (
+          <div
+            className={`bg-background fixed inset-0 z-50 flex flex-col items-center justify-center p-4 transition-[transform,opacity] duration-300 ease-out ${
+              isExitingInterstitial
+                ? 'pointer-events-none -translate-y-4 opacity-0'
+                : 'translate-y-0 opacity-100'
+            }`}
+          >
+            <div className="w-full max-w-sm space-y-4 rounded-sm border border-slate-200 bg-white p-6 font-sans shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
+              <div className="space-y-1.5 text-center">
+                <Lock
+                  className="mx-auto mb-2 h-6 w-6 shrink-0 text-[#FF6B00] dark:text-orange-400"
+                  strokeWidth={2}
+                />
+                <h1 className="font-sans text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                  Secure Micro-Address
+                </h1>
+                <p className="font-sans text-xs text-slate-600 dark:text-slate-400">
+                  This micro-address is protected by a resident passcode.
+                </p>
               </div>
 
-              {authError && (
-                <p className="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5 font-sans pt-0.5">
-                  <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
-                  <span>{authError}</span>
-                </p>
-              )}
+              <form onSubmit={handleUnlock} className="space-y-3.5 pt-1">
+                <div>
+                  <label
+                    htmlFor="passcode-input"
+                    className="mb-1 block font-sans text-xs font-semibold text-slate-900 dark:text-slate-100"
+                  >
+                    Enter Passcode
+                  </label>
+                  <div className="relative flex items-center">
+                    <input
+                      id="passcode-input"
+                      type={showPasscode ? 'text' : 'password'}
+                      required
+                      value={passcode}
+                      onChange={(e) => {
+                        setPasscode(e.target.value);
+                        if (authError) setAuthError('');
+                      }}
+                      placeholder="******"
+                      className="w-full rounded-sm border border-slate-300 bg-white px-3 py-2.5 font-sans text-sm text-slate-900 transition-colors duration-150 placeholder:text-slate-400 focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FF6B00] focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-slate-100 dark:placeholder:text-zinc-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasscode(!showPasscode)}
+                      className="absolute right-3 cursor-pointer rounded-sm p-1 text-slate-400 transition-colors hover:text-slate-700 dark:hover:text-slate-200"
+                      aria-label={
+                        showPasscode ? 'Hide passcode' : 'Show passcode'
+                      }
+                    >
+                      {showPasscode ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
 
-              <button
-                type="submit"
-                id="unlock-address-btn"
-                disabled={isVerifyingPasscode}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-sm bg-[#FF6B00] text-white text-sm font-semibold hover:bg-[#e05e00] active:scale-[0.98] transition-all duration-100 ease-out shadow-xs cursor-pointer font-sans disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                <span>{isVerifyingPasscode ? 'Verifying...' : 'Unlock Address'}</span>
-                <LockOpen className="w-4 h-4" />
-              </button>
-            </form>
+                {authError && (
+                  <p className="flex items-center gap-1.5 pt-0.5 font-sans text-xs font-medium text-red-600 dark:text-red-400">
+                    <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
+                    <span>{authError}</span>
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  id="unlock-address-btn"
+                  disabled={isVerifyingPasscode}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-[#FF6B00] px-4 py-2.5 font-sans text-sm font-semibold text-white shadow-xs transition-all duration-100 ease-out hover:bg-[#e05e00] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <span>
+                    {isVerifyingPasscode ? 'Verifying...' : 'Unlock Address'}
+                  </span>
+                  <LockOpen className="h-4 w-4" />
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* 3. Hero Map Layer with Directions Plugin, Permission Denied UI, or Progressive Map Skeleton */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {isPermissionDenied ? (
-          <div className="w-full h-full flex items-center justify-center p-4 bg-slate-100 dark:bg-zinc-950 pb-28">
-            <div className="w-full max-w-sm bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-sm p-6 shadow-sm font-sans space-y-4 text-left">
+          <div className="flex h-full w-full items-center justify-center bg-slate-100 p-4 pb-28 dark:bg-zinc-950">
+            <div className="w-full max-w-sm space-y-4 rounded-sm border border-slate-300 bg-white p-6 text-left font-sans shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-[#FF6B00] shrink-0" strokeWidth={2} />
-                  <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 font-sans tracking-tight">
+                  <Lock
+                    className="h-5 w-5 shrink-0 text-[#FF6B00]"
+                    strokeWidth={2}
+                  />
+                  <h2 className="font-sans text-base font-bold tracking-tight text-slate-900 dark:text-slate-100">
                     Location Access Required
                   </h2>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
-                  We need your location to show distance and directions to this micro-address.
+                <p className="font-sans text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                  We need your location to show distance and directions to this
+                  micro-address.
                 </p>
               </div>
 
-              <div className="border border-slate-200 dark:border-zinc-800 rounded-sm p-3.5 bg-slate-50 dark:bg-zinc-950 space-y-2">
-                <p className="text-[11px] font-semibold text-slate-900 dark:text-slate-200 uppercase tracking-wider font-sans">
+              <div className="space-y-2 rounded-sm border border-slate-200 bg-slate-50 p-3.5 dark:border-zinc-800 dark:bg-zinc-950">
+                <p className="font-sans text-[11px] font-semibold tracking-wider text-slate-900 uppercase dark:text-slate-200">
                   Instructions
                 </p>
-                <ol className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400 font-sans list-none">
-                  <li>1. Click the 🔒 lock icon in your browser&apos;s address bar.</li>
+                <ol className="list-none space-y-1.5 font-sans text-xs text-slate-600 dark:text-slate-400">
+                  <li>
+                    1. Click the 🔒 lock icon in your browser&apos;s address
+                    bar.
+                  </li>
                   <li>2. Go to Site Settings / Permissions.</li>
                   <li>3. Set Location to &apos;Allow&apos;.</li>
                   <li>4. Reload the page.</li>
@@ -916,18 +1011,18 @@ export default function RecipientPage({ params }: PageProps) {
                 type="button"
                 onClick={() => window.location.reload()}
                 id="reload-page-permission-btn"
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-sm bg-[#FF6B00] text-white text-xs sm:text-sm font-semibold hover:bg-[#e05e00] active:scale-[0.98] transition-colors duration-150 shadow-xs cursor-pointer font-sans"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-[#FF6B00] px-4 py-2.5 font-sans text-xs font-semibold text-white shadow-xs transition-colors duration-150 hover:bg-[#e05e00] active:scale-[0.98] sm:text-sm"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="h-4 w-4" />
                 <span>Reload Page</span>
               </button>
             </div>
           </div>
-        ) : (isLoading || isLocating) ? (
-          <div className="w-full h-full bg-slate-200 dark:bg-zinc-800 animate-pulse relative flex items-center justify-center">
+        ) : isLoading || isLocating ? (
+          <div className="relative flex h-full w-full animate-pulse items-center justify-center bg-slate-200 dark:bg-zinc-800">
             <div className="flex flex-col items-center gap-2 text-slate-400 dark:text-zinc-500">
-              <MapPin className="w-8 h-8 opacity-40" />
-              <span className="text-[11px] font-mono tracking-wider uppercase opacity-60">
+              <MapPin className="h-8 w-8 opacity-40" />
+              <span className="font-mono text-[11px] tracking-wider uppercase opacity-60">
                 Initializing Map &amp; GPS
               </span>
             </div>
@@ -942,7 +1037,7 @@ export default function RecipientPage({ params }: PageProps) {
             }}
             viewerLocation={viewerLocation}
             isLocating={isLocating}
-            className="w-full h-full"
+            className="h-full w-full"
             onRouteCalculated={handleRouteCalculated}
             onRouteError={handleRouteError}
           />
@@ -951,8 +1046,8 @@ export default function RecipientPage({ params }: PageProps) {
 
       {/* 4. Floating Top Status Banner & Fullscreen Toggle */}
       <div className="absolute top-14 right-3 z-20 flex flex-col items-end gap-2">
-        <div className="bg-card/90 backdrop-blur-sm border border-border px-2.5 py-1 rounded-[4px] text-[11px] font-semibold text-foreground flex items-center gap-1.5 shadow-xs">
-          <Compass className="w-3.5 h-3.5 text-accent" />
+        <div className="bg-card/90 border-border text-foreground flex items-center gap-1.5 rounded-[4px] border px-2.5 py-1 text-[11px] font-semibold shadow-xs backdrop-blur-sm">
+          <Compass className="text-accent h-3.5 w-3.5" />
           <span>Facing North</span>
         </div>
 
@@ -961,14 +1056,20 @@ export default function RecipientPage({ params }: PageProps) {
           type="button"
           onClick={() => setIsMapFullscreen((prev) => !prev)}
           id="expand-recipient-map-btn"
-          aria-label={isMapFullscreen ? 'Exit fullscreen map' : 'Expand map fullscreen'}
-          title={isMapFullscreen ? 'Restore address details' : 'Expand map to fullscreen'}
-          className="bg-card/95 hover:bg-card active:scale-95 transition-all backdrop-blur-md border border-border p-2.5 rounded-lg text-foreground shadow-md flex items-center justify-center cursor-pointer"
+          aria-label={
+            isMapFullscreen ? 'Exit fullscreen map' : 'Expand map fullscreen'
+          }
+          title={
+            isMapFullscreen
+              ? 'Restore address details'
+              : 'Expand map to fullscreen'
+          }
+          className="bg-card/95 hover:bg-card border-border text-foreground flex cursor-pointer items-center justify-center rounded-lg border p-2.5 shadow-md backdrop-blur-md transition-all active:scale-95"
         >
           {isMapFullscreen ? (
-            <Minimize2 className="w-4 h-4 text-accent" />
+            <Minimize2 className="text-accent h-4 w-4" />
           ) : (
-            <Maximize2 className="w-4 h-4 text-accent" />
+            <Maximize2 className="text-accent h-4 w-4" />
           )}
         </button>
       </div>
@@ -977,44 +1078,50 @@ export default function RecipientPage({ params }: PageProps) {
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className={`absolute bottom-[70px] left-3 right-3 z-30 transition-all duration-300 ease-in-out ${
+        className={`absolute right-3 bottom-[70px] left-3 z-30 transition-all duration-300 ease-in-out ${
           isMapFullscreen
-            ? 'translate-y-[150%] opacity-0 pointer-events-none'
-            : 'translate-y-0 opacity-100 pointer-events-auto'
+            ? 'pointer-events-none translate-y-[150%] opacity-0'
+            : 'pointer-events-auto translate-y-0 opacity-100'
         }`}
       >
-        <div className="bg-card/95 backdrop-blur-md border border-border rounded-lg shadow-xl font-sans overflow-hidden">
+        <div className="bg-card/95 border-border overflow-hidden rounded-lg border font-sans shadow-xl backdrop-blur-md">
           {/* Drag Handle Bar & Summary Header */}
           <div
             role="button"
             tabIndex={0}
-            aria-label={isSheetCollapsed ? 'Expand address details' : 'Collapse address details'}
+            aria-label={
+              isSheetCollapsed
+                ? 'Expand address details'
+                : 'Collapse address details'
+            }
             onClick={() => setIsSheetCollapsed((prev) => !prev)}
-            className="w-full px-3.5 pt-1.5 pb-2.5 cursor-pointer select-none hover:bg-muted/40 transition-colors"
+            className="hover:bg-muted/40 w-full cursor-pointer px-3.5 pt-1.5 pb-2.5 transition-colors select-none"
           >
             {/* Horizontal Pill Handle */}
-            <div className="w-10 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700 mx-auto mb-2" />
+            <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
 
             {/* Compact Summary Header Row */}
             <div className="flex items-center justify-between">
               <div className="space-y-0.5 text-left">
-                <span className="text-[11px] font-medium text-muted-foreground block font-sans">
+                <span className="text-muted-foreground block font-sans text-[11px] font-medium">
                   Doorstep distance
                 </span>
-                <div className="text-base sm:text-lg font-bold text-foreground font-sans flex items-center gap-1.5">
+                <div className="text-foreground flex items-center gap-1.5 font-sans text-base font-bold sm:text-lg">
                   {isPermissionDenied ? (
-                    <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
                       Location access required
                     </span>
                   ) : isLoading || isLocating ? (
                     <div className="flex items-center gap-2 py-0.5">
-                      <div className="h-5 w-20 bg-slate-200 dark:bg-zinc-700 rounded-sm animate-pulse" />
-                      <div className="h-4 w-16 bg-slate-200 dark:bg-zinc-700 rounded-sm animate-pulse" />
+                      <div className="h-5 w-20 animate-pulse rounded-sm bg-slate-200 dark:bg-zinc-700" />
+                      <div className="h-4 w-16 animate-pulse rounded-sm bg-slate-200 dark:bg-zinc-700" />
                     </div>
                   ) : (
                     <>
                       <span className="text-accent">{distanceText}</span>
-                      <span className="text-xs text-muted-foreground font-normal">{etaText}</span>
+                      <span className="text-muted-foreground text-xs font-normal">
+                        {etaText}
+                      </span>
                     </>
                   )}
                 </div>
@@ -1024,138 +1131,144 @@ export default function RecipientPage({ params }: PageProps) {
                 <div className="text-right">
                   {isLoading ? (
                     <div className="flex flex-col items-end gap-1">
-                      <div className="h-4 w-20 bg-slate-200 dark:bg-zinc-700 rounded-sm animate-pulse" />
-                      <div className="h-3 w-24 bg-slate-200 dark:bg-zinc-700 rounded-sm animate-pulse" />
+                      <div className="h-4 w-20 animate-pulse rounded-sm bg-slate-200 dark:bg-zinc-700" />
+                      <div className="h-3 w-24 animate-pulse rounded-sm bg-slate-200 dark:bg-zinc-700" />
                     </div>
                   ) : (
                     <>
-                      <span className="font-mono text-xs font-bold text-primary block">
+                      <span className="text-primary block font-mono text-xs font-bold">
                         {code}
                       </span>
-                      <span className="text-[10px] text-muted-foreground font-mono">
-                        {destLat && destLng ? `${destLat.toFixed(4)}° N, ${destLng.toFixed(4)}° E` : ''}
+                      <span className="text-muted-foreground font-mono text-[10px]">
+                        {destLat && destLng
+                          ? `${destLat.toFixed(4)}° N, ${destLng.toFixed(4)}° E`
+                          : ''}
                       </span>
                     </>
                   )}
                 </div>
-                {!isLoading && (hasZAxisData || photoUrl || !addressData?.isRawDigipin) && (
-                  <div className="p-1 rounded text-muted-foreground hover:text-foreground">
-                    {isSheetCollapsed ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </div>
-                )}
+                {!isLoading &&
+                  (hasZAxisData || photoUrl || !addressData?.isRawDigipin) && (
+                    <div className="text-muted-foreground hover:text-foreground rounded p-1">
+                      {isSheetCollapsed ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  )}
               </div>
             </div>
           </div>
 
           {/* Expandable / Collapsible Details Body (only rendered if details exist) */}
-          {!isLoading && (hasZAxisData || photoUrl || !addressData?.isRawDigipin) && (
-            <div
-              className={`transition-[max-height,opacity] duration-300 ease-in-out px-3.5 pb-3 ${
-                isSheetCollapsed ? 'max-h-0 opacity-0 overflow-hidden !py-0' : 'max-h-[60vh] opacity-100 overflow-y-auto space-y-2.5 pt-1 border-t border-border/60'
-              }`}
-            >
-              {/* Z-Axis Details (Floor, Unit, Routing Notes) */}
-              {hasZAxisData ? (
-                <div className="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800 p-2.5 rounded space-y-2">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                    <Building2 className="w-3.5 h-3.5 text-accent shrink-0" />
-                    <span>Floor &amp; unit navigation</span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="bg-white dark:bg-zinc-950 p-2 rounded border border-zinc-200/60 dark:border-zinc-800">
-                      <span className="text-[10px] font-medium text-muted-foreground block">
-                        Floor
-                      </span>
-                      <span className="font-semibold text-foreground text-xs sm:text-sm mt-0.5 block truncate">
-                        {floor || 'Ground'}
-                      </span>
+          {!isLoading &&
+            (hasZAxisData || photoUrl || !addressData?.isRawDigipin) && (
+              <div
+                className={`px-3.5 pb-3 transition-[max-height,opacity] duration-300 ease-in-out ${
+                  isSheetCollapsed
+                    ? 'max-h-0 overflow-hidden !py-0 opacity-0'
+                    : 'border-border/60 max-h-[60vh] space-y-2.5 overflow-y-auto border-t pt-1 opacity-100'
+                }`}
+              >
+                {/* Z-Axis Details (Floor, Unit, Routing Notes) */}
+                {hasZAxisData ? (
+                  <div className="space-y-2 rounded border border-zinc-200/80 bg-zinc-50 p-2.5 dark:border-zinc-800 dark:bg-zinc-900/60">
+                    <div className="text-foreground flex items-center gap-1.5 text-xs font-semibold">
+                      <Building2 className="text-accent h-3.5 w-3.5 shrink-0" />
+                      <span>Floor &amp; unit navigation</span>
                     </div>
-                    <div className="bg-white dark:bg-zinc-950 p-2 rounded border border-zinc-200/60 dark:border-zinc-800">
-                      <span className="text-[10px] font-medium text-muted-foreground block">
-                        Unit
-                      </span>
-                      <span className="font-semibold text-foreground text-xs sm:text-sm mt-0.5 block truncate">
-                        {flat || 'Main Door'}
-                      </span>
-                    </div>
-                  </div>
 
-                  {hints && (
-                    <div className="bg-white dark:bg-zinc-950 p-2 rounded border border-zinc-200/60 dark:border-zinc-800 text-xs">
-                      <div className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground mb-0.5">
-                        <Info className="w-3 h-3 text-accent shrink-0" />
-                        <span>Routing notes</span>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="rounded border border-zinc-200/60 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
+                        <span className="text-muted-foreground block text-[10px] font-medium">
+                          Floor
+                        </span>
+                        <span className="text-foreground mt-0.5 block truncate text-xs font-semibold sm:text-sm">
+                          {floor || 'Ground'}
+                        </span>
                       </div>
-                      <p className="text-xs text-foreground leading-snug font-sans">
-                        {hints}
-                      </p>
+                      <div className="rounded border border-zinc-200/60 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
+                        <span className="text-muted-foreground block text-[10px] font-medium">
+                          Unit
+                        </span>
+                        <span className="text-foreground mt-0.5 block truncate text-xs font-semibold sm:text-sm">
+                          {flat || 'Main Door'}
+                        </span>
+                      </div>
                     </div>
-                  )}
-                </div>
-              ) : null}
 
-              {/* View Doorway Photo Button (only if photo exists or registered address) */}
-              {photoUrl ? (
-                <button
-                  type="button"
-                  id="view-doorway-photo-btn"
-                  onClick={() => setIsPhotoModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-[4px] bg-primary text-primary-foreground text-xs md:text-sm font-semibold hover:opacity-95 active:scale-[0.98] transition-[transform,opacity] duration-150 shadow-xs cursor-pointer font-sans"
-                >
-                  <Camera className="w-4 h-4 text-accent" />
-                  <span>View Doorway Photo</span>
-                </button>
-              ) : !addressData?.isRawDigipin ? (
-                <button
-                  type="button"
-                  id="view-doorway-photo-btn"
-                  onClick={() => setIsPhotoModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-[4px] bg-primary text-primary-foreground text-xs md:text-sm font-semibold hover:opacity-95 active:scale-[0.98] transition-[transform,opacity] duration-150 shadow-xs cursor-pointer font-sans"
-                >
-                  <Camera className="w-4 h-4 text-accent" />
-                  <span>Doorway Visual Lock</span>
-                </button>
-              ) : null}
-            </div>
-          )}
+                    {hints && (
+                      <div className="rounded border border-zinc-200/60 bg-white p-2 text-xs dark:border-zinc-800 dark:bg-zinc-950">
+                        <div className="text-muted-foreground mb-0.5 flex items-center gap-1 text-[10px] font-medium">
+                          <Info className="text-accent h-3 w-3 shrink-0" />
+                          <span>Routing notes</span>
+                        </div>
+                        <p className="text-foreground font-sans text-xs leading-snug">
+                          {hints}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : null}
+
+                {/* View Doorway Photo Button (only if photo exists or registered address) */}
+                {photoUrl ? (
+                  <button
+                    type="button"
+                    id="view-doorway-photo-btn"
+                    onClick={() => setIsPhotoModalOpen(true)}
+                    className="bg-primary text-primary-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] px-3 py-2.5 font-sans text-xs font-semibold shadow-xs transition-[transform,opacity] duration-150 hover:opacity-95 active:scale-[0.98] md:text-sm"
+                  >
+                    <Camera className="text-accent h-4 w-4" />
+                    <span>View Doorway Photo</span>
+                  </button>
+                ) : !addressData?.isRawDigipin ? (
+                  <button
+                    type="button"
+                    id="view-doorway-photo-btn"
+                    onClick={() => setIsPhotoModalOpen(true)}
+                    className="bg-primary text-primary-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] px-3 py-2.5 font-sans text-xs font-semibold shadow-xs transition-[transform,opacity] duration-150 hover:opacity-95 active:scale-[0.98] md:text-sm"
+                  >
+                    <Camera className="text-accent h-4 w-4" />
+                    <span>Doorway Visual Lock</span>
+                  </button>
+                ) : null}
+              </div>
+            )}
         </div>
       </div>
 
       {/* 6. Doorway Photo Lightbox Dialog */}
       <Dialog open={isPhotoModalOpen} onOpenChange={setIsPhotoModalOpen}>
         <DialogContent
-          className="rounded-[4px] border border-border bg-card p-4 sm:p-5 sm:max-w-md shadow-xl font-sans"
+          className="border-border bg-card rounded-[4px] border p-4 font-sans shadow-xl sm:max-w-md sm:p-5"
           showCloseButton={true}
         >
           <DialogHeader className="gap-1 text-left font-sans">
-            <DialogTitle className="text-base font-bold text-foreground font-sans tracking-tight">
+            <DialogTitle className="text-foreground font-sans text-base font-bold tracking-tight">
               Doorway Photo
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground font-sans">
+            <DialogDescription className="text-muted-foreground font-sans text-xs">
               Visual reference for entrance confirmation at doorstep.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="mt-3 relative w-full aspect-[4/3] bg-zinc-950 rounded-[4px] overflow-hidden border border-zinc-800 flex items-center justify-center">
+          <div className="relative mt-3 flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[4px] border border-zinc-800 bg-zinc-950">
             {photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={photoUrl}
                 alt="Doorway visual reference"
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-900 text-zinc-400 p-4 text-center">
-                <Building2 className="w-8 h-8 mb-1.5 text-zinc-500" />
+              <div className="flex h-full w-full flex-col items-center justify-center bg-zinc-900 p-4 text-center text-zinc-400">
+                <Building2 className="mb-1.5 h-8 w-8 text-zinc-500" />
                 <span className="text-xs font-semibold text-zinc-200">
                   {flat ? `Entrance ${flat}` : 'Entrance Confirmation'}
                 </span>
-                <span className="text-[11px] text-zinc-400 mt-0.5">
+                <span className="mt-0.5 text-[11px] text-zinc-400">
                   No doorway photo was attached to this micro-address.
                 </span>
               </div>
@@ -1166,20 +1279,20 @@ export default function RecipientPage({ params }: PageProps) {
 
       {/* 7. Fixed Bottom Thumb-Zone CTA */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border px-4 py-3 font-sans shadow-lg transition-transform duration-300 ${
+        className={`bg-card border-border fixed right-0 bottom-0 left-0 z-40 border-t px-4 py-3 font-sans shadow-lg transition-transform duration-300 ${
           isMapFullscreen
-            ? 'translate-y-full opacity-0 pointer-events-none'
-            : 'translate-y-0 opacity-100 pointer-events-auto'
+            ? 'pointer-events-none translate-y-full opacity-0'
+            : 'pointer-events-auto translate-y-0 opacity-100'
         }`}
       >
-        <div className="max-w-md md:max-w-lg mx-auto">
+        <div className="mx-auto max-w-md md:max-w-lg">
           <button
             type="button"
             onClick={() => setIsNavDrawerOpen(true)}
             id="start-navigation-btn"
-            className="flex items-center justify-center gap-2 w-full bg-accent text-accent-foreground font-semibold text-sm py-3.5 rounded-[4px] hover:opacity-95 active:scale-[0.98] transition-[transform,opacity] duration-150 shadow-sm cursor-pointer font-sans"
+            className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] py-3.5 font-sans text-sm font-semibold shadow-sm transition-[transform,opacity] duration-150 hover:opacity-95 active:scale-[0.98]"
           >
-            <Navigation className="w-4 h-4 fill-current" />
+            <Navigation className="h-4 w-4 fill-current" />
             <span>Start Navigation</span>
           </button>
         </div>
@@ -1187,23 +1300,23 @@ export default function RecipientPage({ params }: PageProps) {
 
       {/* Floating Bottom Bar in Fullscreen Mode */}
       {isMapFullscreen && (
-        <div className="fixed bottom-5 left-0 right-0 z-40 px-4 flex items-center justify-center pointer-events-none">
-          <div className="flex items-center gap-2 bg-card/95 backdrop-blur-md border border-border px-3.5 py-2 rounded-full shadow-lg pointer-events-auto">
+        <div className="pointer-events-none fixed right-0 bottom-5 left-0 z-40 flex items-center justify-center px-4">
+          <div className="bg-card/95 border-border pointer-events-auto flex items-center gap-2 rounded-full border px-3.5 py-2 shadow-lg backdrop-blur-md">
             <button
               type="button"
               onClick={() => setIsMapFullscreen(false)}
-              className="text-xs font-semibold text-accent hover:underline cursor-pointer flex items-center gap-1.5"
+              className="text-accent flex cursor-pointer items-center gap-1.5 text-xs font-semibold hover:underline"
             >
-              <Minimize2 className="w-3.5 h-3.5" />
+              <Minimize2 className="h-3.5 w-3.5" />
               <span>Restore Details</span>
             </button>
-            <div className="w-px h-4 bg-border" />
+            <div className="bg-border h-4 w-px" />
             <button
               type="button"
               onClick={() => setIsNavDrawerOpen(true)}
-              className="text-xs font-bold text-foreground hover:text-accent cursor-pointer flex items-center gap-1.5"
+              className="text-foreground hover:text-accent flex cursor-pointer items-center gap-1.5 text-xs font-bold"
             >
-              <Navigation className="w-3.5 h-3.5 fill-current" />
+              <Navigation className="h-3.5 w-3.5 fill-current" />
               <span>Navigate</span>
             </button>
           </div>
@@ -1212,7 +1325,7 @@ export default function RecipientPage({ params }: PageProps) {
 
       {/* 8. High-Visibility Navigation App Picker Modal (Performant bg-black/40 & Clean UI) */}
       {isNavDrawerOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
+        <div className="animate-in fade-in fixed inset-0 z-[100] flex items-end justify-center p-0 duration-150 sm:items-center sm:p-4">
           {/* Simple performant backdrop without laggy blur */}
           <div
             className="fixed inset-0 bg-black/40 transition-opacity"
@@ -1225,23 +1338,23 @@ export default function RecipientPage({ params }: PageProps) {
             role="dialog"
             aria-modal="true"
             aria-labelledby="nav-modal-title"
-            className="relative z-[101] w-full max-w-md bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-t-2xl sm:rounded-2xl p-5 sm:p-6 shadow-2xl font-sans space-y-4 max-h-[90vh] overflow-y-auto"
+            className="relative z-[101] max-h-[90vh] w-full max-w-md space-y-4 overflow-y-auto rounded-t-2xl border border-zinc-200 bg-white p-5 font-sans shadow-2xl sm:rounded-2xl sm:p-6 dark:border-zinc-800 dark:bg-zinc-950"
           >
             {/* Header with Title and Close Button */}
-            <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-900">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-2 dark:border-zinc-900">
               <h3
                 id="nav-modal-title"
-                className="text-base sm:text-lg font-bold text-zinc-950 dark:text-zinc-50 tracking-tight"
+                className="text-base font-bold tracking-tight text-zinc-950 sm:text-lg dark:text-zinc-50"
               >
                 Start Navigation
               </h3>
               <button
                 type="button"
                 onClick={() => setIsNavDrawerOpen(false)}
-                className="p-1 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+                className="cursor-pointer rounded-md p-1 text-zinc-400 transition-colors hover:text-zinc-700 dark:hover:text-zinc-200"
                 aria-label="Close navigation options"
               >
-                <X className="w-5 h-5" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
@@ -1258,17 +1371,17 @@ export default function RecipientPage({ params }: PageProps) {
                   );
                   setIsNavDrawerOpen(false);
                 }}
-                className="w-full flex items-center justify-between p-3.5 sm:p-4 rounded-xl border border-border bg-card hover:bg-muted/80 text-foreground transition-all active:scale-[0.99] cursor-pointer shadow-xs group"
+                className="border-border bg-card hover:bg-muted/80 text-foreground group flex w-full cursor-pointer items-center justify-between rounded-xl border p-3.5 shadow-xs transition-all active:scale-[0.99] sm:p-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/20">
-                    <MapPin className="w-5 h-5" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                    <MapPin className="h-5 w-5" />
                   </div>
-                  <span className="text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                  <span className="text-foreground group-hover:text-primary text-sm font-bold transition-colors sm:text-base">
                     Open in Google Maps
                   </span>
                 </div>
-                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0 ml-2" />
+                <ExternalLink className="text-muted-foreground group-hover:text-foreground ml-2 h-4 w-4 shrink-0 transition-colors" />
               </button>
 
               {/* Button 2: Mappls */}
@@ -1282,17 +1395,17 @@ export default function RecipientPage({ params }: PageProps) {
                   );
                   setIsNavDrawerOpen(false);
                 }}
-                className="w-full flex items-center justify-between p-3.5 sm:p-4 rounded-xl border border-border bg-card hover:bg-muted/80 text-foreground transition-all active:scale-[0.99] cursor-pointer shadow-xs group"
+                className="border-border bg-card hover:bg-muted/80 text-foreground group flex w-full cursor-pointer items-center justify-between rounded-xl border p-3.5 shadow-xs transition-all active:scale-[0.99] sm:p-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/20">
-                    <Compass className="w-5 h-5" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-orange-500/20 bg-orange-500/10 text-orange-600 dark:text-orange-400">
+                    <Compass className="h-5 w-5" />
                   </div>
-                  <span className="text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                  <span className="text-foreground group-hover:text-primary text-sm font-bold transition-colors sm:text-base">
                     Open in Mappls
                   </span>
                 </div>
-                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0 ml-2" />
+                <ExternalLink className="text-muted-foreground group-hover:text-foreground ml-2 h-4 w-4 shrink-0 transition-colors" />
               </button>
             </div>
 
@@ -1301,7 +1414,7 @@ export default function RecipientPage({ params }: PageProps) {
               <button
                 type="button"
                 onClick={() => setIsNavDrawerOpen(false)}
-                className="w-full py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-xs font-semibold text-zinc-700 dark:text-zinc-300 active:scale-[0.98] transition-all cursor-pointer"
+                className="dark:hover:bg-zinc-850 w-full cursor-pointer rounded-lg border border-zinc-200 bg-zinc-100 py-2.5 text-xs font-semibold text-zinc-700 transition-all hover:bg-zinc-200 active:scale-[0.98] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
               >
                 Cancel
               </button>

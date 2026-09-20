@@ -18,10 +18,16 @@ import {
 import { useAddressStore } from '@/store/useAddressStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getSessionAction } from '@/app/actions/auth';
-import { getRecentAddressesAction, type RecentAddressItem } from '@/app/actions/getRecentAddresses';
+import {
+  getRecentAddressesAction,
+  type RecentAddressItem,
+} from '@/app/actions/getRecentAddresses';
 import { formatDigipin, cleanDigipin, isValid } from '@/lib/digipin';
 import { clearDraftAndReset } from '@/lib/draft';
-import { ManageAddressModal, type ManageAddressItem } from '@/components/shared/ManageAddressModal';
+import {
+  ManageAddressModal,
+  type ManageAddressItem,
+} from '@/components/shared/ManageAddressModal';
 import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 
 /**
@@ -44,8 +50,11 @@ export default function HomePage() {
   const [resumeStep, setResumeStep] = useState<string>('/create');
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [recentAddresses, setRecentAddresses] = useState<RecentAddressItem[]>([]);
-  const [selectedAddressForManage, setSelectedAddressForManage] = useState<ManageAddressItem | null>(null);
+  const [recentAddresses, setRecentAddresses] = useState<RecentAddressItem[]>(
+    []
+  );
+  const [selectedAddressForManage, setSelectedAddressForManage] =
+    useState<ManageAddressItem | null>(null);
 
   // Sync active authentication session and fetch recent addresses
   useEffect(() => {
@@ -138,7 +147,9 @@ export default function HomePage() {
     }
 
     if (clean.length !== 10) {
-      setResolveError(`DIGIPIN must be exactly 10 characters. Entered: ${clean.length}/10`);
+      setResolveError(
+        `DIGIPIN must be exactly 10 characters. Entered: ${clean.length}/10`
+      );
       return;
     }
 
@@ -153,42 +164,43 @@ export default function HomePage() {
 
   return (
     <div
-      className={`flex flex-col min-h-[calc(100vh-4rem)] space-y-8 animate-in fade-in duration-150 font-sans ${
+      className={`animate-in fade-in flex min-h-[calc(100vh-4rem)] flex-col space-y-8 font-sans duration-150 ${
         isAuthenticated ? 'pb-24 md:pb-12' : 'pb-12'
       }`}
     >
       {/* ─── 1. HERO SECTION & PRIMARY CTAS ──────────────────────────────── */}
-      <section className="pt-2 md:pt-6 space-y-4">
+      <section className="space-y-4 pt-2 md:pt-6">
         {/* Hero Title & Subtitle */}
         <div className="space-y-2">
-          <h1 className="text-3xl md:text-5xl font-black text-foreground tracking-tight leading-[1.15]">
+          <h1 className="text-foreground text-3xl leading-[1.15] font-black tracking-tight md:text-5xl">
             Precision Micro-Addressing for Every Doorstep.
           </h1>
-          <p className="text-sm md:text-base text-muted-foreground max-w-2xl font-normal leading-relaxed">
-            Eliminate the last 50 meters of delivery confusion. Combine verified 10-character DIGIPIN
-            spatial coordinates, doorway visual locks, and entrance routing into a single permanent badge.
+          <p className="text-muted-foreground max-w-2xl text-sm leading-relaxed font-normal md:text-base">
+            Eliminate the last 50 meters of delivery confusion. Combine verified
+            10-character DIGIPIN spatial coordinates, doorway visual locks, and
+            entrance routing into a single permanent badge.
           </p>
         </div>
 
         {/* Primary CTA Action Group */}
-        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="flex flex-col items-stretch gap-3 pt-2 sm:flex-row sm:items-center">
           <button
             type="button"
             onClick={handleStartNewCreation}
             id="hero-create-address-btn"
-            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-accent text-accent-foreground font-bold text-base sm:text-lg rounded-xl shadow-xs hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer font-sans"
+            className="bg-accent text-accent-foreground inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-xl px-8 py-4 font-sans text-base font-bold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] sm:text-lg"
           >
-            <Plus className="w-5 h-5 stroke-[2.5]" />
+            <Plus className="h-5 w-5 stroke-[2.5]" />
             <span>Create Micro-Address</span>
-            <ArrowRight className="w-5 h-5 ml-0.5" />
+            <ArrowRight className="ml-0.5 h-5 w-5" />
           </button>
 
           <Link
             href="/about"
-            className="inline-flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-card text-foreground font-semibold text-sm hover:bg-muted active:scale-[0.98] transition-colors"
+            className="bg-card text-foreground hover:bg-muted inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-5 py-3.5 text-sm font-semibold transition-colors active:scale-[0.98] dark:border-zinc-700"
           >
             <span>How it works</span>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <ChevronRight className="text-muted-foreground h-4 w-4" />
           </Link>
 
           {/* Guest Login button: strictly hidden if authenticated */}
@@ -196,10 +208,10 @@ export default function HomePage() {
             <Link
               href="/login"
               id="hero-login-btn"
-              className="inline-flex items-center justify-center gap-1.5 px-5 py-3.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-card text-foreground font-semibold text-sm hover:bg-muted active:scale-[0.98] transition-colors"
+              className="bg-card text-foreground hover:bg-muted inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-300 px-5 py-3.5 text-sm font-semibold transition-colors active:scale-[0.98] dark:border-zinc-700"
             >
               <span>Login</span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <ChevronRight className="text-muted-foreground h-4 w-4" />
             </Link>
           )}
         </div>
@@ -207,65 +219,67 @@ export default function HomePage() {
 
       {/* ─── RECENT ADDRESSES SECTION (LOGGED IN USERS WITH ≥ 1 ADDRESS) ─── */}
       {isAuthenticated && recentAddresses.length > 0 && (
-        <section className="bg-card border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 sm:p-6 shadow-xs font-sans space-y-3">
+        <section className="bg-card space-y-3 rounded-xl border border-zinc-200 p-5 font-sans shadow-xs sm:p-6 dark:border-zinc-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-accent" />
-              <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
+              <MapPin className="text-accent h-4 w-4" />
+              <h2 className="text-foreground text-sm font-bold tracking-tight sm:text-base">
                 Recent Addresses
               </h2>
             </div>
             <Link
               href="/dashboard"
-              className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-foreground flex items-center gap-1 transition-colors"
+              className="hover:text-foreground flex items-center gap-1 text-xs font-semibold text-zinc-600 transition-colors dark:text-zinc-400"
             >
               <span>View all in Dashboard</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-3">
             {recentAddresses.map((addr) => (
               <div
                 key={addr.id || addr.slug}
                 onClick={() => setSelectedAddressForManage(addr)}
-                className="group flex flex-col justify-between p-3.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-background hover:border-accent/60 hover:shadow-xs transition-all text-left cursor-pointer"
+                className="group bg-background hover:border-accent/60 flex cursor-pointer flex-col justify-between rounded-lg border border-zinc-200 p-3.5 text-left transition-all hover:shadow-xs dark:border-zinc-800"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-foreground truncate">
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="text-foreground truncate text-xs font-semibold">
                       {addr.label || addr.flat || 'Micro-Address'}
                     </span>
-                    <span className="text-[11px] text-muted-foreground group-hover:text-accent font-medium transition-colors shrink-0 ml-1">
+                    <span className="text-muted-foreground group-hover:text-accent ml-1 shrink-0 text-[11px] font-medium transition-colors">
                       Manage &rarr;
                     </span>
                   </div>
-                  <p className="font-mono text-xs font-semibold text-accent tracking-wider">
+                  <p className="text-accent font-mono text-xs font-semibold tracking-wider">
                     {addr.digipin}
                   </p>
                 </div>
                 {(addr.floor || addr.landmark) && (
-                  <p className="text-[11px] text-muted-foreground truncate mt-1.5">
+                  <p className="text-muted-foreground mt-1.5 truncate text-[11px]">
                     {[addr.floor, addr.landmark].filter(Boolean).join(' • ')}
                   </p>
                 )}
 
                 <div
-                  className="pt-2.5 mt-2 border-t border-border/80 flex items-center justify-between text-[11px]"
+                  className="border-border/80 mt-2 flex items-center justify-between border-t pt-2.5 text-[11px]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Link
                     href={`/a/${addr.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground font-medium transition-colors"
+                    className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 font-medium transition-colors"
                     title="Open public view"
                   >
-                    <Eye className="w-3 h-3" />
+                    <Eye className="h-3 w-3" />
                     <span>👁️ Public View</span>
                   </Link>
 
-                  <span className="text-[10px] text-muted-foreground">Click to Manage</span>
+                  <span className="text-muted-foreground text-[10px]">
+                    Click to Manage
+                  </span>
                 </div>
               </div>
             ))}
@@ -274,13 +288,13 @@ export default function HomePage() {
       )}
 
       {/* ─── 2. DIGIPIN RESOLVER (PROGRESSIVE DISCLOSURE) ─────────────────── */}
-      <section className="bg-card border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 sm:p-6 shadow-xs font-sans">
+      <section className="bg-card rounded-xl border border-zinc-200 p-5 font-sans shadow-xs sm:p-6 dark:border-zinc-800">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-md bg-accent/10 text-accent flex items-center justify-center shrink-0">
-              <Navigation className="w-4 h-4 fill-current" />
+            <div className="bg-accent/10 text-accent flex h-7 w-7 shrink-0 items-center justify-center rounded-md">
+              <Navigation className="h-4 w-4 fill-current" />
             </div>
-            <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
+            <h2 className="text-foreground text-sm font-bold tracking-tight sm:text-base">
               Navigate to a DIGIPIN
             </h2>
           </div>
@@ -294,10 +308,10 @@ export default function HomePage() {
                 setSearchCode('');
                 setResolveError('');
               }}
-              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded-md p-1 transition-colors"
               aria-label="Close resolver input"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -309,17 +323,20 @@ export default function HomePage() {
               type="button"
               id="reveal-digipin-input-btn"
               onClick={() => setIsResolverOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent text-foreground text-sm font-semibold hover:bg-muted/70 active:scale-[0.98] transition-all cursor-pointer font-sans"
+              className="text-foreground hover:bg-muted/70 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-zinc-300 bg-transparent px-4 py-2.5 font-sans text-sm font-semibold transition-all active:scale-[0.98] dark:border-zinc-700"
             >
-              <Search className="w-4 h-4 text-muted-foreground" />
+              <Search className="text-muted-foreground h-4 w-4" />
               <span>Enter existing DIGIPIN</span>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+              <ChevronRight className="text-muted-foreground h-3.5 w-3.5" />
             </button>
           </div>
         ) : (
-          <form onSubmit={handleResolveDigipin} className="mt-4 flex flex-col sm:flex-row gap-2.5 animate-in fade-in duration-150">
+          <form
+            onSubmit={handleResolveDigipin}
+            className="animate-in fade-in mt-4 flex flex-col gap-2.5 duration-150 sm:flex-row"
+          >
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-zinc-400" />
               <input
                 id="digipin-search"
                 type="text"
@@ -331,45 +348,51 @@ export default function HomePage() {
                 }}
                 placeholder="e.g. 39J-M99-P923"
                 maxLength={14}
-                className="w-full rounded-lg pl-10 pr-3 py-3 text-sm font-mono tracking-wider text-foreground placeholder:text-muted-foreground border border-zinc-300 dark:border-zinc-700 focus:border-primary focus:ring-[3px] focus:ring-primary/20 focus:outline-none transition-colors duration-200 ease-out bg-background"
+                className="text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 bg-background w-full rounded-lg border border-zinc-300 py-3 pr-3 pl-10 font-mono text-sm tracking-wider transition-colors duration-200 ease-out focus:ring-[3px] focus:outline-none dark:border-zinc-700"
                 aria-label="Enter DIGIPIN code to navigate"
               />
             </div>
 
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-semibold text-sm rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-[0.98] transition-all cursor-pointer shadow-xs shrink-0 font-sans"
+              className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-zinc-900 px-6 py-3 font-sans text-sm font-semibold text-white shadow-xs transition-all hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               <span>Navigate</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="h-4 w-4" />
             </button>
           </form>
         )}
 
         {resolveError && (
-          <p className="text-xs text-destructive mt-2.5 font-medium">{resolveError}</p>
+          <p className="text-destructive mt-2.5 text-xs font-medium">
+            {resolveError}
+          </p>
         )}
       </section>
 
       {/* ─── 3. QUICK UTILITY SHORTCUTS (DISABLED FOR RELEASE) ──────────────── */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+      <section className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
         <button
           type="button"
           disabled
           aria-disabled="true"
           id="quick-scan-link"
-          className="flex items-center justify-between bg-card border border-zinc-200 dark:border-zinc-800 rounded-xl p-4.5 opacity-50 cursor-not-allowed shadow-2xs w-full text-left"
+          className="bg-card flex w-full cursor-not-allowed items-center justify-between rounded-xl border border-zinc-200 p-4.5 text-left opacity-50 shadow-2xs dark:border-zinc-800"
         >
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center shrink-0">
-              <QrCode className="w-5 h-5" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+              <QrCode className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">Scan QR Badge</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Resolve a physical doorway plate instantly</p>
+              <p className="text-foreground text-sm font-semibold">
+                Scan QR Badge
+              </p>
+              <p className="text-muted-foreground mt-0.5 text-xs">
+                Resolve a physical doorway plate instantly
+              </p>
             </div>
           </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+          <ChevronRight className="text-muted-foreground h-4 w-4 shrink-0" />
         </button>
 
         <button
@@ -377,46 +400,50 @@ export default function HomePage() {
           disabled
           aria-disabled="true"
           id="quick-report-link"
-          className="flex items-center justify-between bg-card border border-zinc-200 dark:border-zinc-800 rounded-xl p-4.5 opacity-50 cursor-not-allowed shadow-2xs w-full text-left"
+          className="bg-card flex w-full cursor-not-allowed items-center justify-between rounded-xl border border-zinc-200 p-4.5 text-left opacity-50 shadow-2xs dark:border-zinc-800"
         >
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center shrink-0">
-              <Flag className="w-5 h-5" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+              <Flag className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">Report Civic Defect</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Potholes, broken lights and access blockers</p>
+              <p className="text-foreground text-sm font-semibold">
+                Report Civic Defect
+              </p>
+              <p className="text-muted-foreground mt-0.5 text-xs">
+                Potholes, broken lights and access blockers
+              </p>
             </div>
           </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+          <ChevronRight className="text-muted-foreground h-4 w-4 shrink-0" />
         </button>
       </section>
 
       {/* ─── 4. RESUME PROGRESS TOAST (ACTIVE FOR 7 SECONDS) ──────────────── */}
       {showResumeToast && (
-        <div className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-50 bg-card border border-border rounded-lg p-3.5 shadow-lg flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-3 duration-200 font-sans">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse shrink-0" />
-            <p className="text-xs font-medium truncate font-sans text-foreground">
+        <div className="bg-card border-border animate-in fade-in slide-in-from-bottom-3 fixed right-4 bottom-6 left-4 z-50 flex items-center justify-between gap-3 rounded-lg border p-3.5 font-sans shadow-lg duration-200 md:right-6 md:left-auto md:w-96">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="bg-accent h-2.5 w-2.5 shrink-0 animate-pulse rounded-full" />
+            <p className="text-foreground truncate font-sans text-xs font-medium">
               Address creation in progress
             </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               id="home-resume-draft-btn"
               onClick={() => router.push(resumeStep)}
-              className="px-3 py-1.5 rounded-md bg-accent text-accent-foreground text-xs font-semibold hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer font-sans"
+              className="bg-accent text-accent-foreground cursor-pointer rounded-md px-3 py-1.5 font-sans text-xs font-semibold transition-all hover:opacity-90 active:scale-[0.98]"
             >
               Resume
             </button>
             <button
               type="button"
               onClick={() => setShowResumeToast(false)}
-              className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
+              className="text-muted-foreground hover:text-foreground cursor-pointer p-1"
               aria-label="Dismiss notification"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>

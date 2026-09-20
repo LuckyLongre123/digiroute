@@ -18,7 +18,10 @@ export async function PATCH(request: Request) {
     const { userId, name, email, phone } = body;
 
     if (!userId || typeof userId !== 'string') {
-      return NextResponse.json({ error: 'userId is required.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'userId is required.' },
+        { status: 400 }
+      );
     }
 
     const updates: Record<string, string | null> = {};
@@ -27,7 +30,10 @@ export async function PATCH(request: Request) {
     if (phone !== undefined) updates.phone = phone?.trim() || null;
 
     if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: 'No update fields provided.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No update fields provided.' },
+        { status: 400 }
+      );
     }
 
     try {
@@ -35,9 +41,16 @@ export async function PATCH(request: Request) {
     } catch (err: unknown) {
       console.warn('[Admin Update User] DB update failed:', err);
       const msg = err instanceof Error ? err.message : String(err || '');
-      if (msg.includes('unique') || msg.includes('duplicate') || msg.includes('P2002')) {
+      if (
+        msg.includes('unique') ||
+        msg.includes('duplicate') ||
+        msg.includes('P2002')
+      ) {
         return NextResponse.json(
-          { error: 'Email or phone number is already registered to another user.' },
+          {
+            error:
+              'Email or phone number is already registered to another user.',
+          },
           { status: 409 }
         );
       }
@@ -53,6 +66,9 @@ export async function PATCH(request: Request) {
     });
   } catch (err) {
     console.error('[Admin Update User] Error:', err);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error.' },
+      { status: 500 }
+    );
   }
 }

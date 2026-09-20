@@ -135,7 +135,9 @@ const initialState: AddressDraftState = {
 
 // ---- Store ---------------------------------------------------------------
 
-export const useAddressStore = create<AddressDraftState & AddressStoreActions>()(
+export const useAddressStore = create<
+  AddressDraftState & AddressStoreActions
+>()(
   persist(
     (set) => ({
       ...initialState,
@@ -147,7 +149,8 @@ export const useAddressStore = create<AddressDraftState & AddressStoreActions>()
       setCoordinates: (lat, lng) =>
         set({ latitude: lat, baseLat: lat, longitude: lng, baseLng: lng }),
 
-      setEntranceCoordinates: (lat, lng) => set({ entranceLat: lat, entranceLng: lng }),
+      setEntranceCoordinates: (lat, lng) =>
+        set({ entranceLat: lat, entranceLng: lng }),
 
       setPhotoBlob: (blob) => set({ doorwayPhotoBlob: blob }),
 
@@ -162,7 +165,8 @@ export const useAddressStore = create<AddressDraftState & AddressStoreActions>()
           metadata: { ...state.metadata, ...data },
           floor: data.floor !== undefined ? data.floor : state.floor,
           flat: data.flat !== undefined ? data.flat : state.flat,
-          landmark: data.landmark !== undefined ? data.landmark : state.landmark,
+          landmark:
+            data.landmark !== undefined ? data.landmark : state.landmark,
           isSaved: data.saveToAccount === false ? false : state.isSaved,
           isEphemeral: data.saveToAccount === false ? true : state.isEphemeral,
         })),
@@ -202,7 +206,10 @@ export const useAddressStore = create<AddressDraftState & AddressStoreActions>()
 
       setSaveToAccount: (saveToAccount) =>
         set((state) => ({
-          metadata: { ...state.metadata, saveToAccount: Boolean(saveToAccount) },
+          metadata: {
+            ...state.metadata,
+            saveToAccount: Boolean(saveToAccount),
+          },
           isSaved: saveToAccount ? state.isSaved : false,
           isEphemeral: saveToAccount ? state.isEphemeral : true,
         })),
@@ -213,7 +220,9 @@ export const useAddressStore = create<AddressDraftState & AddressStoreActions>()
 
       addOrUpdateViewer: (viewer) =>
         set((state) => {
-          const existingIndex = state.activeViewers.findIndex((v) => v.id === viewer.id);
+          const existingIndex = state.activeViewers.findIndex(
+            (v) => v.id === viewer.id
+          );
           if (existingIndex >= 0) {
             const updated = [...state.activeViewers];
             updated[existingIndex] = viewer;
@@ -300,9 +309,11 @@ export const useAddressStore = create<AddressDraftState & AddressStoreActions>()
         const safePhotoUrl =
           state.photoUrl && !state.photoUrl.startsWith('blob:')
             ? state.photoUrl
-            : state.doorwayPhotoUrl && !state.doorwayPhotoUrl.startsWith('blob:')
+            : state.doorwayPhotoUrl &&
+                !state.doorwayPhotoUrl.startsWith('blob:')
               ? state.doorwayPhotoUrl
-              : state.doorwayPhotoBase64 && !state.doorwayPhotoBase64.startsWith('blob:')
+              : state.doorwayPhotoBase64 &&
+                  !state.doorwayPhotoBase64.startsWith('blob:')
                 ? state.doorwayPhotoBase64
                 : null;
 
@@ -334,7 +345,10 @@ export const useAddressStore = create<AddressDraftState & AddressStoreActions>()
       onRehydrateStorage: () => {
         return (state, error) => {
           if (error) {
-            console.warn('[useAddressStore] Rehydration error encountered:', error);
+            console.warn(
+              '[useAddressStore] Rehydration error encountered:',
+              error
+            );
           }
           setTimeout(() => {
             useAddressStore.getState().setHasHydrated(true);
@@ -363,4 +377,3 @@ export function setActiveCloudinaryPromise(p: Promise<string | null> | null) {
 export function getActiveCloudinaryPromise(): Promise<string | null> | null {
   return activeCloudinaryPromise;
 }
-

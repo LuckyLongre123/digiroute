@@ -5,11 +5,7 @@ import { create } from 'zustand';
 export type CameraFacingMode = 'environment' | 'user';
 
 export type CameraErrorType =
-  | 'permission-denied'
-  | 'not-found'
-  | 'not-supported'
-  | 'stream-error'
-  | null;
+  'permission-denied' | 'not-found' | 'not-supported' | 'stream-error' | null;
 
 interface CameraState {
   streamActive: boolean;
@@ -37,16 +33,18 @@ const initialState: CameraState = {
 
 // ---- Store ---------------------------------------------------------------
 
-export const useCameraStore = create<CameraState & CameraStoreActions>()((set) => ({
-  ...initialState,
+export const useCameraStore = create<CameraState & CameraStoreActions>()(
+  (set) => ({
+    ...initialState,
 
-  setStreamActive: (active) => set({ streamActive: active }),
+    setStreamActive: (active) => set({ streamActive: active }),
 
-  setCapturedBlob: (blob) => set({ capturedBlob: blob }),
+    setCapturedBlob: (blob) => set({ capturedBlob: blob }),
 
-  setCameraError: (error) => set({ cameraError: error }),
+    setCameraError: (error) => set({ cameraError: error }),
 
-  setFacingMode: (mode) => set({ facingMode: mode }),
+    setFacingMode: (mode) => set({ facingMode: mode }),
 
-  resetCamera: () => set(initialState),
-}));
+    resetCamera: () => set(initialState),
+  })
+);

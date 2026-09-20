@@ -5,7 +5,12 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { AddressPayload } from '@/lib/prisma';
 
-const LOCAL_STORAGE_FILE = path.join(process.cwd(), 'src', 'data', 'addresses.json');
+const LOCAL_STORAGE_FILE = path.join(
+  process.cwd(),
+  'src',
+  'data',
+  'addresses.json'
+);
 
 /**
  * PATCH /api/admin/update-address
@@ -23,10 +28,19 @@ export async function PATCH(request: Request) {
     const { slug, updates } = body;
 
     if (!slug || !updates) {
-      return NextResponse.json({ error: 'slug and updates are required.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'slug and updates are required.' },
+        { status: 400 }
+      );
     }
 
-    const allowedFields = ['label', 'floor', 'flat', 'landmark', 'routingNotes'];
+    const allowedFields = [
+      'label',
+      'floor',
+      'flat',
+      'landmark',
+      'routingNotes',
+    ];
     const sanitized: Record<string, unknown> = {};
     for (const key of allowedFields) {
       if (key in updates) {
@@ -36,7 +50,11 @@ export async function PATCH(request: Request) {
 
     // Handle expiresAt and isEphemeral
     if ('expiresAt' in updates) {
-      if (!updates.expiresAt || updates.expiresAt === 'never' || updates.expiresAt === 'null') {
+      if (
+        !updates.expiresAt ||
+        updates.expiresAt === 'never' ||
+        updates.expiresAt === 'null'
+      ) {
         sanitized.expiresAt = null;
         sanitized.isEphemeral = false;
       } else {
@@ -62,7 +80,11 @@ export async function PATCH(request: Request) {
       const idx = list.findIndex((a) => a.slug === slug);
       if (idx !== -1) {
         list[idx] = { ...list[idx], ...sanitized };
-        await fs.writeFile(LOCAL_STORAGE_FILE, JSON.stringify(list, null, 2), 'utf-8');
+        await fs.writeFile(
+          LOCAL_STORAGE_FILE,
+          JSON.stringify(list, null, 2),
+          'utf-8'
+        );
       }
     } catch {
       // ignore
@@ -71,6 +93,9 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[Admin Update Address] Error:', err);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error.' },
+      { status: 500 }
+    );
   }
 }

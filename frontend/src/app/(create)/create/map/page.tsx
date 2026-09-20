@@ -2,12 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  MapPin,
-  Crosshair,
-  ArrowRight,
-  RotateCcw,
-} from 'lucide-react';
+import { MapPin, Crosshair, ArrowRight, RotateCcw } from 'lucide-react';
 import { useAddressStore, useHasHydrated } from '@/store/useAddressStore';
 import { MapplsMap } from '@/components/ui/MapplsMap';
 import { encode, formatDigipin } from '@/lib/digipin';
@@ -54,7 +49,9 @@ export default function CreateMapPage() {
   const storedEntranceLng = useAddressStore((state) => state.entranceLng);
   const storeDigipin = useAddressStore((state) => state.digipin);
 
-  const setEntranceCoordinates = useAddressStore((state) => state.setEntranceCoordinates);
+  const setEntranceCoordinates = useAddressStore(
+    (state) => state.setEntranceCoordinates
+  );
   const setDigipin = useAddressStore((state) => state.setDigipin);
   const setStep = useAddressStore((state) => state.setStep);
 
@@ -87,7 +84,8 @@ export default function CreateMapPage() {
   if (
     currentSourceLat !== null &&
     currentSourceLng !== null &&
-    (prevSourceCoords.lat !== currentSourceLat || prevSourceCoords.lng !== currentSourceLng)
+    (prevSourceCoords.lat !== currentSourceLat ||
+      prevSourceCoords.lng !== currentSourceLng)
   ) {
     setPrevSourceCoords({ lat: currentSourceLat, lng: currentSourceLng });
     setPinLat(currentSourceLat);
@@ -110,10 +108,13 @@ export default function CreateMapPage() {
   }, [baseLat, baseLng, pinLat, pinLng]);
 
   // Handle position change from either dragging marker or clicking anywhere on map
-  const handlePinChange = useCallback((coords: { lat: number; lng: number }) => {
-    setPinLat(Number(coords.lat.toFixed(6)));
-    setPinLng(Number(coords.lng.toFixed(6)));
-  }, []);
+  const handlePinChange = useCallback(
+    (coords: { lat: number; lng: number }) => {
+      setPinLat(Number(coords.lat.toFixed(6)));
+      setPinLng(Number(coords.lng.toFixed(6)));
+    },
+    []
+  );
 
   // Quick reset pin back to initial GPS accuracy circle center
   const handleResetToCenter = useCallback(() => {
@@ -136,9 +137,11 @@ export default function CreateMapPage() {
   // Wait momentarily for Zustand storage rehydration to finish
   if (!hasHydrated) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] text-muted-foreground font-sans">
-        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2" />
-        <span className="text-xs font-medium text-muted-foreground font-sans">Restoring address draft...</span>
+      <div className="text-muted-foreground flex min-h-[50vh] flex-1 flex-col items-center justify-center font-sans">
+        <div className="border-accent mb-2 h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
+        <span className="text-muted-foreground font-sans text-xs font-medium">
+          Restoring address draft...
+        </span>
       </div>
     );
   }
@@ -148,9 +151,9 @@ export default function CreateMapPage() {
   }
 
   return (
-    <div className="relative flex-1 flex flex-col h-full w-full min-h-0 overflow-hidden font-sans select-none gap-2.5">
+    <div className="relative flex h-full min-h-0 w-full flex-1 flex-col gap-2.5 overflow-hidden font-sans select-none">
       {/* ─── 1. FULL-BLEED DYNAMICALLY STRETCHED MAP WRAPPER ───────────────── */}
-      <div className="relative flex-1 w-full min-h-0 rounded-xl overflow-hidden border border-border shadow-xs bg-zinc-100 dark:bg-zinc-900">
+      <div className="border-border relative min-h-0 w-full flex-1 overflow-hidden rounded-xl border bg-zinc-100 shadow-xs dark:bg-zinc-900">
         <MapplsMap
           center={[baseLat, baseLng]}
           zoom={16}
@@ -168,14 +171,16 @@ export default function CreateMapPage() {
             onPositionChange: handlePinChange,
             title: 'ENTRANCE PIN',
           }}
-          className="w-full h-full"
+          className="h-full w-full"
         />
 
         {/* Floating Instruction Pill at Top */}
-        <div className="absolute top-3 left-0 right-0 flex justify-center z-20 px-4 pointer-events-none">
-          <div className="bg-card/95 backdrop-blur-md border border-border px-3.5 py-1.5 rounded-full text-xs font-semibold text-foreground shadow-sm flex items-center gap-2 pointer-events-auto">
-            <Crosshair className="w-3.5 h-3.5 text-accent" />
-            <span className="font-sans">Tap anywhere or drag pin to your entrance</span>
+        <div className="pointer-events-none absolute top-3 right-0 left-0 z-20 flex justify-center px-4">
+          <div className="bg-card/95 border-border text-foreground pointer-events-auto flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm backdrop-blur-md">
+            <Crosshair className="text-accent h-3.5 w-3.5" />
+            <span className="font-sans">
+              Tap anywhere or drag pin to your entrance
+            </span>
           </div>
         </div>
 
@@ -184,52 +189,54 @@ export default function CreateMapPage() {
           <button
             type="button"
             onClick={handleResetToCenter}
-            className="absolute top-3 right-3 z-20 px-2.5 py-1 bg-card/90 backdrop-blur-xs border border-border text-[11px] font-semibold text-muted-foreground hover:text-foreground rounded-md shadow-xs transition-colors cursor-pointer font-sans flex items-center gap-1.5"
+            className="bg-card/90 border-border text-muted-foreground hover:text-foreground absolute top-3 right-3 z-20 flex cursor-pointer items-center gap-1.5 rounded-md border px-2.5 py-1 font-sans text-[11px] font-semibold shadow-xs backdrop-blur-xs transition-colors"
           >
-            <RotateCcw className="w-3 h-3" />
+            <RotateCcw className="h-3 w-3" />
             <span>Reset to Center</span>
           </button>
         )}
       </div>
 
       {/* ─── 2. FLOATING BOTTOM-SHEET METRIC CARD (FIXED HEIGHT, ZERO GAP) ──── */}
-      <div className="shrink-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md shadow-xl border border-zinc-200 dark:border-zinc-800 rounded-xl p-3.5 sm:p-4 space-y-3 font-sans">
+      <div className="z-30 shrink-0 space-y-3 rounded-xl border border-zinc-200 bg-white/95 p-3.5 font-sans shadow-xl backdrop-blur-md sm:p-4 dark:border-zinc-800 dark:bg-zinc-950/95">
         {/* Card Header & Distance Offset Badge */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse" />
-            <span className="text-xs font-bold text-foreground uppercase tracking-wider font-sans">
+            <div className="bg-accent h-2.5 w-2.5 animate-pulse rounded-full" />
+            <span className="text-foreground font-sans text-xs font-bold tracking-wider uppercase">
               Doorway DIGIPIN Refinement
             </span>
           </div>
 
           <span
-            className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full font-sans transition-colors ${
+            className={`rounded-full px-2.5 py-0.5 font-sans text-[11px] font-semibold transition-colors ${
               distanceOffset === 0
                 ? 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
-                : 'bg-accent/10 text-accent border border-accent/25'
+                : 'bg-accent/10 text-accent border-accent/25 border'
             }`}
           >
-            {distanceOffset === 0 ? 'Accuracy Center (0m)' : `Refined by ${distanceOffset}m`}
+            {distanceOffset === 0
+              ? 'Accuracy Center (0m)'
+              : `Refined by ${distanceOffset}m`}
           </span>
         </div>
 
         {/* Live DIGIPIN & Coordinates Readout */}
-        <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3 rounded-lg flex items-center justify-between">
+        <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-sans font-medium">
+            <span className="text-muted-foreground font-sans text-[10px] font-medium tracking-wider uppercase">
               Refined DIGIPIN
             </span>
-            <p className="font-mono text-xl sm:text-2xl font-black text-foreground tracking-widest leading-none pt-0.5">
+            <p className="text-foreground pt-0.5 font-mono text-xl leading-none font-black tracking-widest sm:text-2xl">
               {refinedDigipin}
             </p>
           </div>
 
           <div className="text-right">
-            <span className="text-[10px] uppercase font-mono text-muted-foreground block">
+            <span className="text-muted-foreground block font-mono text-[10px] uppercase">
               {pinLat.toFixed(6)}° N
             </span>
-            <span className="text-[10px] font-mono text-muted-foreground block">
+            <span className="text-muted-foreground block font-mono text-[10px]">
               {pinLng.toFixed(6)}° E
             </span>
           </div>
@@ -240,11 +247,11 @@ export default function CreateMapPage() {
           type="button"
           onClick={handleConfirmPin}
           id="confirm-entrance-pin-btn"
-          className="w-full h-11 sm:h-12 bg-accent text-accent-foreground font-bold text-sm sm:text-base rounded-xl flex items-center justify-center gap-2 shadow-xs hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer font-sans"
+          className="bg-accent text-accent-foreground flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl font-sans text-sm font-bold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] sm:h-12 sm:text-base"
         >
-          <MapPin className="w-4 h-4 fill-current" />
+          <MapPin className="h-4 w-4 fill-current" />
           <span>Confirm Entrance Pin</span>
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </div>

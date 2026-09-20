@@ -17,7 +17,9 @@ export interface CreateAddressResult {
   error?: string;
 }
 
-export async function createAddress(formData: FormData): Promise<CreateAddressResult> {
+export async function createAddress(
+  formData: FormData
+): Promise<CreateAddressResult> {
   try {
     const digipin = (formData.get('digipin') as string)?.trim();
     const baseLatStr = formData.get('baseLat') as string;
@@ -43,20 +45,29 @@ export async function createAddress(formData: FormData): Promise<CreateAddressRe
     const flat = (formData.get('flat') as string)?.trim() || null;
     const landmark = (formData.get('landmark') as string)?.trim() || null;
     const label = (formData.get('label') as string)?.trim() || null;
-    const routingNotes = (formData.get('routingNotes') as string)?.trim() || null;
+    const routingNotes =
+      (formData.get('routingNotes') as string)?.trim() || null;
     const rawPasscode = (formData.get('passcode') as string)?.trim() || null;
-    const passcode = rawPasscode && rawPasscode.length > 0 ? await hashPassword(rawPasscode) : null;
+    const passcode =
+      rawPasscode && rawPasscode.length > 0
+        ? await hashPassword(rawPasscode)
+        : null;
     const expiry = (formData.get('expiry') as string)?.trim() || '30m';
 
     // Optimistic UI: Accept client-generated slug if provided, otherwise generate cryptographic slug
     const clientSlug = (formData.get('slug') as string)?.trim();
-    const slug = clientSlug && clientSlug.startsWith('dg-') ? clientSlug : `dg-${nanoid(12)}`;
+    const slug =
+      clientSlug && clientSlug.startsWith('dg-')
+        ? clientSlug
+        : `dg-${nanoid(12)}`;
 
     // Handle doorway photo: check for direct Cloudinary photoUrl first, fallback to file upload.
     // STRICT VALIDATION: Never accept strings starting with blob:
     const clientPhotoUrl = (formData.get('photoUrl') as string)?.trim();
     let doorwayPhotoUrl: string | null =
-      clientPhotoUrl && (clientPhotoUrl.startsWith('http://') || clientPhotoUrl.startsWith('https://'))
+      clientPhotoUrl &&
+      (clientPhotoUrl.startsWith('http://') ||
+        clientPhotoUrl.startsWith('https://'))
         ? clientPhotoUrl
         : null;
     const photoFile = formData.get('photo') as File | null;
@@ -66,7 +77,12 @@ export async function createAddress(formData: FormData): Promise<CreateAddressRe
         const bytes = await photoFile.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'doorways');
+        const uploadsDir = path.join(
+          process.cwd(),
+          'public',
+          'uploads',
+          'doorways'
+        );
         await fs.mkdir(uploadsDir, { recursive: true });
 
         const fileName = `${slug}.webp`;
@@ -136,7 +152,9 @@ export async function createAddress(formData: FormData): Promise<CreateAddressRe
 
     const baseUrl =
       process.env.NEXT_PUBLIC_APP_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000');
     const shareUrl = `${baseUrl}/a/${slug}`;
 
     return {
@@ -152,7 +170,8 @@ export async function createAddress(formData: FormData): Promise<CreateAddressRe
     console.error('[createAddress] Action error:', error);
     return {
       success: false,
-      error: 'An unexpected error occurred while saving the address. Please try again.',
+      error:
+        'An unexpected error occurred while saving the address. Please try again.',
     };
   }
 }

@@ -21,7 +21,8 @@ export default async function AddressDetailPage({ params }: AddressPageProps) {
   let addressRecord = await getAddressBySlug(id);
   if (!addressRecord) {
     const userAddresses = await getUserAddresses(session.user.id);
-    addressRecord = userAddresses.find((a) => a.id === id || a.slug === id) || null;
+    addressRecord =
+      userAddresses.find((a) => a.id === id || a.slug === id) || null;
   }
 
   // Strict User Data Isolation: Ensure user strictly owns this address

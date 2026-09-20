@@ -13,7 +13,11 @@ import {
   AlertCircle,
   Loader2,
 } from 'lucide-react';
-import { useAddressStore, useHasHydrated, getActiveCloudinaryPromise } from '@/store/useAddressStore';
+import {
+  useAddressStore,
+  useHasHydrated,
+  getActiveCloudinaryPromise,
+} from '@/store/useAddressStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getSessionAction } from '@/app/actions/auth';
 import { db, getCameraBlob } from '@/lib/db';
@@ -23,7 +27,11 @@ import { nanoid } from 'nanoid';
 
 const emptySubscribe = () => () => {};
 function useMounted() {
-  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 }
 
 /**
@@ -68,12 +76,16 @@ export default function CreateSharePage() {
   const photoBlob = useAddressStore((state) => state.doorwayPhotoBlob);
   const photoUrlStore = useAddressStore((state) => state.doorwayPhotoUrl);
   const doorwayPhotoKey = useAddressStore((state) => state.doorwayPhotoKey);
-  const doorwayPhotoBase64 = useAddressStore((state) => state.doorwayPhotoBase64);
+  const doorwayPhotoBase64 = useAddressStore(
+    (state) => state.doorwayPhotoBase64
+  );
   const setSlug = useAddressStore((state) => state.setSlug);
   const setPhotoUrlStore = useAddressStore((state) => state.setPhotoUrl);
   const setIsCompleted = useAddressStore((state) => state.setIsCompleted);
 
-  const [photoUrl, setPhotoUrl] = useState<string | null>(doorwayPhotoBase64 || photoUrlStore || null);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(
+    doorwayPhotoBase64 || photoUrlStore || null
+  );
   const isSubmittingRef = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -95,7 +107,9 @@ export default function CreateSharePage() {
 
     async function restorePhoto() {
       // 1. Best case: store already has a valid Cloudinary or Base64 URL
-      const existingStoreUrl = useAddressStore.getState().photoUrl || useAddressStore.getState().doorwayPhotoUrl;
+      const existingStoreUrl =
+        useAddressStore.getState().photoUrl ||
+        useAddressStore.getState().doorwayPhotoUrl;
       if (
         existingStoreUrl &&
         (existingStoreUrl.startsWith('http://') ||
@@ -118,7 +132,9 @@ export default function CreateSharePage() {
 
       // 3. Fetch persisted blob from Dexie IndexedDB
       try {
-        let record = doorwayPhotoKey ? await getCameraBlob(doorwayPhotoKey) : null;
+        let record = doorwayPhotoKey
+          ? await getCameraBlob(doorwayPhotoKey)
+          : null;
         if (!record) {
           record = (await db.camera_blobs.orderBy('createdAt').last()) || null;
         }
@@ -133,7 +149,10 @@ export default function CreateSharePage() {
           if (active) setPhotoUrl(createdBlobUrl);
         }
       } catch (err) {
-        console.warn('[share] Failed to restore photo from Dexie IndexedDB:', err);
+        console.warn(
+          '[share] Failed to restore photo from Dexie IndexedDB:',
+          err
+        );
       }
 
       // 4. Fallback: persisted base64 string in Zustand (survives reloads)
@@ -161,7 +180,10 @@ export default function CreateSharePage() {
   // Validation: ONLY Base Location (Step 1 code or GPS coordinates) is strictly mandatory
   const isBaseLocationPresent = Boolean(
     (digipin && digipin.trim().length > 0) ||
-    (latitude !== null && longitude !== null && !isNaN(latitude) && !isNaN(longitude))
+    (latitude !== null &&
+      longitude !== null &&
+      !isNaN(latitude) &&
+      !isNaN(longitude))
   );
   const isValid = isBaseLocationPresent && !isSubmitting;
 
@@ -179,7 +201,8 @@ export default function CreateSharePage() {
   const floor = storeMetadata?.floor?.trim() || '';
   const flat = storeMetadata?.flat?.trim() || '';
   const hints = storeMetadata?.landmark?.trim() || '';
-  const tag = storeMetadata?.customTag?.trim() || storeMetadata?.label?.trim() || '';
+  const tag =
+    storeMetadata?.customTag?.trim() || storeMetadata?.label?.trim() || '';
   const hasFloorOrFlat = Boolean(floor || flat);
   const floorFlatText = [floor, flat].filter(Boolean).join(', ');
   const hasZAxisData = Boolean(hasFloorOrFlat || hints);
@@ -226,23 +249,35 @@ export default function CreateSharePage() {
       try {
         // RACE CONDITION FIX: Await the Cloudinary upload promise before executing DB save
         let finalPhotoUrl: string | null = null;
-        const uploadPromise = useAddressStore.getState().uploadPromise || getActiveCloudinaryPromise();
+        const uploadPromise =
+          useAddressStore.getState().uploadPromise ||
+          getActiveCloudinaryPromise();
 
         if (uploadPromise) {
           try {
             const resolvedUrl = await uploadPromise;
-            if (resolvedUrl && (resolvedUrl.startsWith('http://') || resolvedUrl.startsWith('https://'))) {
+            if (
+              resolvedUrl &&
+              (resolvedUrl.startsWith('http://') ||
+                resolvedUrl.startsWith('https://'))
+            ) {
               finalPhotoUrl = resolvedUrl;
             }
           } catch (promiseErr) {
-            console.warn('[share] Error awaiting Cloudinary upload promise:', promiseErr);
+            console.warn(
+              '[share] Error awaiting Cloudinary upload promise:',
+              promiseErr
+            );
           }
         }
 
         // If not resolved from promise, check if store has a valid http/https URL
         if (!finalPhotoUrl) {
           const storeUrl = useAddressStore.getState().doorwayPhotoUrl;
-          if (storeUrl && (storeUrl.startsWith('http://') || storeUrl.startsWith('https://'))) {
+          if (
+            storeUrl &&
+            (storeUrl.startsWith('http://') || storeUrl.startsWith('https://'))
+          ) {
             finalPhotoUrl = storeUrl;
           }
         }
@@ -271,13 +306,17 @@ export default function CreateSharePage() {
             if (
               uploadResult.success &&
               uploadResult.url &&
-              (uploadResult.url.startsWith('http://') || uploadResult.url.startsWith('https://'))
+              (uploadResult.url.startsWith('http://') ||
+                uploadResult.url.startsWith('https://'))
             ) {
               finalPhotoUrl = uploadResult.url;
               useAddressStore.getState().setPhotoUrl(finalPhotoUrl);
             }
           } catch (fallbackErr) {
-            console.warn('[share] Fallback direct Cloudinary upload error:', fallbackErr);
+            console.warn(
+              '[share] Fallback direct Cloudinary upload error:',
+              fallbackErr
+            );
           }
         }
 
@@ -305,7 +344,7 @@ export default function CreateSharePage() {
           photoUrl: finalPhotoUrl,
         };
 
-        console.log("PAYLOAD TO BACKEND:", payload);
+        console.log('PAYLOAD TO BACKEND:', payload);
 
         // Build FormData payload for Server Action
         const formData = new FormData();
@@ -328,7 +367,11 @@ export default function CreateSharePage() {
         formData.append('saveToAccount', String(payload.saveToAccount));
 
         // STRICT VALIDATION: Ensure photoUrl starts with http. Never pass a string starting with blob:
-        if (finalPhotoUrl && (finalPhotoUrl.startsWith('http://') || finalPhotoUrl.startsWith('https://'))) {
+        if (
+          finalPhotoUrl &&
+          (finalPhotoUrl.startsWith('http://') ||
+            finalPhotoUrl.startsWith('https://'))
+        ) {
           formData.append('photoUrl', finalPhotoUrl);
         } else if (activeBlob) {
           formData.append('photo', activeBlob, 'doorway.webp');
@@ -355,7 +398,9 @@ export default function CreateSharePage() {
         }
       } catch (bgErr) {
         console.error('[share] Background createAddress error:', bgErr);
-        setSubmitError('Failed to publish address due to a network or server issue');
+        setSubmitError(
+          'Failed to publish address due to a network or server issue'
+        );
       }
     })();
   };
@@ -363,9 +408,11 @@ export default function CreateSharePage() {
   // Wait momentarily for component mount and Zustand storage rehydration to finish
   if (!mounted || !hasHydrated) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center min-h-[50vh] text-muted-foreground font-sans">
-        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2" />
-        <span className="text-xs font-medium text-muted-foreground font-sans">Restoring review data...</span>
+      <div className="text-muted-foreground flex min-h-[50vh] flex-1 flex-col items-center justify-center font-sans">
+        <div className="border-accent mb-2 h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" />
+        <span className="text-muted-foreground font-sans text-xs font-medium">
+          Restoring review data...
+        </span>
       </div>
     );
   }
@@ -376,122 +423,133 @@ export default function CreateSharePage() {
 
   return (
     <div
-      className="flex flex-col min-h-[calc(100vh-8rem)] pb-28 animate-in fade-in duration-150 pt-2 space-y-5 font-sans text-foreground"
+      className="animate-in fade-in text-foreground flex min-h-[calc(100vh-8rem)] flex-col space-y-5 pt-2 pb-28 font-sans duration-150"
       style={{ fontFamily: 'var(--font-sans), sans-serif' }}
     >
       {/* Step Header */}
       <div>
-        <h1 className="text-xl md:text-2xl font-bold font-sans text-foreground tracking-tight">
+        <h1 className="text-foreground font-sans text-xl font-bold tracking-tight md:text-2xl">
           Step 5 of 5: Review
         </h1>
-        <p className="text-xs md:text-sm text-muted-foreground mt-0.5 font-sans">
-          Verify your captured micro-address details before generating your sovereign link.
+        <p className="text-muted-foreground mt-0.5 font-sans text-xs md:text-sm">
+          Verify your captured micro-address details before generating your
+          sovereign link.
         </p>
       </div>
 
       {/* Validation Warning Alert only if Base Location is missing */}
       {!isBaseLocationPresent && (
-        <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-[4px] p-3 text-amber-900 font-sans">
-          <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-          <div className="text-xs leading-relaxed font-sans">
+        <div className="flex items-start gap-2.5 rounded-[4px] border border-amber-200 bg-amber-50 p-3 font-sans text-amber-900">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
+          <div className="font-sans text-xs leading-relaxed">
             <span className="font-semibold text-amber-950">
               Base Location Required:
             </span>{' '}
-            Please lock your satellite position in Step 1 to generate a micro-address.
+            Please lock your satellite position in Step 1 to generate a
+            micro-address.
           </div>
         </div>
       )}
 
       {/* Server Action Error Banner */}
       {submitError && (
-        <div className="flex items-start gap-2.5 bg-rose-50 border border-rose-200 rounded-[4px] p-3 text-rose-900 font-sans animate-in fade-in">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-          <div className="text-xs leading-relaxed font-sans">
-            <span className="font-semibold text-rose-950">Publication Error:</span>{' '}
+        <div className="animate-in fade-in flex items-start gap-2.5 rounded-[4px] border border-rose-200 bg-rose-50 p-3 font-sans text-rose-900">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" />
+          <div className="font-sans text-xs leading-relaxed">
+            <span className="font-semibold text-rose-950">
+              Publication Error:
+            </span>{' '}
             {submitError}
           </div>
         </div>
       )}
 
       {/* 4-Factor Review Card */}
-      <div className="bg-card border border-border rounded-[4px] p-5 shadow-xs space-y-4 font-sans">
+      <div className="bg-card border-border space-y-4 rounded-[4px] border p-5 font-sans shadow-xs">
         {/* Factor 1: Location Code & Pin */}
-        <div className="flex items-start justify-between pb-3.5 border-b border-border">
+        <div className="border-border flex items-start justify-between border-b pb-3.5">
           <div className="space-y-1">
-            <span className="text-[11px] font-semibold text-accent uppercase tracking-wider block font-sans">
+            <span className="text-accent block font-sans text-[11px] font-semibold tracking-wider uppercase">
               Location Code &amp; Pin
             </span>
-            <div className="font-mono text-lg md:text-xl font-bold text-primary tracking-wider">
+            <div className="text-primary font-mono text-lg font-bold tracking-wider md:text-xl">
               {code}
             </div>
             <div className="space-y-0.5 pt-0.5">
-              <p className="text-xs text-muted-foreground flex items-center gap-1 font-mono">
-                <MapPin className="w-3.5 h-3.5 text-accent shrink-0" />
+              <p className="text-muted-foreground flex items-center gap-1 font-mono text-xs">
+                <MapPin className="text-accent h-3.5 w-3.5 shrink-0" />
                 <span>Base: {coordinates}</span>
               </p>
               {entranceLat != null && entranceLng != null && (
-                <p className="text-[11px] text-muted-foreground flex items-center gap-1 font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 ml-1 mr-1 shrink-0" />
-                  <span>Entrance Pin: {Number(entranceLat).toFixed(4)}° N, {Number(entranceLng).toFixed(4)}° E</span>
+                <p className="text-muted-foreground flex items-center gap-1 font-mono text-[11px]">
+                  <span className="mr-1 ml-1 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+                  <span>
+                    Entrance Pin: {Number(entranceLat).toFixed(4)}° N,{' '}
+                    {Number(entranceLng).toFixed(4)}° E
+                  </span>
                 </p>
               )}
             </div>
           </div>
           <Link
             href="/create/map"
-            className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-semibold pt-1 cursor-pointer shrink-0 font-sans"
+            className="text-accent inline-flex shrink-0 cursor-pointer items-center gap-1 pt-1 font-sans text-xs font-semibold hover:underline"
           >
-            <Edit3 className="w-3.5 h-3.5" />
+            <Edit3 className="h-3.5 w-3.5" />
             <span>Edit Pin</span>
           </Link>
         </div>
 
         {/* Factor 2: Doorway Photo (Enlarged full-width preview) */}
-        <div className="pb-4 border-b border-border space-y-2.5">
+        <div className="border-border space-y-2.5 border-b pb-4">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-accent uppercase tracking-wider block font-sans">
+            <span className="text-accent block font-sans text-[11px] font-semibold tracking-wider uppercase">
               Doorway Visual Lock
             </span>
             <Link
               href="/create/camera"
-              className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-semibold cursor-pointer font-sans"
+              className="text-accent inline-flex cursor-pointer items-center gap-1 font-sans text-xs font-semibold hover:underline"
             >
-              <Edit3 className="w-3.5 h-3.5" />
+              <Edit3 className="h-3.5 w-3.5" />
               <span>{photoUrl ? 'Retake Photo' : 'Add Photo'}</span>
             </Link>
           </div>
 
           {photoUrl ? (
-            <div className="w-full aspect-video min-h-[220px] max-h-[340px] rounded-lg border border-border overflow-hidden relative shadow-xs bg-zinc-950 flex items-center justify-center">
+            <div className="border-border relative flex aspect-video max-h-[340px] min-h-[220px] w-full items-center justify-center overflow-hidden rounded-lg border bg-zinc-950 shadow-xs">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photoUrl}
                 alt="Doorway visual lock"
-                className="w-full h-full object-contain"
+                className="h-full w-full object-contain"
               />
-              <div className="absolute bottom-2 left-2 bg-black/75 backdrop-blur-sm text-white text-[11px] font-medium px-2 py-0.5 rounded flex items-center gap-1.5 pointer-events-none">
-                <Camera className="w-3.5 h-3.5 text-accent" />
+              <div className="pointer-events-none absolute bottom-2 left-2 flex items-center gap-1.5 rounded bg-black/75 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
+                <Camera className="text-accent h-3.5 w-3.5" />
                 <span>Visual Lock Attached</span>
               </div>
             </div>
           ) : (
-            <div className="w-full py-6 rounded-lg border border-dashed border-border flex flex-col items-center justify-center bg-muted/20 text-muted-foreground">
-              <Camera className="w-6 h-6 mb-1 text-muted-foreground/60" />
-              <span className="text-xs font-medium text-foreground">No doorway photo provided</span>
-              <span className="text-[11px] text-muted-foreground mt-0.5">Optional visual lock for couriers</span>
+            <div className="border-border bg-muted/20 text-muted-foreground flex w-full flex-col items-center justify-center rounded-lg border border-dashed py-6">
+              <Camera className="text-muted-foreground/60 mb-1 h-6 w-6" />
+              <span className="text-foreground text-xs font-medium">
+                No doorway photo provided
+              </span>
+              <span className="text-muted-foreground mt-0.5 text-[11px]">
+                Optional visual lock for couriers
+              </span>
             </div>
           )}
         </div>
 
         {/* Factor 3 & 4: Z-Axis Details & Security */}
         <div className="flex items-start justify-between">
-          <div className="space-y-2 text-xs w-full">
+          <div className="w-full space-y-2 text-xs">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold text-accent uppercase tracking-wider block font-sans">
+              <span className="text-accent block font-sans text-[11px] font-semibold tracking-wider uppercase">
                 Z-Axis &amp; Security Details
               </span>
               {tag ? (
-                <span className="px-1.5 py-0.5 rounded-[4px] bg-muted text-[10px] font-semibold text-foreground border border-border font-sans">
+                <span className="bg-muted text-foreground border-border rounded-[4px] border px-1.5 py-0.5 font-sans text-[10px] font-semibold">
                   {tag}
                 </span>
               ) : null}
@@ -500,32 +558,39 @@ export default function CreateSharePage() {
             {hasZAxisData ? (
               <>
                 {hasFloorOrFlat && (
-                  <p className="text-sm font-semibold text-foreground font-sans">
+                  <p className="text-foreground font-sans text-sm font-semibold">
                     {floorFlatText}
                   </p>
                 )}
                 {hints && (
-                  <p className="text-xs text-muted-foreground leading-relaxed font-sans">
+                  <p className="text-muted-foreground font-sans text-xs leading-relaxed">
                     {hints}
                   </p>
                 )}
               </>
             ) : (
-              <p className="text-xs text-zinc-400 font-sans">
+              <p className="font-sans text-xs text-zinc-400">
                 No additional doorway details provided.
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/60">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-muted/60 text-xs font-medium text-foreground">
-                <Clock className="w-3.5 h-3.5 text-accent" />
+            <div className="border-border/60 flex flex-wrap items-center gap-2 border-t pt-2">
+              <div className="bg-muted/60 text-foreground inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium">
+                <Clock className="text-accent h-3.5 w-3.5" />
                 <span>
-                  Link Expiry: {storeMetadata?.expiry === 'never' ? 'Permanent' : storeMetadata?.expiry === '24h' ? '24 Hours' : storeMetadata?.expiry === '1h' ? '1 Hour' : '30 Minutes'}
+                  Link Expiry:{' '}
+                  {storeMetadata?.expiry === 'never'
+                    ? 'Permanent'
+                    : storeMetadata?.expiry === '24h'
+                      ? '24 Hours'
+                      : storeMetadata?.expiry === '1h'
+                        ? '1 Hour'
+                        : '30 Minutes'}
                 </span>
               </div>
               {storeMetadata?.passcode ? (
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-medium border border-emerald-500/20">
-                  <Shield className="w-3.5 h-3.5" />
+                <div className="inline-flex items-center gap-1.5 rounded border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                  <Shield className="h-3.5 w-3.5" />
                   <span>Passcode Protected</span>
                 </div>
               ) : null}
@@ -533,38 +598,38 @@ export default function CreateSharePage() {
           </div>
           <Link
             href="/create/metadata"
-            className="inline-flex items-center gap-1 text-xs text-accent hover:underline font-semibold pt-0.5 shrink-0 ml-3 cursor-pointer font-sans"
+            className="text-accent ml-3 inline-flex shrink-0 cursor-pointer items-center gap-1 pt-0.5 font-sans text-xs font-semibold hover:underline"
           >
-            <Edit3 className="w-3.5 h-3.5" />
+            <Edit3 className="h-3.5 w-3.5" />
             <span>Edit Details</span>
           </Link>
         </div>
       </div>
 
       {/* Bottom CTA: Generate Micro-Address */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-card border-t border-border px-4 py-3.5 font-sans">
-        <div className="max-w-md md:max-w-xl lg:max-w-2xl mx-auto">
+      <div className="bg-card border-border fixed right-0 bottom-0 left-0 z-30 border-t px-4 py-3.5 font-sans">
+        <div className="mx-auto max-w-md md:max-w-xl lg:max-w-2xl">
           <button
             type="button"
             id="share-generate-btn"
             onClick={handleGenerate}
             disabled={!isValid || isSubmitting}
             aria-disabled={!isValid || isSubmitting}
-            className={`flex items-center justify-center gap-2 w-full font-semibold text-sm md:text-base py-3.5 rounded-[4px] transition-[transform,opacity] duration-150 ease-out font-sans ${
+            className={`flex w-full items-center justify-center gap-2 rounded-[4px] py-3.5 font-sans text-sm font-semibold transition-[transform,opacity] duration-150 ease-out md:text-base ${
               isValid && !isSubmitting
-                ? 'bg-accent text-accent-foreground hover:opacity-95 active:scale-[0.98] shadow-sm cursor-pointer'
-                : 'bg-zinc-300 dark:bg-zinc-800 text-zinc-500 opacity-50 cursor-not-allowed shadow-none'
+                ? 'bg-accent text-accent-foreground cursor-pointer shadow-sm hover:opacity-95 active:scale-[0.98]'
+                : 'cursor-not-allowed bg-zinc-300 text-zinc-500 opacity-50 shadow-none dark:bg-zinc-800'
             }`}
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-accent-foreground" />
+                <Loader2 className="text-accent-foreground h-4 w-4 animate-spin" />
                 <span>Generating...</span>
               </>
             ) : (
               <>
                 <span>Generate Micro-Address</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="h-4 w-4" />
               </>
             )}
           </button>
