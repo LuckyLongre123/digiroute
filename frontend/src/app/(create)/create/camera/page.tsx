@@ -13,7 +13,6 @@ import {
   Loader2,
   ShieldCheck,
   ArrowRight,
-  Lock,
 } from 'lucide-react';
 import {
   useAddressStore,
@@ -118,6 +117,7 @@ export default function CreateCameraPage() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isHydrating, setIsHydrating] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     doorwayPhotoBase64 || existingPhotoUrl || null
   );
@@ -178,24 +178,27 @@ export default function CreateCameraPage() {
           setIsStreaming(true);
         };
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.warn('Camera access denied or unavailable:', err);
+      const errorName = err instanceof Error ? err.name : '';
       if (
-        err.name === 'NotAllowedError' ||
-        err.name === 'PermissionDeniedError'
+        errorName === 'NotAllowedError' ||
+        errorName === 'PermissionDeniedError'
       ) {
         setCameraError(
           'Permission to access camera was denied. Please allow camera access in browser settings.'
         );
       } else if (
-        err.name === 'NotFoundError' ||
-        err.name === 'DevicesNotFoundError'
+        errorName === 'NotFoundError' ||
+        errorName === 'DevicesNotFoundError'
       ) {
         setCameraError(
           'No physical camera device was detected on your system.'
         );
       } else {
-        setCameraError(err.message || 'Failed to initialize camera.');
+        setCameraError(
+          'Unable to acquire camera feed. Please check hardware permissions.'
+        );
       }
       setIsStreaming(false);
     }
@@ -327,9 +330,10 @@ export default function CreateCameraPage() {
 
       // 3. Persist to Dexie IndexedDB and Zustand store as Base64
       await persistAndPreviewBlob(blob);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Capture failed:', err);
-      alert('Failed to capture frame: ' + (err.message || 'Unknown error'));
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      alert('Failed to capture frame: ' + message);
     } finally {
       setIsProcessing(false);
     }
@@ -352,7 +356,8 @@ export default function CreateCameraPage() {
   };
 
   const handleContinue = () => {
-    if (!previewUrl) return;
+    if (!previewUrl || isNavigating) return;
+    setIsNavigating(true);
 
     // Persist wizard currentStep = 3 before navigating
     useAddressStore.getState().setCurrentStep(3);
@@ -611,19 +616,29 @@ export default function CreateCameraPage() {
             <button
               type="button"
               id="camera-continue-btn"
+              disabled={isNavigating}
               onClick={handleContinue}
-              className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] md:text-base"
+              className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 md:text-base"
             >
-              <MapPin className="h-4 w-4 fill-current" />
-              <span>Lock Photo &amp; Set Entrance Pin</span>
-              <ArrowRight className="h-4 w-4" />
+              {isNavigating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <MapPin className="h-4 w-4 fill-current" />
+                  <span>Lock Photo &amp; Set Entrance Pin</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
             </button>
           ) : (
             <button
               type="button"
               disabled
               id="camera-continue-btn"
-              className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
+              className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
             >
               <Camera className="h-4 w-4" />
               <span>Capture doorway photo to continue</span>

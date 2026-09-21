@@ -153,6 +153,7 @@ function CreateStep1Content() {
   const resetDraft = useAddressStore((state) => state.resetDraft);
 
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const hasPromptedResumeRef = useRef(false);
 
   // Draft Resumption Interstitial: Check on mount if user has existing unfinished draft
@@ -198,6 +199,7 @@ function CreateStep1Content() {
       5: '/create/share',
     };
     if (resumeStep > 1 && STEP_ROUTES[resumeStep]) {
+      setIsNavigating(true);
       router.push(STEP_ROUTES[resumeStep]);
     }
   };
@@ -231,7 +233,8 @@ function CreateStep1Content() {
     isManualValid;
 
   const handleContinue = () => {
-    if (!isContinueEnabled) return;
+    if (!isContinueEnabled || isNavigating) return;
+    setIsNavigating(true);
 
     if (isManualValid) {
       const decoded = decode(cleanManual);
@@ -250,6 +253,7 @@ function CreateStep1Content() {
       useAddressStore.getState().setCurrentStep(2);
       useAddressStore.getState().setStep(2);
       router.push('/create/camera');
+      return;
     }
   };
 
@@ -552,18 +556,28 @@ function CreateStep1Content() {
             <button
               type="button"
               id="create-step1-continue"
+              disabled={isNavigating}
               onClick={handleContinue}
-              className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] md:text-base"
+              className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 md:text-base"
             >
-              <MapPin className="h-4 w-4 fill-current" />
-              <span>Lock DIGIPIN &amp; Continue</span>
+              {isNavigating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <MapPin className="h-4 w-4 fill-current" />
+                  <span>Lock DIGIPIN &amp; Continue</span>
+                </>
+              )}
             </button>
           ) : (
             <button
               type="button"
               disabled
               id="create-step1-continue"
-              className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
+              className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
             >
               <MapPin className="h-4 w-4" />
               <span>Detect location to continue</span>

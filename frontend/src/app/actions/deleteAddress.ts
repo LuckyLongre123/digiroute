@@ -23,7 +23,8 @@ export async function deleteAddressAction(slugOrId: string) {
       };
     }
 
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard', 'layout');
+    revalidatePath('/admin/overview');
     return { success: true };
   } catch (err) {
     console.error('[deleteAddressAction] Error:', err);

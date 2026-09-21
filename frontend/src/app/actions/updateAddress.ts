@@ -41,8 +41,9 @@ export async function updateAddressAction(input: UpdateAddressInput) {
       };
     }
 
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard', 'layout');
     revalidatePath(`/dashboard/address/${input.slugOrId}`);
+    revalidatePath('/admin/overview');
     return { success: true, address: updated };
   } catch (err) {
     console.error('[updateAddressAction] Error:', err);

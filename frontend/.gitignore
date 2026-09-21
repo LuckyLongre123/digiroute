@@ -50,3 +50,6 @@ dist/
 # Local server data storage
 src/data/*.json
 src/data/
+
+# Test files
+test/

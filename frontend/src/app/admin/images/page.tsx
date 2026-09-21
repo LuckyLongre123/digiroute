@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ReactFlow,
@@ -71,7 +72,7 @@ function UserNode({ data }: { data: UserNodeData }) {
   const u = data.record;
   return (
     <div
-      className="relative min-w-[170px] cursor-pointer rounded-md px-3.5 py-3 font-mono text-xs"
+      className="relative min-w-[180px] cursor-pointer rounded-md px-4 py-3.5 font-mono text-sm md:px-3.5 md:py-3 md:text-xs"
       style={{
         backgroundColor: '#0c1a2e',
         border: '1px solid #1d4ed8',
@@ -80,22 +81,22 @@ function UserNode({ data }: { data: UserNodeData }) {
       }}
     >
       <div className="mb-1 flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1 text-[10px] font-bold tracking-wider text-blue-400 uppercase">
-          <UserIcon className="h-3 w-3" />
+        <span className="flex items-center gap-1 text-xs font-bold tracking-wider text-blue-400 uppercase md:text-[10px]">
+          <UserIcon className="h-3.5 w-3.5 md:h-3 md:w-3" />
           <span>User</span>
         </span>
-        <span className="rounded bg-blue-500/20 px-1.5 py-0.5 font-mono text-[10px] text-blue-300">
+        <span className="rounded bg-blue-500/20 px-2 py-0.5 font-mono text-xs text-blue-300 md:text-[10px]">
           {data.photoCount} {data.photoCount === 1 ? 'photo' : 'photos'}
         </span>
       </div>
       <div
-        className="max-w-[150px] truncate text-sm font-semibold"
+        className="max-w-[160px] truncate text-base font-semibold md:text-sm"
         title={u.name || u.email}
       >
         {u.name || u.email?.split('@')[0] || 'Anonymous'}
       </div>
       <div
-        className="mt-0.5 max-w-[150px] truncate text-[10px] opacity-60"
+        className="mt-0.5 max-w-[160px] truncate text-xs opacity-60 md:text-[10px]"
         title={u.email}
       >
         {u.email || 'no email'}
@@ -117,7 +118,7 @@ function ImageNode({ data }: { data: ImageNodeData }) {
   return (
     <div
       onClick={() => data.onSelectImage(a)}
-      className="group relative min-w-[210px] cursor-pointer rounded-md p-2.5 font-mono text-xs transition-all hover:scale-[1.02] hover:border-cyan-500"
+      className="group relative min-w-[220px] cursor-pointer rounded-md p-3 font-mono text-sm transition-all hover:scale-[1.02] hover:border-cyan-500 md:p-2.5 md:text-xs"
       style={{
         backgroundColor: '#18181b',
         border: imageError
@@ -139,14 +140,14 @@ function ImageNode({ data }: { data: ImageNodeData }) {
       />
       <div className="flex items-center gap-3">
         {imageError ? (
-          <div className="relative flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded border border-red-500/50 bg-red-950/40 p-1 text-center text-red-400">
-            <span className="text-base leading-none">⚠️</span>
-            <span className="mt-0.5 text-[8px] font-bold tracking-tight">
+          <div className="relative flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded border border-red-500/50 bg-red-950/40 p-1 text-center text-red-400 md:h-14 md:w-14">
+            <span className="text-lg leading-none">⚠️</span>
+            <span className="mt-0.5 text-[9px] font-bold tracking-tight md:text-[8px]">
               404
             </span>
           </div>
         ) : (
-          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded border border-zinc-700 bg-zinc-900">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded border border-zinc-700 bg-zinc-900 md:h-14 md:w-14">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={a.doorwayPhotoUrl!}
@@ -159,26 +160,26 @@ function ImageNode({ data }: { data: ImageNodeData }) {
         )}
         <div className="min-w-0 flex-1">
           {imageError ? (
-            <div className="mb-1 inline-block rounded border border-red-500/50 bg-red-950/80 px-1.5 py-0.5 text-[9px] leading-tight font-bold text-red-300">
-              ⚠️ Media Missing (Deleted from CDN)
+            <div className="mb-1 inline-block rounded border border-red-500/50 bg-red-950/80 px-2 py-0.5 text-[10px] leading-tight font-bold text-red-300 md:text-[9px]">
+              ⚠️ Media Missing
             </div>
           ) : (
             <div
-              className="mb-0.5 text-[10px] font-bold tracking-wider uppercase"
+              className="mb-0.5 text-xs font-bold tracking-wider uppercase md:text-[10px]"
               style={{ color: a.isEphemeral ? '#f59e0b' : '#22d3ee' }}
             >
               {a.isEphemeral ? 'Guest Photo' : 'Doorway Photo'}
             </div>
           )}
-          <div className="font-mono text-sm font-bold tracking-wider text-zinc-100">
+          <div className="font-mono text-base font-bold tracking-wider text-zinc-100 md:text-sm">
             {a.digipin}
           </div>
           {a.label && (
-            <div className="mt-0.5 truncate text-[11px] text-zinc-400">
+            <div className="mt-0.5 truncate text-xs text-zinc-400 md:text-[11px]">
               {a.label}
             </div>
           )}
-          <div className="mt-1 text-[10px] font-medium text-cyan-400 group-hover:underline">
+          <div className="mt-1 text-xs font-medium text-cyan-400 group-hover:underline md:text-[10px]">
             View / manage →
           </div>
         </div>
@@ -486,45 +487,52 @@ export default function AdminImagesPage() {
       }}
     >
       {/* Top Bar */}
-      <header
-        className="z-10 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b px-4 py-2.5 sm:px-6 sm:py-3"
-        style={{ borderColor: '#27272a', backgroundColor: '#09090b' }}
-      >
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-zinc-100 uppercase">
-            <Camera className="h-4 w-4 shrink-0 text-cyan-400" />
-            <span>Media Node Graph</span>
-          </span>
+      <header className="z-10 flex shrink-0 flex-col gap-3 border-b border-zinc-800 bg-[#09090b] px-4 py-3.5 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-4 md:py-2.5">
+        <div className="flex w-full items-center justify-between gap-2 sm:gap-3 md:w-auto md:justify-start">
+          <div className="grid w-full grid-cols-2 items-center gap-1 rounded-[3px] border border-zinc-800 bg-zinc-950 p-1 font-mono text-xs sm:flex sm:w-auto md:p-0.5 md:text-[11px]">
+            <span className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-[2px] bg-cyan-400/10 px-3 py-2 font-semibold text-cyan-400 md:min-h-0 md:px-2.5 md:py-1">
+              <Camera className="h-4 w-4 text-cyan-400 md:h-3.5 md:w-3.5" />
+              <span>Active Graph</span>
+            </span>
+            <Link
+              href="/admin/images/trash"
+              className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-[2px] px-3 py-2 text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-rose-400 md:min-h-0 md:px-2.5 md:py-1"
+              title="View and clean orphaned Cloudinary images"
+            >
+              <Trash2 className="h-4 w-4 md:h-3.5 md:w-3.5" />
+              <span>Trash Images</span>
+            </Link>
+          </div>
           <span className="hidden text-zinc-600 sm:inline">|</span>
-          <span className="hidden font-mono text-xs text-zinc-400 sm:inline">
+          <span className="hidden font-mono text-xs text-zinc-400 lg:inline">
             Connecting doorway imagery to owner nodes
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+        <div className="flex w-full flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:gap-4 md:w-auto">
           {/* Media Search Input */}
-          <div className="relative flex items-center">
-            <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
+          <div className="relative flex w-full items-center md:w-auto">
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500 md:left-2.5 md:h-3.5 md:w-3.5" />
             <input
               type="text"
               value={mediaSearchTerm}
               onChange={(e) => setMediaSearchTerm(e.target.value)}
               placeholder="Filter media (DIGIPIN, userId, addressId)..."
-              className="w-56 rounded border border-zinc-800 bg-zinc-900 px-2.5 py-1 pr-7 pl-7 font-mono text-[11px] text-zinc-100 transition-colors placeholder:text-zinc-500 focus:border-cyan-400 focus:outline-none sm:w-64"
+              className="h-11 min-h-[44px] w-full rounded border border-zinc-800 bg-zinc-900 px-3 py-2 pr-9 pl-9 font-mono text-sm text-zinc-100 transition-colors placeholder:text-zinc-500 focus:border-cyan-400 focus:outline-none md:h-8 md:min-h-0 md:w-60 md:text-[11px] lg:w-64"
             />
             {mediaSearchTerm && (
               <button
                 type="button"
                 onClick={() => setMediaSearchTerm('')}
-                className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-zinc-500 transition-colors hover:text-zinc-200"
+                className="absolute top-1/2 right-2 flex min-h-[44px] min-w-[36px] -translate-y-1/2 cursor-pointer items-center justify-center text-zinc-500 transition-colors hover:text-zinc-200"
                 title="Clear media filter"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4 w-4 md:h-3.5 md:w-3.5" />
               </button>
             )}
           </div>
 
-          <div className="hidden items-center gap-3 font-mono text-xs text-zinc-400 md:flex">
+          <div className="hidden items-center gap-3 font-mono text-xs text-zinc-400 lg:flex">
             <span>
               Photos:{' '}
               <strong className="text-cyan-400">{stats.photoCount}</strong>
@@ -535,33 +543,35 @@ export default function AdminImagesPage() {
             </span>
           </div>
 
-          <button
-            onClick={handleSyncMedia}
-            disabled={syncing || loading}
-            title="Verify Cloudinary media URLs and clean 404s from database"
-            className="flex cursor-pointer items-center gap-1.5 rounded-[3px] border border-amber-900/60 bg-amber-950/20 px-2 py-1 font-mono text-xs whitespace-nowrap text-amber-400 transition-colors hover:border-amber-400 hover:text-amber-300 disabled:opacity-50 sm:px-3 sm:py-1.5 sm:text-sm"
-          >
-            <Sparkles
-              size={12}
-              className={
-                syncing ? 'animate-spin text-amber-400' : 'text-amber-400'
-              }
-            />
-            <span>{syncing ? 'syncing...' : '$ sync/clean db'}</span>
-          </button>
+          <div className="flex w-full items-center gap-2.5 sm:w-auto">
+            <button
+              onClick={handleSyncMedia}
+              disabled={syncing || loading}
+              title="Verify Cloudinary media URLs and clean 404s from database"
+              className="flex min-h-[44px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-[3px] border border-amber-900/60 bg-amber-950/20 px-3.5 py-2.5 font-mono text-sm whitespace-nowrap text-amber-400 transition-colors hover:border-amber-400 hover:text-amber-300 disabled:opacity-50 sm:flex-initial md:min-h-0 md:gap-1.5 md:px-3 md:py-1.5 md:text-xs"
+            >
+              <Sparkles
+                size={14}
+                className={
+                  syncing ? 'animate-spin text-amber-400' : 'text-amber-400'
+                }
+              />
+              <span>{syncing ? 'syncing...' : '$ sync/clean db'}</span>
+            </button>
 
-          <button
-            onClick={fetchData}
-            className="flex cursor-pointer items-center gap-1.5 rounded-[3px] border border-zinc-800 px-2 py-1 font-mono text-xs whitespace-nowrap text-zinc-400 transition-colors hover:border-cyan-400 hover:text-cyan-400 sm:px-3 sm:py-1.5 sm:text-sm"
-          >
-            <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-            <span>$ refresh</span>
-          </button>
+            <button
+              onClick={fetchData}
+              className="flex min-h-[44px] flex-1 cursor-pointer items-center justify-center gap-2 rounded-[3px] border border-zinc-800 px-3.5 py-2.5 font-mono text-sm whitespace-nowrap text-zinc-400 transition-colors hover:border-cyan-400 hover:text-cyan-400 sm:flex-initial md:min-h-0 md:gap-1.5 md:px-3 md:py-1.5 md:text-xs"
+            >
+              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+              <span>$ refresh</span>
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Graph Container — Mobile & Desktop responsive */}
-      <div className="relative h-[calc(100vh-120px)] min-h-[500px] w-full">
+      <div className="relative h-[65vh] min-h-[500px] w-full md:h-[calc(100vh-120px)]">
         {loading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-950/80">
             <div className="flex animate-pulse items-center gap-2 font-mono text-xs text-cyan-400">
@@ -635,29 +645,30 @@ export default function AdminImagesPage() {
 
       {/* Detail / Preview Modal for Selected Image Node */}
       {selectedImage && (
-        <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 duration-150">
+        <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 duration-150 sm:p-6">
           <div className="w-full max-w-md overflow-hidden rounded-lg border border-zinc-700 bg-zinc-900 font-mono text-xs text-zinc-200 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 p-3">
-              <span className="font-semibold tracking-wider text-cyan-400">
+            <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-3">
+              <span className="text-sm font-semibold tracking-wider text-cyan-400 md:text-xs">
                 {`${selectedImage.digipin} // Doorway Photo`}
               </span>
               <button
                 onClick={() => handleSelectImage(null)}
-                className="cursor-pointer rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                className="flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                aria-label="Close modal"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5 md:h-4 md:w-4" />
               </button>
             </div>
 
-            <div className="space-y-4 p-4">
+            <div className="space-y-4 p-4 sm:p-5">
               <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border border-zinc-800 bg-zinc-950">
                 {modalImageError ? (
                   <div className="flex flex-col items-center justify-center space-y-1.5 p-6 text-center">
                     <span className="text-2xl">⚠️</span>
-                    <span className="text-xs font-bold text-red-400">
+                    <span className="text-sm font-bold text-red-400 md:text-xs">
                       Media Missing (Deleted from CDN)
                     </span>
-                    <span className="max-w-xs text-[11px] text-zinc-500">
+                    <span className="max-w-xs text-xs leading-relaxed text-zinc-500 md:text-[11px]">
                       The file returned 404 on Cloudinary. Click &ldquo;Delete
                       Photo&rdquo; below to clean this broken reference from the
                       database.
@@ -674,43 +685,47 @@ export default function AdminImagesPage() {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2">
-                  <span className="block text-zinc-500">DIGIPIN</span>
-                  <span className="font-bold text-zinc-100">
+              <div className="grid grid-cols-2 gap-2 text-xs md:text-[11px]">
+                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2.5 md:p-2">
+                  <span className="block text-[10px] text-zinc-500">
+                    DIGIPIN
+                  </span>
+                  <span className="text-sm font-bold text-zinc-100 md:text-xs">
                     {selectedImage.digipin}
                   </span>
                 </div>
-                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2">
-                  <span className="block text-zinc-500">Label</span>
-                  <span className="block truncate font-medium text-zinc-100">
+                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2.5 md:p-2">
+                  <span className="block text-[10px] text-zinc-500">Label</span>
+                  <span className="block truncate text-sm font-medium text-zinc-100 md:text-xs">
                     {selectedImage.label || 'No label'}
                   </span>
                 </div>
-                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2">
-                  <span className="block text-zinc-500">Type</span>
-                  <span className="text-cyan-400">
+                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2.5 md:p-2">
+                  <span className="block text-[10px] text-zinc-500">Type</span>
+                  <span className="text-xs text-cyan-400 md:text-[11px]">
                     {selectedImage.isEphemeral
                       ? 'Guest (Ephemeral)'
                       : 'Permanent Micro-Address'}
                   </span>
                 </div>
-                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2">
-                  <span className="block text-zinc-500">Owner ID</span>
-                  <span className="block truncate text-zinc-300">
+                <div className="rounded border border-zinc-800/80 bg-zinc-950/60 p-2.5 md:p-2">
+                  <span className="block text-[10px] text-zinc-500">
+                    Owner ID
+                  </span>
+                  <span className="block truncate text-xs text-zinc-300 md:text-[11px]">
                     {selectedImage.userId || 'Guest (Unregistered)'}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-3 border-t border-zinc-800 pt-2">
+              <div className="flex items-center justify-between gap-3 border-t border-zinc-800 pt-3">
                 <a
                   href={`/a/${selectedImage.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex cursor-pointer items-center gap-1.5 text-cyan-400 hover:underline"
+                  className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 text-sm text-cyan-400 hover:underline md:min-h-0 md:text-xs"
                 >
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <ExternalLink className="h-4 w-4 md:h-3.5 md:w-3.5" />
                   <span>Public View</span>
                 </a>
 
@@ -718,9 +733,9 @@ export default function AdminImagesPage() {
                   type="button"
                   onClick={handleDeletePhoto}
                   disabled={deleting}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded border border-red-800/80 bg-red-950/60 px-3 py-1.5 text-red-300 transition-colors hover:bg-red-900/80 disabled:opacity-50"
+                  className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 rounded border border-red-800/80 bg-red-950/60 px-3.5 py-2.5 text-sm text-red-300 transition-colors hover:bg-red-900/80 disabled:opacity-50 md:min-h-0 md:px-3 md:py-1.5 md:text-xs"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-4 w-4 md:h-3.5 md:w-3.5" />
                   <span>{deleting ? 'Deleting...' : 'Delete Photo'}</span>
                 </button>
               </div>

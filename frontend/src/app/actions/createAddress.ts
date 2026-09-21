@@ -2,6 +2,7 @@
 
 import { getSession, hashPassword } from '@/lib/auth';
 import { saveAddress, type AddressPayload } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 import { nanoid } from 'nanoid';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -149,6 +150,13 @@ export async function createAddress(
     };
 
     await saveAddress(addressPayload);
+
+    try {
+      revalidatePath('/dashboard', 'layout');
+      revalidatePath('/admin/overview');
+    } catch {
+      // Non-blocking revalidation
+    }
 
     const baseUrl =
       process.env.NEXT_PUBLIC_APP_URL ||

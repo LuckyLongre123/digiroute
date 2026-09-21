@@ -74,3 +74,45 @@ export async function uploadToCloudinary(
     };
   }
 }
+
+/**
+ * Normalizes and extracts Cloudinary public_id from a photo URL.
+ * Example: https://res.cloudinary.com/demo/image/upload/v1726000000/doorways/dg-abc123.webp
+ * Output: doorways/dg-abc123
+ */
+export function extractCloudinaryPublicId(url: string): string | null {
+  if (!url || typeof url !== 'string' || !url.includes('cloudinary.com')) {
+    return null;
+  }
+
+  try {
+    const urlWithoutQuery = url.split('?')[0].split('#')[0];
+    const parts = urlWithoutQuery.split('/');
+    const uploadIndex = parts.indexOf('upload');
+    if (uploadIndex === -1) return null;
+
+    let segments = parts.slice(uploadIndex + 1);
+
+    // Skip version (v123456789) or transformation segments (c_fill,w_300, etc.)
+    while (
+      segments.length > 0 &&
+      ((segments[0].startsWith('v') && /^v\d+$/.test(segments[0])) ||
+        segments[0].includes(',') ||
+        segments[0].startsWith('c_') ||
+        segments[0].startsWith('w_') ||
+        segments[0].startsWith('h_') ||
+        segments[0].startsWith('q_') ||
+        segments[0].startsWith('f_'))
+    ) {
+      segments = segments.slice(1);
+    }
+
+    if (segments.length === 0) return null;
+
+    const fullPathWithExt = segments.join('/');
+    // Strip file extension (.jpg, .png, .webp, etc.)
+    return fullPathWithExt.replace(/\.[^/.]+$/, '');
+  } catch {
+    return null;
+  }
+}

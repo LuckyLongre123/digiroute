@@ -43,7 +43,8 @@ export async function claimAddress(addressId: string) {
     try {
       revalidatePath(`/a/${claimed.slug}`);
       revalidatePath('/create/success');
-      revalidatePath('/dashboard');
+      revalidatePath('/dashboard', 'layout');
+      revalidatePath('/admin/overview');
     } catch {
       // Non-blocking cache revalidation
     }

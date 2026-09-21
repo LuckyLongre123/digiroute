@@ -19,6 +19,7 @@ import {
   Layers,
   Lock,
   Shield,
+  Loader2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -49,6 +50,7 @@ function computeExpiresAt(exp: string): string | null {
 export default function CreateMetadataPage() {
   const router = useRouter();
   const hasHydrated = useHasHydrated();
+  const [isNavigating, setIsNavigating] = useState(false);
   const baseLat = useAddressStore((state) => state.latitude);
   const baseLng = useAddressStore((state) => state.longitude);
   const setMetadata = useAddressStore((state) => state.setMetadata);
@@ -233,6 +235,8 @@ export default function CreateMetadataPage() {
   };
 
   const handleContinue = () => {
+    if (isNavigating) return;
+    setIsNavigating(true);
     persistCurrentData({ expiry });
     useAddressStore.getState().setCurrentStep(5);
     useAddressStore.getState().setStep(5);
@@ -639,11 +643,21 @@ export default function CreateMetadataPage() {
           <button
             type="button"
             id="metadata-continue-btn"
+            disabled={isNavigating}
             onClick={handleContinue}
-            className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded py-3.5 text-sm font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98] md:text-base"
+            className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm py-3.5 text-sm font-semibold shadow-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 md:text-base"
           >
-            <span>Review &amp; Generate</span>
-            <ArrowRight className="h-4 w-4" />
+            {isNavigating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              <>
+                <span>Review &amp; Generate</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
           </button>
         </div>
       </div>

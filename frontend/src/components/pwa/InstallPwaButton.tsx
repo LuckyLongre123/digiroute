@@ -13,7 +13,8 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPwaButton() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(() => {
     if (typeof window === 'undefined') return false;
     return (
@@ -93,27 +94,24 @@ export function InstallPwaButton() {
 
   // Fallback for iOS or browsers that don't dispatch beforeinstallprompt
   return (
-    <div className="flex max-w-md flex-col items-center gap-2.5 rounded-sm border border-zinc-200 bg-zinc-50/70 p-3.5 text-center font-sans dark:border-zinc-800 dark:bg-zinc-900/60">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300">
-        {isIOS ? (
-          <>
-            <Share2 className="h-3.5 w-3.5 text-zinc-500" />
-            <span>
-              To install on iOS, tap <strong>Share</strong> &gt;{' '}
-              <strong>Add to Home Screen</strong>.
-            </span>
-          </>
-        ) : (
-          <>
-            <Smartphone className="h-3.5 w-3.5 text-zinc-500" />
-            <span>
-              To install, tap your browser menu (⋮) and select{' '}
-              <strong>Add to Home Screen</strong> or{' '}
-              <strong>Install App</strong>.
-            </span>
-          </>
-        )}
-      </div>
+    <div className="flex max-w-md items-center gap-3 rounded-sm border border-zinc-200 bg-zinc-50/70 p-3 text-left font-sans dark:border-zinc-800 dark:bg-zinc-900/60">
+      {isIOS ? (
+        <>
+          <Share2 className="h-5 w-5 shrink-0 text-slate-500 dark:text-zinc-400" />
+          <p className="text-sm leading-normal text-slate-600 dark:text-zinc-300">
+            To install on iOS, tap <strong>Share</strong> &gt;{' '}
+            <strong>Add to Home Screen</strong>.
+          </p>
+        </>
+      ) : (
+        <>
+          <Smartphone className="h-5 w-5 shrink-0 text-slate-500 dark:text-zinc-400" />
+          <p className="text-sm leading-normal text-slate-600 dark:text-zinc-300">
+            To install, tap your browser menu (⋮) and select{' '}
+            <strong>Add to Home Screen</strong> or <strong>Install App</strong>.
+          </p>
+        </>
+      )}
     </div>
   );
 }

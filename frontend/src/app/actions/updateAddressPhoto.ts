@@ -39,7 +39,8 @@ export async function updateAddressPhoto(slugOrId: string, photoUrl: string) {
       revalidatePath(`/dashboard/address/${slugOrId}`);
       revalidatePath(`/dashboard/manage/${slugOrId}`);
       revalidatePath(`/a/${updated.slug}`);
-      revalidatePath('/dashboard');
+      revalidatePath('/dashboard', 'layout');
+      revalidatePath('/admin/overview');
     } catch {
       // Non-blocking revalidation
     }

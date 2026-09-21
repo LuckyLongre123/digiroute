@@ -36,9 +36,15 @@ export interface DraggableMarkerProps {
 export interface MapplsMapProps {
   center?: [number, number] | { lat: number; lng: number };
   zoom?: number;
+  minZoom?: number;
+  maxZoom?: number;
   className?: string;
   interactive?: boolean;
+  pitchWithGestures?: boolean;
+  dragRotate?: boolean;
+  touchPitch?: boolean;
   onMapClick?: (coords: { lat: number; lng: number }) => void;
+  onMoveEnd?: (coords: { lat: number; lng: number }) => void;
   centerOffsetPercent?: { x: number; y: number };
   markers?: MapMarkerItem[];
   accuracyCircle?: AccuracyCircleProps;
@@ -73,9 +79,15 @@ declare global {
 export function MapplsMap({
   center = [28.6139, 77.209],
   zoom = 16,
+  minZoom = 12,
+  maxZoom = 19,
   className = '',
   interactive = true,
+  pitchWithGestures = false,
+  dragRotate = false,
+  touchPitch = false,
   onMapClick,
+  onMoveEnd,
   markers = [],
   accuracyCircle,
   draggableMarker,
@@ -94,6 +106,11 @@ export function MapplsMap({
   const standardMarkersRef = useRef<any[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const polylineRef = useRef<any>(null);
+
+  const onMoveEndRef = useRef(onMoveEnd);
+  useEffect(() => {
+    onMoveEndRef.current = onMoveEnd;
+  }, [onMoveEnd]);
 
   const [isSdkLoaded, setIsSdkLoaded] = useState(() => {
     if (typeof window !== 'undefined' && window.mappls?.Map) return true;
@@ -184,46 +201,61 @@ export function MapplsMap({
       const map = new window.mappls.Map(containerId, {
         center: { lat: centerLat, lng: centerLng },
         zoom: zoom ?? 16,
+        minZoom: minZoom ?? 12,
+        maxZoom: maxZoom ?? 19,
         geolocation: false,
         zoomControl: interactive,
+        pitchWithGestures: pitchWithGestures ?? false,
+        dragRotate: dragRotate ?? false,
+        touchPitch: touchPitch ?? false,
       });
 
       mapRef.current = map;
 
-      // Click event listener on map instance
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      map.addListener('click', (e: any) => {
-        const coords =
-          e?.lngLat || e?.latlng || e?.latLng || (e?.lng && e?.lat ? e : null);
-        if (coords) {
-          const lat = Number((coords.lat ?? coords[1]).toFixed(6));
-          const lng = Number(
-            (coords.lng ?? coords.lon ?? coords[0]).toFixed(6)
-          );
-
-          if (!isNaN(lat) && !isNaN(lng)) {
-            if (draggableMarkerRef.current) {
-              if (
-                typeof draggableMarkerRef.current.setPosition === 'function'
-              ) {
-                draggableMarkerRef.current.setPosition({ lat, lng });
-              } else if (
-                typeof draggableMarkerRef.current.setLngLat === 'function'
-              ) {
-                draggableMarkerRef.current.setLngLat([lng, lat]);
+      // Moveend event listener for zero-lag fixed center pin dragging
+      if (typeof map.addListener === 'function') {
+        map.addListener('moveend', () => {
+          if (onMoveEndRef.current && typeof map.getCenter === 'function') {
+            try {
+              const c = map.getCenter();
+              if (c) {
+                const lat = Number((c.lat ?? c[1]).toFixed(6));
+                const lng = Number((c.lng ?? c.lon ?? c[0]).toFixed(6));
+                if (!isNaN(lat) && !isNaN(lng)) {
+                  onMoveEndRef.current({ lat, lng });
+                }
               }
+            } catch (err) {
+              console.warn('[MapplsMap] moveend error:', err);
             }
+          }
+        });
+      }
 
-            if (draggableCallbackRef.current) {
-              draggableCallbackRef.current({ lat, lng });
-            }
+      // Click event listener on map instance:
+      // Click-to-move is strictly disabled to guarantee zero-lag fixed center pin UX.
+      // The map coordinates should ONLY update via drag/pan moveend.
+      // If a parent provides onMapClick, only trigger it for passive inspection.
+      if (typeof map.addListener === 'function' && onMapClick) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        map.addListener('click', (e: any) => {
+          const coords =
+            e?.lngLat ||
+            e?.latlng ||
+            e?.latLng ||
+            (e?.lng && e?.lat ? e : null);
+          if (coords) {
+            const lat = Number((coords.lat ?? coords[1]).toFixed(6));
+            const lng = Number(
+              (coords.lng ?? coords.lon ?? coords[0]).toFixed(6)
+            );
 
-            if (onMapClickRef.current) {
+            if (!isNaN(lat) && !isNaN(lng) && onMapClickRef.current) {
               onMapClickRef.current({ lat, lng });
             }
           }
-        }
-      });
+        });
+      }
     } catch (err) {
       console.error('Error initializing Mappls Map:', err);
       queueMicrotask(() => setLoadError(true));
@@ -265,8 +297,21 @@ export function MapplsMap({
   useEffect(() => {
     if (!mapRef.current) return;
     try {
-      if (typeof mapRef.current.setCenter === 'function') {
-        mapRef.current.setCenter({ lat: centerLat, lng: centerLng });
+      if (
+        typeof mapRef.current.getCenter === 'function' &&
+        typeof mapRef.current.setCenter === 'function'
+      ) {
+        const curr = mapRef.current.getCenter();
+        const currLat = Number((curr?.lat ?? curr?.[1] ?? 0).toFixed(5));
+        const currLng = Number(
+          (curr?.lng ?? curr?.lon ?? curr?.[0] ?? 0).toFixed(5)
+        );
+        if (
+          Math.abs(currLat - centerLat) > 0.00005 ||
+          Math.abs(currLng - centerLng) > 0.00005
+        ) {
+          mapRef.current.setCenter({ lat: centerLat, lng: centerLng });
+        }
       }
     } catch {}
   }, [centerLat, centerLng]);
@@ -308,8 +353,8 @@ export function MapplsMap({
         map: mapRef.current,
         center: { lat: cLat, lng: cLng },
         radius: accuracyCircle.radius || 25,
-        fillColor: accuracyCircle.fillColor || '#3b82f6',
-        fillOpacity: accuracyCircle.fillOpacity ?? 0.18,
+        fillColor: accuracyCircle.fillColor || 'rgba(59, 130, 246, 0.2)',
+        fillOpacity: accuracyCircle.fillOpacity ?? 0.2,
         strokeColor: accuracyCircle.strokeColor || '#2563eb',
         strokeOpacity: 0.7,
         strokeWeight: 2,

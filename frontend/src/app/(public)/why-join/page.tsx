@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { InstallPromptCard } from '@/components/pwa/InstallPromptCard';
 import {
   Shield,
   Clock,
@@ -37,6 +38,13 @@ export default function WhyJoinPage() {
           sovereign address management.
         </p>
       </div>
+
+      {/* Prominent PWA Install Prompt */}
+      <InstallPromptCard
+        title="Get the DigiRoute Mobile App"
+        description="Install DigiRoute on your home screen for quick micro-address creation, instant GPS locks, and offline access."
+        buttonText="Install App"
+      />
 
       {/* Asymmetric Bento Grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

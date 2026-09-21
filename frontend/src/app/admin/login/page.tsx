@@ -63,24 +63,27 @@ export default function AdminLoginPage() {
         }}
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-md rounded-md border border-zinc-800/90 bg-zinc-950/95 p-5 shadow-2xl backdrop-blur-md sm:p-7">
+      <div className="relative z-10 mx-auto w-full max-w-md rounded-md border border-zinc-800/90 bg-zinc-950/95 p-5 shadow-2xl backdrop-blur-md sm:p-7 md:p-8">
         {/* Return to Home link */}
         <div className="mb-6 flex items-center justify-between border-b border-zinc-900 pb-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 transition-colors hover:text-cyan-400"
+            className="flex min-h-[44px] items-center gap-2 font-mono text-sm text-zinc-400 transition-colors hover:text-cyan-400 md:text-xs"
           >
-            <ArrowLeft size={13} />
+            <ArrowLeft size={15} />
             <span>&larr; Return to DigiRoute</span>
           </Link>
-          <span className="font-mono text-[10px] text-zinc-700">
+          <span className="font-mono text-xs text-zinc-600 md:text-[10px]">
             restricted-terminal
           </span>
         </div>
 
         {/* Brand Logo in Admin Login */}
-        <div className="mb-5 flex items-center justify-between">
-          <Link href="/" className="inline-block cursor-pointer">
+        <div className="mb-6 flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex min-h-[44px] cursor-pointer items-center"
+          >
             <Image
               src="/logo-transparent.png"
               alt="DigiRoute Logo"
@@ -91,7 +94,7 @@ export default function AdminLoginPage() {
               className="h-auto w-32 object-contain dark:brightness-200 dark:invert"
             />
           </Link>
-          <span className="rounded border border-zinc-800 bg-zinc-900 px-2 py-0.5 font-mono text-[10px] text-zinc-400">
+          <span className="rounded border border-zinc-800 bg-zinc-900 px-2.5 py-1 font-mono text-xs text-zinc-400 md:text-[10px]">
             Admin Auth
           </span>
         </div>
@@ -103,10 +106,16 @@ export default function AdminLoginPage() {
             <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
             <div className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
           </div>
-          <p className="mb-1 font-mono text-xs" style={{ color: '#71717a' }}>
+          <p
+            className="mb-1 font-mono text-sm md:text-xs"
+            style={{ color: '#71717a' }}
+          >
             root@digiroute-admin:~$
           </p>
-          <p className="font-mono text-sm" style={{ color: '#22d3ee' }}>
+          <p
+            className="font-mono text-base font-semibold md:text-sm"
+            style={{ color: '#22d3ee' }}
+          >
             authenticate --elevated
           </p>
         </div>
@@ -116,7 +125,7 @@ export default function AdminLoginPage() {
           <div>
             <label
               htmlFor="admin-email"
-              className="mb-1.5 block font-mono text-[11px] tracking-widest uppercase"
+              className="mb-1.5 block font-mono text-xs tracking-widest uppercase md:text-[11px]"
               style={{ color: '#71717a' }}
             >
               Identifier
@@ -129,7 +138,7 @@ export default function AdminLoginPage() {
               required
               autoComplete="username"
               disabled={isPending}
-              className="w-full rounded-[3px] px-3 py-2.5 font-mono text-sm transition-colors outline-none disabled:opacity-50"
+              className="min-h-[44px] w-full rounded-[3px] px-3.5 py-3 font-mono text-base transition-colors outline-none disabled:opacity-50 md:py-2.5 md:text-sm"
               style={{
                 backgroundColor: '#18181b',
                 border: '1px solid #27272a',
@@ -144,7 +153,7 @@ export default function AdminLoginPage() {
           <div>
             <label
               htmlFor="admin-password"
-              className="mb-1.5 block font-mono text-[11px] tracking-widest uppercase"
+              className="mb-1.5 block font-mono text-xs tracking-widest uppercase md:text-[11px]"
               style={{ color: '#71717a' }}
             >
               Passphrase
@@ -157,7 +166,7 @@ export default function AdminLoginPage() {
               required
               autoComplete="current-password"
               disabled={isPending}
-              className="w-full rounded-[3px] px-3 py-2.5 font-mono text-sm transition-colors outline-none disabled:opacity-50"
+              className="min-h-[44px] w-full rounded-[3px] px-3.5 py-3 font-mono text-base transition-colors outline-none disabled:opacity-50 md:py-2.5 md:text-sm"
               style={{
                 backgroundColor: '#18181b',
                 border: '1px solid #27272a',
@@ -171,7 +180,7 @@ export default function AdminLoginPage() {
 
           {error && (
             <p
-              className="rounded-[3px] px-3 py-2 font-mono text-xs"
+              className="rounded-[3px] px-3.5 py-2.5 font-mono text-sm md:text-xs"
               style={{
                 backgroundColor: 'rgba(239,68,68,0.1)',
                 color: '#f87171',
@@ -186,7 +195,7 @@ export default function AdminLoginPage() {
             type="submit"
             id="admin-login-submit"
             disabled={isPending}
-            className="w-full rounded-[3px] py-2.5 font-mono text-sm font-semibold transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-[44px] w-full cursor-pointer rounded-[3px] py-3 font-mono text-base font-semibold transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 md:py-2.5 md:text-sm"
             style={{
               backgroundColor: isPending ? '#164e63' : '#22d3ee',
               color: '#09090b',
@@ -194,7 +203,7 @@ export default function AdminLoginPage() {
           >
             {isPending ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="h-3.5 w-3.5 animate-spin rounded-full border border-current border-t-transparent" />
+                <span className="h-4 w-4 animate-spin rounded-full border border-current border-t-transparent" />
                 Authenticating...
               </span>
             ) : (
@@ -205,7 +214,7 @@ export default function AdminLoginPage() {
 
         {/* Version stamp */}
         <p
-          className="mt-8 text-center font-mono text-[10px]"
+          className="mt-8 text-center font-mono text-xs md:text-[10px]"
           style={{ color: '#3f3f46' }}
         >
           digiroute-admin v1.0.0 — restricted access

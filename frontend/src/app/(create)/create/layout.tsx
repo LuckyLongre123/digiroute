@@ -242,92 +242,91 @@ export default function CreateLayout({
     <div
       className={`bg-background flex min-h-screen flex-col ${isCameraStep || isMapStep ? 'h-[100dvh] overflow-hidden' : ''}`}
     >
-      {/* Wizard Chrome Header */}
+      {/* Wizard Chrome Header (Two-Row Refined Utilitarian Layout) */}
       <header className="bg-card border-border sticky top-0 z-40 shrink-0 border-b font-sans">
-        <div className="mx-auto flex h-14 max-w-md items-center justify-between gap-3 px-4 md:max-w-xl lg:max-w-2xl">
-          {/* Top-Left: Back button (for previous steps) + DigiRoute Brand Logo with Safety Net */}
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            {!isSuccessStep && prevPath && (
+        <div className="mx-auto max-w-md px-4 md:max-w-xl lg:max-w-2xl">
+          {/* Top Row (Brand & Actions) */}
+          <div className="flex h-12 items-center justify-between">
+            {/* Left: DigiRoute Home / Logo (+ back button) */}
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+              {!isSuccessStep && prevPath && (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  aria-label="Go to previous step"
+                  className="pressable hover:bg-muted text-foreground flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-all active:scale-[0.98]"
+                >
+                  <ArrowLeft className="text-foreground h-4 w-4" />
+                </button>
+              )}
               <button
                 type="button"
-                onClick={handleBack}
-                aria-label="Go to previous step"
+                onClick={handleCloseClick}
+                id="wizard-header-logo-btn"
+                className="group flex cursor-pointer items-center gap-1.5 focus:outline-none"
+                aria-label="Return Home"
+              >
+                <span className="font-sans text-base font-bold tracking-tight text-zinc-950 sm:text-lg dark:text-zinc-50">
+                  Digi<span className="text-accent">Route</span>
+                </span>
+                <span
+                  className="bg-accent h-2 w-2 animate-pulse rounded-full"
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+
+            {/* Right: Start Over & Close (X) */}
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+              {!isSuccessStep && (
+                <button
+                  type="button"
+                  onClick={handleStartOver}
+                  id="create-start-over-btn"
+                  title="Reset draft and start fresh"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-2.5 py-1.5 font-sans text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
+                >
+                  <RotateCcw className="h-3.5 w-3.5 shrink-0" />
+                  <span>Start Over</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={handleCloseClick}
+                aria-label="Exit address creation"
                 className="pressable hover:bg-muted text-foreground flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-all active:scale-[0.98]"
               >
-                <ArrowLeft className="text-foreground h-4 w-4" />
+                <X className="h-4 w-4" />
               </button>
-            )}
-            <button
-              type="button"
-              onClick={handleCloseClick}
-              id="wizard-header-logo-btn"
-              className="group flex cursor-pointer items-center gap-1.5 focus:outline-none"
-              aria-label="Return Home"
-            >
-              <span className="font-sans text-base font-bold tracking-tight text-zinc-950 sm:text-lg dark:text-zinc-50">
-                Digi<span className="text-accent">Route</span>
-              </span>
-              <span
-                className="bg-accent h-2 w-2 animate-pulse rounded-full"
-                aria-hidden="true"
-              />
-            </button>
+            </div>
           </div>
 
-          {/* Step info */}
-          <div
-            className="flex-1 text-center"
-            style={{ fontFamily: 'var(--font-sans), sans-serif' }}
-          >
-            {isSuccessStep ? (
-              <h2 className="text-foreground font-sans text-sm leading-none font-bold tracking-tight">
-                Micro-Address Created
-              </h2>
-            ) : (
-              <>
-                <p className="text-muted-foreground mb-1 font-sans text-xs leading-none font-medium">
+          {/* Bottom Row (Step Context) */}
+          <div className="pt-0.5 pb-2.5">
+            {!isSuccessStep ? (
+              <div className="flex items-baseline gap-2">
+                <span className="font-sans text-xs font-medium text-slate-500 dark:text-zinc-400">
                   Step {currentStep.num} of {STEPS.length}
-                </p>
-                <h2 className="text-foreground font-sans text-sm leading-none font-bold tracking-tight">
+                </span>
+                <span className="text-xs text-slate-400 dark:text-zinc-600">
+                  -
+                </span>
+                <h2 className="font-sans text-xs font-semibold tracking-tight text-zinc-900 sm:text-sm dark:text-zinc-100">
                   {currentStep.label}
                 </h2>
-              </>
+              </div>
+            ) : (
+              <h2 className="font-sans text-xs font-semibold tracking-tight text-zinc-900 sm:text-sm dark:text-zinc-100">
+                Micro-Address Created
+              </h2>
             )}
-          </div>
-
-          {/* Right Action Group: Start Over & Close */}
-          <div className="flex min-w-[72px] shrink-0 items-center justify-end gap-1.5">
-            {!isSuccessStep && (
-              <button
-                type="button"
-                onClick={handleStartOver}
-                id="create-start-over-btn"
-                title="Reset draft and start fresh"
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-2 py-1 font-sans text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 sm:text-sm dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100"
-              >
-                <RotateCcw className="h-3.5 w-3.5 shrink-0" />
-                <span>Start Over</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={handleCloseClick}
-              aria-label={
-                isSuccessStep
-                  ? 'Exit address creation'
-                  : 'Exit address creation'
-              }
-              className="pressable hover:bg-muted text-foreground flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-all active:scale-[0.98]"
-            >
-              <X className="h-4 w-4" />
-            </button>
           </div>
         </div>
 
-        {/* Saffron progress bar */}
+        {/* Orange Progress Bar spanning the width of the screen */}
         {!isSuccessStep && (
-          <div className="bg-muted h-0.5">
+          <div className="bg-muted h-0.5 w-full">
             <div
               role="progressbar"
               aria-valuenow={currentStep.num}

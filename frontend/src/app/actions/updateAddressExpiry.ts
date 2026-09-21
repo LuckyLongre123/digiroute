@@ -61,7 +61,8 @@ export async function updateAddressExpiry(
     try {
       revalidatePath(`/a/${updated.slug}`);
       revalidatePath('/create/success');
-      revalidatePath('/dashboard');
+      revalidatePath('/dashboard', 'layout');
+      revalidatePath('/admin/overview');
     } catch {
       // Non-blocking cache revalidation
     }

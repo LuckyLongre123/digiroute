@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { claimAddress } from '@/app/actions/claimAddress';
 import { updateAddressExpiry } from '@/app/actions/updateAddressExpiry';
 import { getSessionAction } from '@/app/actions/auth';
+import { InstallPromptCard } from '@/components/pwa/InstallPromptCard';
 import { toast } from 'sonner';
 import {
   ArrowRight,
@@ -119,6 +120,7 @@ function CreateSuccessContent() {
   const [isUnsavedCreateModalOpen, setIsUnsavedCreateModalOpen] =
     useState(false);
   const [isChangeExpiryModalOpen, setIsChangeExpiryModalOpen] = useState(false);
+  const [isNavigatingQr, setIsNavigatingQr] = useState(false);
 
   // Expiry state
   const [selectedExpiry, setSelectedExpiry] = useState<string>('24 Hours');
@@ -197,16 +199,13 @@ function CreateSuccessContent() {
     () => storeExpiresAt || null
   );
   const [addressUserId, setAddressUserId] = useState<string | null>(null);
-  const [isExpiredOrInvalid, setIsExpiredOrInvalid] = useState(false);
 
-  useEffect(() => {
-    if (!expiresAt) {
-      setIsExpiredOrInvalid(false);
-      return;
-    }
-    const target = new Date(expiresAt).getTime();
-    setIsExpiredOrInvalid(isNaN(target) || target <= Date.now());
-  }, [expiresAt]);
+  const [now] = useState(() => Date.now());
+  const isExpiredOrInvalid = Boolean(
+    expiresAt &&
+    (isNaN(new Date(expiresAt).getTime()) ||
+      new Date(expiresAt).getTime() <= now)
+  );
 
   useEffect(() => {
     if (!slug) return;
@@ -607,15 +606,39 @@ function CreateSuccessContent() {
         </div>
 
         {/* Full-Width Generate QR Badge Button */}
-        <Link
-          href={`/create/qr?slug=${slug}`}
+        <button
+          type="button"
+          onClick={() => {
+            setIsNavigatingQr(true);
+            router.push(`/create/qr?slug=${slug}`);
+          }}
+          disabled={isNavigatingQr}
           id="success-generate-qr-badge-btn"
-          className="hover:bg-zinc-850 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-zinc-900 px-4 py-3.5 font-sans text-sm font-semibold text-zinc-100 shadow-sm transition-all active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="hover:bg-zinc-850 flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-zinc-900 px-4 py-3.5 font-sans text-sm font-semibold text-zinc-100 shadow-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
-          <QrCode className="text-accent h-4 w-4" />
-          <span>Generate QR Badge</span>
-        </Link>
+          {isNavigatingQr ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <span>Loading...</span>
+            </>
+          ) : (
+            <>
+              <QrCode className="text-accent h-4 w-4" />
+              <span>Generate QR Badge</span>
+            </>
+          )}
+        </button>
       </div>
+
+      {/* Contextual Guest PWA Install Prompt */}
+      {!isAuthenticated && (
+        <InstallPromptCard
+          title="Get the DigiRoute Mobile App"
+          description="Micro-address created successfully. Download the DigiRoute app for faster access and offline tracking."
+          buttonText="Download App"
+          className="mt-4"
+        />
+      )}
 
       {/* Discrete Dev Backdoor Footer Link */}
       <Link

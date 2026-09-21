@@ -2,6 +2,7 @@ import { getAdminSession } from '@/lib/adminAuth';
 import type { AddressPayload } from '@/lib/prisma';
 import { db } from '@/prisma/db';
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -155,6 +156,13 @@ export async function DELETE(request: Request) {
     // Delete from Cloudinary if URL exists
     if (photoUrl) {
       await deleteFromCloudinary(photoUrl);
+    }
+
+    try {
+      revalidatePath('/dashboard', 'layout');
+      revalidatePath('/admin/overview');
+    } catch {
+      // Non-blocking
     }
 
     return NextResponse.json({ success: true });

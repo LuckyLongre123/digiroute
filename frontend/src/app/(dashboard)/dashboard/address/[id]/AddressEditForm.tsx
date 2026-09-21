@@ -94,6 +94,7 @@ export default function AddressEditForm({
       if (result.success) {
         toast.success('Address deleted successfully.');
         router.push('/dashboard');
+        router.refresh();
       } else {
         toast.error(result.error || 'Failed to delete address.');
         isDeletingRef.current = false;

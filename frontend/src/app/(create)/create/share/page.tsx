@@ -44,12 +44,8 @@ function useMounted() {
  */
 export default function CreateSharePage() {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const hasHydrated = useHasHydrated();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Hydrate global auth state from server session on mount
   useEffect(() => {
@@ -88,6 +84,7 @@ export default function CreateSharePage() {
   );
   const isSubmittingRef = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Route protection: Wait for Zustand storage hydration before evaluating coordinates
@@ -209,11 +206,12 @@ export default function CreateSharePage() {
 
   const handleGenerate = () => {
     // CRUCIAL LOGIC GUARD: Early return prevents double-submission even before re-render
-    if (isSubmitting || isSubmittingRef.current) return;
+    if (isSubmitting || isSubmittingRef.current || isNavigating) return;
     if (!isValid || latitude === null || longitude === null) return;
 
     isSubmittingRef.current = true;
     setIsSubmitting(true);
+    setIsNavigating(true);
     setSubmitError(null);
 
     // 1. OPTIMISTIC UI: Generate unique short slug on the client-side immediately
@@ -541,24 +539,39 @@ export default function CreateSharePage() {
           )}
         </div>
 
-        {/* Factor 3 & 4: Z-Axis Details & Security */}
-        <div className="flex items-start justify-between">
-          <div className="w-full space-y-2 text-xs">
+        {/* Factor 3 & 4: Z-Axis & Metadata (Refined Utilitarian Redesign) */}
+        <div className="space-y-2">
+          {/* 1. Clean Header: Title on left, Edit Details on right */}
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-2 dark:border-zinc-800">
+            <span className="font-sans text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-zinc-400">
+              Z-Axis &amp; Metadata
+            </span>
+            <Link
+              href="/create/metadata"
+              className="text-accent inline-flex cursor-pointer items-center gap-1 font-sans text-xs font-semibold hover:underline"
+            >
+              <Edit3 className="h-3.5 w-3.5" />
+              <span>Edit Details</span>
+            </Link>
+          </div>
+
+          {/* 2. Structured Metadata Body: Vertically stacked list */}
+          <div className="flex flex-col gap-3 pt-2">
+            {/* Property Type */}
             <div className="flex items-center gap-2">
-              <span className="text-accent block font-sans text-[11px] font-semibold tracking-wider uppercase">
-                Z-Axis &amp; Security Details
+              <span className="font-sans text-xs font-medium text-slate-500 dark:text-zinc-400">
+                Type:
               </span>
-              {tag ? (
-                <span className="bg-muted text-foreground border-border rounded-[4px] border px-1.5 py-0.5 font-sans text-[10px] font-semibold">
-                  {tag}
-                </span>
-              ) : null}
+              <span className="rounded-sm border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-sans text-xs font-medium text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                {tag || 'Home'}
+              </span>
             </div>
 
+            {/* Security / Doorway Details */}
             {hasZAxisData ? (
-              <>
+              <div className="space-y-1">
                 {hasFloorOrFlat && (
-                  <p className="text-foreground font-sans text-sm font-semibold">
+                  <p className="font-sans text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                     {floorFlatText}
                   </p>
                 )}
@@ -567,15 +580,16 @@ export default function CreateSharePage() {
                     {hints}
                   </p>
                 )}
-              </>
+              </div>
             ) : (
-              <p className="font-sans text-xs text-zinc-400">
+              <p className="font-sans text-sm text-slate-500 italic dark:text-zinc-400">
                 No additional doorway details provided.
               </p>
             )}
 
-            <div className="border-border/60 flex flex-wrap items-center gap-2 border-t pt-2">
-              <div className="bg-muted/60 text-foreground inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium">
+            {/* 3. Link Expiry Integration (Bottom of stack) */}
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              <div className="inline-flex items-center gap-1.5 rounded-sm border border-zinc-200 bg-zinc-100 px-2.5 py-1 font-sans text-xs font-medium text-zinc-800 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-200">
                 <Clock className="text-accent h-3.5 w-3.5" />
                 <span>
                   Link Expiry:{' '}
@@ -588,21 +602,15 @@ export default function CreateSharePage() {
                         : '30 Minutes'}
                 </span>
               </div>
+
               {storeMetadata?.passcode ? (
-                <div className="inline-flex items-center gap-1.5 rounded border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                <div className="inline-flex items-center gap-1.5 rounded-sm border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 font-sans text-xs font-medium text-emerald-700 dark:text-emerald-400">
                   <Shield className="h-3.5 w-3.5" />
                   <span>Passcode Protected</span>
                 </div>
               ) : null}
             </div>
           </div>
-          <Link
-            href="/create/metadata"
-            className="text-accent ml-3 inline-flex shrink-0 cursor-pointer items-center gap-1 pt-0.5 font-sans text-xs font-semibold hover:underline"
-          >
-            <Edit3 className="h-3.5 w-3.5" />
-            <span>Edit Details</span>
-          </Link>
         </div>
       </div>
 
@@ -613,18 +621,18 @@ export default function CreateSharePage() {
             type="button"
             id="share-generate-btn"
             onClick={handleGenerate}
-            disabled={!isValid || isSubmitting}
-            aria-disabled={!isValid || isSubmitting}
-            className={`flex w-full items-center justify-center gap-2 rounded-[4px] py-3.5 font-sans text-sm font-semibold transition-[transform,opacity] duration-150 ease-out md:text-base ${
-              isValid && !isSubmitting
+            disabled={!isValid || isSubmitting || isNavigating}
+            aria-disabled={!isValid || isSubmitting || isNavigating}
+            className={`flex w-full items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold transition-[transform,opacity] duration-150 ease-out md:text-base ${
+              isValid && !isSubmitting && !isNavigating
                 ? 'bg-accent text-accent-foreground cursor-pointer shadow-sm hover:opacity-95 active:scale-[0.98]'
                 : 'cursor-not-allowed bg-zinc-300 text-zinc-500 opacity-50 shadow-none dark:bg-zinc-800'
             }`}
           >
-            {isSubmitting ? (
+            {isSubmitting || isNavigating ? (
               <>
-                <Loader2 className="text-accent-foreground h-4 w-4 animate-spin" />
-                <span>Generating...</span>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span>Loading...</span>
               </>
             ) : (
               <>
