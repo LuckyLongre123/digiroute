@@ -13,8 +13,8 @@ export interface AdminRecord {
   updatedAt: string;
 }
 
-const DEFAULT_EMAIL = 'officailluckylongre@gmail.com';
-const DEFAULT_PASSWORD = 'Lucky123';
+const DEFAULT_EMAIL = process.env.ADMIN_EMAIL || '';
+const DEFAULT_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
 /**
  * Ensure the admin data directory exists.
@@ -41,27 +41,32 @@ export async function getAdminUser(): Promise<AdminRecord | null> {
 }
 
 /**
- * Initialize the admin user with default credentials if no admin exists.
- * Default: officailluckylongre@gmail.com / Lucky123
+ * Initialize the admin user from environment variables if no admin exists.
  */
-export async function initAdminIfNeeded(): Promise<AdminRecord> {
+export async function initAdminIfNeeded(): Promise<AdminRecord | null> {
   const existing = await getAdminUser();
   if (existing) return existing;
 
+  const email = process.env.ADMIN_EMAIL?.trim();
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) {
+    return null;
+  }
+
   await ensureAdminDir();
-  const passwordHash = await hashAdminPassword(DEFAULT_PASSWORD);
+  const passwordHash = await hashAdminPassword(password);
   const now = new Date().toISOString();
 
   const admin: AdminRecord = {
     id: 'admin-root',
-    email: DEFAULT_EMAIL,
+    email,
     passwordHash,
     createdAt: now,
     updatedAt: now,
   };
 
   await fs.writeFile(ADMIN_FILE, JSON.stringify(admin, null, 2), 'utf-8');
-  console.log('[AdminStore] Initialized default admin user.');
+  console.log('[AdminStore] Initialized admin user from environment variables.');
   return admin;
 }
 
@@ -74,11 +79,13 @@ export async function updateAdminCredentials(
 ): Promise<AdminRecord> {
   await ensureAdminDir();
   const existing = await initAdminIfNeeded();
+  const now = new Date().toISOString();
   const updated: AdminRecord = {
-    ...existing,
+    id: existing?.id || 'admin-root',
     email,
     passwordHash,
-    updatedAt: new Date().toISOString(),
+    createdAt: existing?.createdAt || now,
+    updatedAt: now,
   };
   await fs.writeFile(ADMIN_FILE, JSON.stringify(updated, null, 2), 'utf-8');
   return updated;

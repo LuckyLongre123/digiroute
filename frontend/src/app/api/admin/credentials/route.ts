@@ -88,7 +88,7 @@ export async function GET() {
 
   const admin = await getAdminUser();
   return NextResponse.json({
-    email: admin?.email || session.email || 'officailluckylongre@gmail.com',
+    email: process.env.ADMIN_EMAIL || admin?.email || session.email || '',
   });
 }
 

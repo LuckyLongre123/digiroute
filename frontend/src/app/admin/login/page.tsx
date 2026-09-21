@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
@@ -19,6 +19,19 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    fetch('/api/admin/login')
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => null);
+          setError(data?.error || 'Network error. Please retry.');
+        }
+      })
+      .catch(() => {
+        setError('Network error. Please retry.');
+      });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
