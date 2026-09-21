@@ -1,4 +1,5 @@
 import { AdminTriggerMount } from '@/components/AdminTriggerMount';
+import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     'navigation',
   ],
   authors: [{ name: 'DigiRoute' }],
-  manifest: '/site.webmanifest',
+  manifest: '/manifest.webmanifest',
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -39,6 +40,11 @@ export const metadata: Metadata = {
     apple: [
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'DigiRoute',
   },
   openGraph: {
     title: 'DigiRoute — Sovereign Micro-Addressing',
@@ -54,7 +60,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#1A3A6B',
+  themeColor: '#ffffff',
 };
 
 export default function RootLayout({
@@ -87,6 +93,8 @@ export default function RootLayout({
             },
           }}
         />
+        {/* PWA Service Worker Registration */}
+        <ServiceWorkerRegister />
         {/* Admin Keyboard Trigger — Ctrl+Shift+A → /admin/login (invisible) */}
         <AdminTriggerMount />
       </body>

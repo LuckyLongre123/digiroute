@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { Check, LogOut, Map, Smartphone, Trash2, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 /**
  * /dashboard/settings - Citizen & App Settings (ROUTE-01, ROUTE-04)
@@ -14,7 +15,7 @@ import { useEffect, useState } from 'react';
 export default function SettingsPage() {
   const router = useRouter();
   const [offlineMap, setOfflineMap] = useState('mappls');
-  const [cleared, setCleared] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   const user = useAuthStore((state) => state.user);
 
@@ -39,17 +40,44 @@ export default function SettingsPage() {
         .toUpperCase()
     : email.slice(0, 2).toUpperCase();
 
-  const handleClearCache = () => {
-    if (typeof window !== 'undefined') {
-      try {
+  const handleClearCache = async () => {
+    if (isClearing) return;
+    setIsClearing(true);
+
+    try {
+      // 1. Unregister active service workers
+      if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((reg) => reg.unregister()));
+      }
+
+      // 2. Clear Cache Storage
+      if (typeof window !== 'undefined' && 'caches' in window) {
+        await caches
+          .keys()
+          .then((names) =>
+            Promise.all(names.map((name) => caches.delete(name)))
+          );
+      }
+
+      // 3. Clear Local and Session Storage
+      if (typeof window !== 'undefined') {
         localStorage.clear();
         sessionStorage.clear();
-      } catch {
-        // Safe fallback
       }
+
+      // 4. Sonner Toast Feedback & Reload
+      toast.success('Cache cleared successfully. Reloading...');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (err) {
+      console.warn('[Settings] Failed to clear cache completely:', err);
+      toast.error('Failed to clear cache completely. Reloading...');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     }
-    setCleared(true);
-    setTimeout(() => setCleared(false), 2500);
   };
 
   const handleLogout = async () => {
@@ -141,13 +169,15 @@ export default function SettingsPage() {
           </div>
           <button
             onClick={handleClearCache}
+            disabled={isClearing}
             type="button"
-            className="border-border bg-background hover:bg-muted text-foreground inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors"
+            id="clear-offline-cache-btn"
+            className="border-border bg-background hover:bg-muted text-foreground inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-sm border px-3 py-2 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {cleared ? (
+            {isClearing ? (
               <>
                 <Check className="text-accent h-3.5 w-3.5" />
-                <span>Cache Cleared</span>
+                <span>Clearing Cache...</span>
               </>
             ) : (
               <>

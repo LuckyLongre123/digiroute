@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Navbar } from './Navbar';
 
 /**
@@ -60,6 +60,13 @@ export default function PublicLayout({
               className="hover:text-foreground transition-colors"
             >
               Why Register
+            </Link>
+            <Link
+              href="/download-app"
+              id="footer-download-pwa-link"
+              className="text-slate-500 transition-colors hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              Get Mobile App
             </Link>
             <Link
               href="/sos"
