@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { nanoid } from 'nanoid';
 import { db } from '@/prisma/db';
 
 export interface AddressPayload {
@@ -66,9 +67,11 @@ export async function saveAddress(
   const now = new Date().toISOString();
   const ownerId = payload.userId ?? null;
   const isGuest = !ownerId;
+  const addressId = payload.id || `addr_${nanoid(16)}`;
 
   const addressRecord: AddressPayload = {
     ...payload,
+    id: addressId,
     floor: payload.floor || null,
     flat: payload.flat || null,
     landmark: payload.landmark || null,
@@ -89,6 +92,7 @@ export async function saveAddress(
   // Attempt database persistence via Prisma 8
   try {
     const created = await db.orm.public.Address.create({
+      id: addressRecord.id || addressId,
       slug: addressRecord.slug,
       digipin: addressRecord.digipin,
       baseLat: addressRecord.baseLat,
@@ -105,6 +109,7 @@ export async function saveAddress(
       isEphemeral: isGuest ? true : (addressRecord.isEphemeral ?? false),
       expiresAt: addressRecord.expiresAt,
       userId: ownerId,
+      updatedAt: addressRecord.updatedAt || now,
     });
 
     if (created) {

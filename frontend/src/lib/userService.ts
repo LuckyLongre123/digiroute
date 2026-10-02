@@ -88,6 +88,7 @@ export async function createUser(data: {
 }): Promise<UserRecord> {
   const normalizedEmail = data.email.trim().toLowerCase();
   const id = `usr_${nanoid(16)}`;
+  const now = new Date().toISOString();
 
   const created = await db.orm.public.User.create({
     id,
@@ -95,6 +96,7 @@ export async function createUser(data: {
     name: data.name.trim(),
     phone: data.phone || null,
     passwordHash: data.passwordHash,
+    updatedAt: now,
   });
 
   if (!created || !created.email) {
