@@ -41,6 +41,7 @@ export interface AddressDraftState {
   photoUrl?: string | null;
   doorwayPhotoKey?: string | null;
   doorwayPhotoBase64?: string | null;
+  photoSkipped: boolean;
   // Step 3: Entrance Pin
   entranceLat?: number | null;
   entranceLng?: number | null;
@@ -71,6 +72,7 @@ interface AddressStoreActions {
   setPhotoUrl: (url: string | null) => void;
   setPhotoKey: (key: string | null) => void;
   setPhotoBase64: (base64: string | null) => void;
+  setPhotoSkipped: (skipped: boolean) => void;
   setMetadata: (data: Partial<AddressDraftMetadata>) => void;
   setFloor: (floor: string) => void;
   setFlat: (flat: string) => void;
@@ -108,6 +110,7 @@ const initialState: AddressDraftState = {
   photoUrl: null,
   doorwayPhotoKey: null,
   doorwayPhotoBase64: null,
+  photoSkipped: false,
   entranceLat: null,
   entranceLng: null,
   floor: '',
@@ -159,6 +162,8 @@ export const useAddressStore = create<
       setPhotoKey: (key) => set({ doorwayPhotoKey: key }),
 
       setPhotoBase64: (base64) => set({ doorwayPhotoBase64: base64 }),
+
+      setPhotoSkipped: (skipped) => set({ photoSkipped: skipped }),
 
       setMetadata: (data) =>
         set((state) => ({
@@ -261,6 +266,7 @@ export const useAddressStore = create<
           photoUrl: null,
           doorwayPhotoKey: null,
           doorwayPhotoBase64: null,
+          photoSkipped: false,
           entranceLat: null,
           entranceLng: null,
           floor: '',
@@ -333,6 +339,7 @@ export const useAddressStore = create<
           photoUrl: safePhotoUrl,
           doorwayPhotoBase64: state.doorwayPhotoBase64 || safePhotoUrl,
           doorwayPhotoBlob: null,
+          photoSkipped: state.photoSkipped ?? false,
           metadata: {
             ...restMetadata,
             floor: state.floor ?? state.metadata.floor ?? '',

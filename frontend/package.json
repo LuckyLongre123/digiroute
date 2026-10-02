@@ -44,6 +44,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "eslint-config-prettier": "^10.1.8",
+    "hyperframes": "^0.8.82",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "prisma": "^8.0.0-rc.14",

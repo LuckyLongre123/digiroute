@@ -13,6 +13,7 @@ import {
   Loader2,
   ShieldCheck,
   ArrowRight,
+  SkipForward,
 } from 'lucide-react';
 import {
   useAddressStore,
@@ -81,17 +82,53 @@ async function compressImageToWebp(
 }
 
 /**
+ * Probe for videoinput devices without requesting any permissions.
+ *
+ * Privacy note: Before getUserMedia is called, enumerateDevices() returns
+ * devices with empty label strings -- this is intentional browser behaviour.
+ * We only need device.kind === 'videoinput' to confirm hardware existence,
+ * not the label.
+ *
+ * Returns false if the mediaDevices API is unavailable (HTTP context, old browser).
+ */
+async function detectCameraHardware(): Promise<boolean> {
+  try {
+    if (!navigator.mediaDevices?.enumerateDevices) return false;
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.some((d) => d.kind === 'videoinput');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Discriminated union representing all mutually-exclusive UI phases.
+ *
+ * - 'detecting'  : Hardware probe in progress (replaces isHydrating skeleton).
+ * - 'opt-in'     : Camera hardware found; permission not yet requested.
+ * - 'no-camera'  : No videoinput device detected on this machine.
+ * - 'streaming'  : Live viewfinder active (getUserMedia granted).
+ * - 'preview'    : Photo captured; camera hardware shut off.
+ */
+type UiPhase = 'detecting' | 'opt-in' | 'no-camera' | 'streaming' | 'preview';
+
+/**
  * /create/camera - Step 2: Visual Lock (Real-Time Hardware Camera Capture Only)
  *
  * Strict UX & Privacy Engineering:
- * 1. Hardware-only real-time capture: Zero file uploads or gallery pickers allowed.
- * 2. Instant hardware track shutdown: Stops all camera tracks immediately upon frame extraction.
- * 3. 4:3 architectural framing reticle with corner brackets.
- * 4. Offscreen canvas frame extraction, EXIF stripping, and WebP compression (< 300KB).
- * 5. IndexedDB (Dexie) Blob persistence and Zustand sync.
- * 6. Hydration restoration on page reload from IndexedDB.
- * 7. Explicit step-by-step camera permission instructions with reload action.
- * 8. Utilitarian light-mode zinc aesthetic with zero em-dashes.
+ * 1. Hardware detection before permission prompt: enumerateDevices() is called
+ *    first so users without a camera see a graceful fallback, not a permission
+ *    denial wall.
+ * 2. Opt-in permission model: getUserMedia is only invoked when the user
+ *    explicitly taps "Add Photo".
+ * 3. Instant hardware track shutdown: Stops all camera tracks immediately upon
+ *    frame extraction.
+ * 4. 4:3 architectural framing reticle with corner brackets.
+ * 5. Offscreen canvas frame extraction, EXIF stripping, and WebP compression (< 300KB).
+ * 6. IndexedDB (Dexie) Blob persistence and Zustand sync.
+ * 7. Hydration restoration on page reload from IndexedDB.
+ * 8. Skip path: Users may bypass Visual Lock; Step 5 renders a fallback card.
+ * 9. Utilitarian zinc aesthetic with zero em-dashes.
  */
 export default function CreateCameraPage() {
   const router = useRouter();
@@ -103,20 +140,22 @@ export default function CreateCameraPage() {
   const setPhotoUrl = useAddressStore((state) => state.setPhotoUrl);
   const setPhotoKey = useAddressStore((state) => state.setPhotoKey);
   const setPhotoBase64 = useAddressStore((state) => state.setPhotoBase64);
+  const setPhotoSkipped = useAddressStore((state) => state.setPhotoSkipped);
   const doorwayPhotoBlob = useAddressStore((state) => state.doorwayPhotoBlob);
   const doorwayPhotoKey = useAddressStore((state) => state.doorwayPhotoKey);
   const doorwayPhotoBase64 = useAddressStore(
     (state) => state.doorwayPhotoBase64
   );
   const existingPhotoUrl = useAddressStore((state) => state.doorwayPhotoUrl);
+  const photoSkipped = useAddressStore((state) => state.photoSkipped);
 
+  const [uiPhase, setUiPhase] = useState<UiPhase>('detecting');
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>(
     'environment'
   );
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isHydrating, setIsHydrating] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     doorwayPhotoBase64 || existingPhotoUrl || null
@@ -148,10 +187,11 @@ export default function CreateCameraPage() {
     setIsStreaming(false);
   }, []);
 
-  // Initialize camera with specified facingMode
+  // Initialize camera with specified facingMode -- only called after user opts in
   const startCamera = useCallback(async () => {
     stopStream();
     setCameraError(null);
+    setUiPhase('streaming');
 
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
@@ -219,7 +259,8 @@ export default function CreateCameraPage() {
     });
   }
 
-  // Hydration Restoration: Restore saved photo from Base64 or IndexedDB on page reload
+  // Hydration Restoration: Restore saved photo from Base64 or IndexedDB on page reload.
+  // Also runs hardware detection when no saved photo is present.
   useEffect(() => {
     if (!hasHydrated) return;
     if (baseLat === null || baseLng === null) return;
@@ -238,7 +279,7 @@ export default function CreateCameraPage() {
         if (isMounted) {
           setPreviewUrl(currentPhoto);
           setPhotoUrl(currentPhoto);
-          setIsHydrating(false);
+          setUiPhase('preview');
           return;
         }
       }
@@ -254,7 +295,7 @@ export default function CreateCameraPage() {
             setPhotoBlob(record.blob);
             setPhotoUrl(base64);
             setPhotoBase64(base64);
-            setIsHydrating(false);
+            setUiPhase('preview');
             return; // Photo restored, bypass camera initialization
           }
         } catch (err) {
@@ -262,10 +303,20 @@ export default function CreateCameraPage() {
         }
       }
 
-      if (isMounted) {
-        setIsHydrating(false);
-        startCamera();
+      if (!isMounted) return;
+
+      // 3. If user previously skipped (back-navigation), restore opt-in phase
+      //    so they can change their mind without re-triggering hardware detection.
+      if (photoSkipped) {
+        setUiPhase('opt-in');
+        return;
       }
+
+      // 4. No saved photo -- probe for camera hardware before requesting permission
+      const hasCameraHardware = await detectCameraHardware();
+      if (!isMounted) return;
+
+      setUiPhase(hasCameraHardware ? 'opt-in' : 'no-camera');
     }
 
     hydrateSavedPhoto();
@@ -281,7 +332,7 @@ export default function CreateCameraPage() {
     doorwayPhotoKey,
     doorwayPhotoBase64,
     existingPhotoUrl,
-    startCamera,
+    photoSkipped,
     stopStream,
     setPhotoBlob,
     setPhotoUrl,
@@ -330,6 +381,7 @@ export default function CreateCameraPage() {
 
       // 3. Persist to Dexie IndexedDB and Zustand store as Base64
       await persistAndPreviewBlob(blob);
+      setUiPhase('preview');
     } catch (err: unknown) {
       console.error('Capture failed:', err);
       const message = err instanceof Error ? err.message : 'Unknown error';
@@ -355,9 +407,30 @@ export default function CreateCameraPage() {
     setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
   };
 
+  /**
+   * Skip path: Advance wizard without capturing a photo.
+   * Sets photoSkipped in Zustand (persisted) and clears any partial photo state.
+   * Step 5 (share/page.tsx) already handles null photo with a fallback card.
+   */
+  const handleSkip = () => {
+    setPhotoSkipped(true);
+    setPhotoBlob(null);
+    setPhotoUrl(null);
+    setPhotoKey(null);
+    setPhotoBase64(null);
+    setPreviewUrl(null);
+    useAddressStore.getState().setUploadPromise(null);
+    setActiveCloudinaryPromise(null);
+    useAddressStore.getState().setCurrentStep(3);
+    router.push('/create/map');
+  };
+
   const handleContinue = () => {
     if (!previewUrl || isNavigating) return;
     setIsNavigating(true);
+
+    // User intentionally captured a photo -- clear any prior skip flag
+    setPhotoSkipped(false);
 
     // Persist wizard currentStep = 3 before navigating
     useAddressStore.getState().setCurrentStep(3);
@@ -412,6 +485,76 @@ export default function CreateCameraPage() {
     return null;
   }
 
+  // Bottom CTA computed from uiPhase
+  const renderBottomCta = () => {
+    switch (uiPhase) {
+      case 'detecting':
+        return (
+          <button
+            type="button"
+            disabled
+            id="camera-continue-btn"
+            className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
+          >
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Detecting camera...</span>
+          </button>
+        );
+
+      case 'no-camera':
+      case 'opt-in':
+        return (
+          <button
+            type="button"
+            id="camera-continue-btn"
+            onClick={handleSkip}
+            className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] md:text-base"
+          >
+            <MapPin className="h-4 w-4 fill-current" />
+            <span>Skip &amp; Set Entrance Pin</span>
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        );
+
+      case 'streaming':
+        return (
+          <button
+            type="button"
+            disabled
+            id="camera-continue-btn"
+            className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
+          >
+            <Camera className="h-4 w-4" />
+            <span>Capture doorway photo to continue</span>
+          </button>
+        );
+
+      case 'preview':
+        return (
+          <button
+            type="button"
+            id="camera-continue-btn"
+            disabled={isNavigating}
+            onClick={handleContinue}
+            className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 md:text-base"
+          >
+            {isNavigating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              <>
+                <MapPin className="h-4 w-4 fill-current" />
+                <span>Lock Photo &amp; Set Entrance Pin</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        );
+    }
+  };
+
   return (
     <div className="animate-in fade-in flex min-h-[calc(100vh-8rem)] flex-col space-y-4 pt-2 pb-24 font-sans duration-150">
       {/* Header Info */}
@@ -425,225 +568,268 @@ export default function CreateCameraPage() {
         </p>
       </div>
 
-      {/* ─── SCENARIO 0: HYDRATING PERSISTED PHOTO ON RELOAD ─────────────── */}
-      {isHydrating ? (
+      {/* PHASE: DETECTING */}
+      {uiPhase === 'detecting' && (
         <div className="bg-card border-border text-muted-foreground flex flex-col items-center justify-center gap-3 rounded-xl border p-12 font-sans shadow-xs">
           <Loader2 className="text-accent h-6 w-6 animate-spin" />
           <span className="text-xs font-medium">
             Checking saved visual lock...
           </span>
         </div>
-      ) : previewUrl ? (
-        /* ─── SCENARIO A: PREVIEW / REVIEW STATE (CAMERA SHUT OFF) ───────── */
-        <div className="bg-card border-border animate-in zoom-in-95 space-y-4 rounded-xl border p-4 font-sans shadow-xs duration-150">
-          <div className="border-border relative mx-auto flex aspect-[4/3] w-full max-w-lg items-center justify-center overflow-hidden rounded-lg border bg-black">
-            <Image
-              src={previewUrl}
-              alt="Doorway Visual Lock"
-              fill
-              unoptimized
-              className="object-cover"
-            />
+      )}
 
-            <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 rounded-md bg-black/75 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-xs">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-              <span>EXIF Stripped</span>
+      {/* PHASE: NO CAMERA */}
+      {uiPhase === 'no-camera' && (
+        <div className="border border-zinc-200 rounded-sm bg-card p-5 font-sans dark:border-zinc-800">
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
+              <Camera className="h-5 w-5 text-zinc-400" />
             </div>
-          </div>
-
-          <div className="border-border flex flex-col items-center justify-between gap-3 border-t pt-1 text-xs sm:flex-row">
-            <div className="flex items-center gap-2 font-medium text-emerald-600">
-              <Check className="h-4 w-4 shrink-0" />
-              <span>
-                Visual Lock Ready{' '}
-                {blobSizeKB ? `(${blobSizeKB} KB • WebP)` : ''}
-              </span>
+            <div className="space-y-1">
+              <p className="text-foreground text-sm font-semibold font-sans">
+                No camera detected
+              </p>
+              <p className="text-muted-foreground text-xs font-sans leading-relaxed">
+                Visual Lock requires a camera. You can add a doorway photo later
+                from the dashboard.
+              </p>
             </div>
-
-            <button
-              type="button"
-              onClick={handleRetake}
-              className="hover:bg-muted text-foreground inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 font-semibold transition-colors dark:border-zinc-700"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              <span>Retake Photo</span>
-            </button>
           </div>
         </div>
-      ) : (
-        /* ─── SCENARIO B: LIVE VIEWFINDER OR PERMISSION INSTRUCTIONS ─────── */
-        <div className="bg-card border-border space-y-4 rounded-xl border p-4 font-sans shadow-xs">
-          {cameraError ? (
-            /* Explicit Step-by-Step Camera Permission Instructions */
-            <div className="bg-card mx-auto max-w-md space-y-4 rounded-lg border border-zinc-200 p-5 text-left font-sans shadow-2xs sm:p-6 dark:border-zinc-800">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-600">
-                  <AlertTriangle className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-foreground text-sm font-bold">
-                    Camera Access Required
-                  </h3>
-                  <p className="text-muted-foreground text-xs">
-                    Camera access is required for the Visual Lock.
-                  </p>
+      )}
+
+      {/* PHASE: OPT-IN */}
+      {uiPhase === 'opt-in' && (
+        <div className="border border-zinc-200 rounded-sm bg-card p-5 space-y-3 font-sans dark:border-zinc-800">
+          <div>
+            <p className="text-foreground text-sm font-bold font-sans">
+              Add a Visual Lock?
+            </p>
+            <p className="text-muted-foreground text-xs font-sans leading-relaxed mt-1">
+              A photo of your entrance helps delivery agents confirm the right
+              doorstep. No metadata is stored.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              id="camera-add-photo-btn"
+              onClick={startCamera}
+              className="bg-accent text-accent-foreground rounded-sm py-2.5 px-4 text-xs font-semibold font-sans cursor-pointer transition-all hover:opacity-95 active:scale-[0.98]"
+            >
+              Add Photo
+            </button>
+            <button
+              type="button"
+              id="camera-skip-inline-btn"
+              onClick={handleSkip}
+              className="border border-zinc-300 dark:border-zinc-700 rounded-sm py-2.5 px-4 text-xs font-semibold font-sans text-foreground cursor-pointer hover:bg-muted transition-colors"
+            >
+              Skip this step
+            </button>
+          </div>
+
+          <p className="text-[11px] text-muted-foreground font-sans">
+            (Optional)
+          </p>
+        </div>
+      )}
+
+      {/* PHASE: STREAMING + PREVIEW */}
+      {(uiPhase === 'streaming' || uiPhase === 'preview') && (
+        <>
+          {uiPhase === 'preview' && previewUrl ? (
+            /* PREVIEW STATE: Camera shut off, photo review */
+            <div className="bg-card border-border animate-in zoom-in-95 space-y-4 rounded-xl border p-4 font-sans shadow-xs duration-150">
+              <div className="border-border relative mx-auto flex aspect-[4/3] w-full max-w-lg items-center justify-center overflow-hidden rounded-lg border bg-black">
+                <Image
+                  src={previewUrl}
+                  alt="Doorway Visual Lock"
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+
+                <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 rounded-md bg-black/75 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-xs">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>EXIF Stripped</span>
                 </div>
               </div>
 
-              <div className="bg-muted/50 border-border/80 space-y-2.5 rounded-lg border p-3.5 font-sans text-xs">
-                <p className="text-foreground font-semibold">
-                  Follow these steps to enable camera access:
-                </p>
-                <ol className="text-muted-foreground list-inside list-decimal space-y-1.5 leading-relaxed">
-                  <li>
-                    Click the{' '}
-                    <span className="text-foreground font-semibold">
-                      🔒 lock icon
-                    </span>{' '}
-                    in your browser&apos;s address bar.
-                  </li>
-                  <li>
-                    Go to{' '}
-                    <span className="text-foreground font-semibold">
-                      Site Settings / Permissions
-                    </span>
-                    .
-                  </li>
-                  <li>
-                    Set{' '}
-                    <span className="text-foreground font-semibold">
-                      Camera
-                    </span>{' '}
-                    to{' '}
-                    <span className="font-semibold text-emerald-600">
-                      Allow
-                    </span>
-                    .
-                  </li>
-                  <li>Reload the page.</li>
-                </ol>
-              </div>
+              <div className="border-border flex flex-col items-center justify-between gap-3 border-t pt-1 text-xs sm:flex-row">
+                <div className="flex items-center gap-2 font-medium text-emerald-600">
+                  <Check className="h-4 w-4 shrink-0" />
+                  <span>
+                    Visual Lock Ready{' '}
+                    {blobSizeKB ? `(${blobSizeKB} KB • WebP)` : ''}
+                  </span>
+                </div>
 
-              <div className="pt-1">
                 <button
                   type="button"
-                  id="reload-camera-page-btn"
-                  onClick={() => window.location.reload()}
-                  className="bg-accent text-accent-foreground flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-lg font-sans text-xs font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98]"
+                  onClick={handleRetake}
+                  className="hover:bg-muted text-foreground inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 font-semibold transition-colors dark:border-zinc-700"
                 >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  <span>Reload Page</span>
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  <span>Retake Photo</span>
                 </button>
               </div>
             </div>
           ) : (
-            /* Active Live Viewfinder with 4:3 Reticle */
-            <div className="border-border relative mx-auto flex aspect-[4/3] w-full max-w-lg items-center justify-center overflow-hidden rounded-lg border bg-zinc-950 shadow-inner">
-              <video
-                ref={videoRef}
-                playsInline
-                muted
-                autoPlay
-                className="h-full w-full object-cover"
-              />
+            /* STREAMING STATE: Live viewfinder or permission error */
+            <div className="bg-card border-border space-y-4 rounded-xl border p-4 font-sans shadow-xs">
+              {cameraError ? (
+                /* Permission / hardware error with skip escape hatch */
+                <div className="bg-card mx-auto max-w-md space-y-4 rounded-lg border border-zinc-200 p-5 text-left font-sans shadow-2xs sm:p-6 dark:border-zinc-800">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-600">
+                      <AlertTriangle className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-foreground text-sm font-bold">
+                        Camera Access Required
+                      </h3>
+                      <p className="text-muted-foreground text-xs">
+                        Camera access is required for the Visual Lock.
+                      </p>
+                    </div>
+                  </div>
 
-              {/* 4:3 Alignment Reticle */}
-              <div className="pointer-events-none absolute aspect-[4/3] w-[82%] rounded-md">
-                {/* Reticle Corner Brackets */}
-                <div className="border-accent absolute -top-0.5 -left-0.5 h-6 w-6 border-t-2 border-l-2" />
-                <div className="border-accent absolute -top-0.5 -right-0.5 h-6 w-6 border-t-2 border-r-2" />
-                <div className="border-accent absolute -bottom-0.5 -left-0.5 h-6 w-6 border-b-2 border-l-2" />
-                <div className="border-accent absolute -right-0.5 -bottom-0.5 h-6 w-6 border-r-2 border-b-2" />
+                  <div className="bg-muted/50 border-border/80 space-y-2.5 rounded-lg border p-3.5 font-sans text-xs">
+                    <p className="text-foreground font-semibold">
+                      Follow these steps to enable camera access:
+                    </p>
+                    <ol className="text-muted-foreground list-inside list-decimal space-y-1.5 leading-relaxed">
+                      <li>
+                        Click the{' '}
+                        <span className="text-foreground font-semibold">
+                          lock icon
+                        </span>{' '}
+                        in your browser&apos;s address bar.
+                      </li>
+                      <li>
+                        Go to{' '}
+                        <span className="text-foreground font-semibold">
+                          Site Settings / Permissions
+                        </span>
+                        .
+                      </li>
+                      <li>
+                        Set{' '}
+                        <span className="text-foreground font-semibold">
+                          Camera
+                        </span>{' '}
+                        to{' '}
+                        <span className="font-semibold text-emerald-600">
+                          Allow
+                        </span>
+                        .
+                      </li>
+                      <li>Reload the page.</li>
+                    </ol>
+                  </div>
 
-                {/* Reticle Guide Text */}
-                <div className="absolute inset-0 flex flex-col items-center justify-between p-3">
-                  <span className="rounded bg-black/60 px-2.5 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-white/90 uppercase backdrop-blur-xs">
-                    Doorway Framing
-                  </span>
-                  <span className="font-sans text-[11px] font-medium text-white/90 drop-shadow-sm">
-                    Align entrance in center
-                  </span>
+                  <div className="pt-1 space-y-2">
+                    <button
+                      type="button"
+                      id="reload-camera-page-btn"
+                      onClick={() => window.location.reload()}
+                      className="bg-accent text-accent-foreground flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-lg font-sans text-xs font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98]"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      <span>Reload Page</span>
+                    </button>
+                    <button
+                      type="button"
+                      id="camera-skip-error-btn"
+                      onClick={handleSkip}
+                      className="text-muted-foreground flex w-full cursor-pointer items-center justify-center gap-1.5 py-1.5 font-sans text-xs underline underline-offset-2 hover:text-foreground transition-colors"
+                    >
+                      <SkipForward className="h-3 w-3" />
+                      <span>Skip Visual Lock</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Active Live Viewfinder with 4:3 Reticle */
+                <div className="border-border relative mx-auto flex aspect-[4/3] w-full max-w-lg items-center justify-center overflow-hidden rounded-lg border bg-zinc-950 shadow-inner">
+                  <video
+                    ref={videoRef}
+                    playsInline
+                    muted
+                    autoPlay
+                    className="h-full w-full object-cover"
+                  />
 
-              {/* Camera Flip Option */}
-              <button
-                type="button"
-                onClick={handleToggleCamera}
-                title="Flip Camera"
-                aria-label="Flip Camera"
-                className="absolute top-3 right-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-xs transition-all hover:bg-black/70 active:scale-95"
-              >
-                <RefreshCw className="h-4 w-4" />
-              </button>
+                  {/* 4:3 Alignment Reticle */}
+                  <div className="pointer-events-none absolute aspect-[4/3] w-[82%] rounded-md">
+                    {/* Reticle Corner Brackets */}
+                    <div className="border-accent absolute -top-0.5 -left-0.5 h-6 w-6 border-t-2 border-l-2" />
+                    <div className="border-accent absolute -top-0.5 -right-0.5 h-6 w-6 border-t-2 border-r-2" />
+                    <div className="border-accent absolute -bottom-0.5 -left-0.5 h-6 w-6 border-b-2 border-l-2" />
+                    <div className="border-accent absolute -right-0.5 -bottom-0.5 h-6 w-6 border-r-2 border-b-2" />
 
-              {/* Processing Spinner Overlay */}
-              {isProcessing && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/70 text-xs font-medium text-white">
-                  <Loader2 className="text-accent h-6 w-6 animate-spin" />
-                  <span>Compressing WebP &amp; Stripping EXIF...</span>
+                    {/* Reticle Guide Text */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-between p-3">
+                      <span className="rounded bg-black/60 px-2.5 py-0.5 font-sans text-[10px] font-semibold tracking-wider text-white/90 uppercase backdrop-blur-xs">
+                        Doorway Framing
+                      </span>
+                      <span className="font-sans text-[11px] font-medium text-white/90 drop-shadow-sm">
+                        Align entrance in center
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Camera Flip Option */}
+                  <button
+                    type="button"
+                    onClick={handleToggleCamera}
+                    title="Flip Camera"
+                    aria-label="Flip Camera"
+                    className="absolute top-3 right-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-xs transition-all hover:bg-black/70 active:scale-95"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                  </button>
+
+                  {/* Processing Spinner Overlay */}
+                  {isProcessing && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/70 text-xs font-medium text-white">
+                      <Loader2 className="text-accent h-6 w-6 animate-spin" />
+                      <span>Compressing WebP &amp; Stripping EXIF...</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Viewfinder Controls (Shutter Button Only - Real-Time Hardware Only) */}
+              {!cameraError && (
+                <div className="flex flex-col items-center justify-center gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleCapture}
+                    disabled={!isStreaming || isProcessing}
+                    id="camera-shutter-btn"
+                    aria-label="Capture doorway photo"
+                    className="bg-accent text-accent-foreground border-card flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-4 shadow-md transition-transform duration-75 ease-out hover:opacity-95 active:scale-[0.92] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Camera className="h-7 w-7 fill-current" />
+                  </button>
+
+                  <span className="text-muted-foreground font-sans text-xs font-medium">
+                    Tap shutter to capture
+                  </span>
                 </div>
               )}
             </div>
           )}
-
-          {/* Viewfinder Controls (Shutter Button Only - Real-Time Hardware Only) */}
-          {!cameraError && (
-            <div className="flex flex-col items-center justify-center gap-2 pt-2">
-              <button
-                type="button"
-                onClick={handleCapture}
-                disabled={!isStreaming || isProcessing}
-                id="camera-shutter-btn"
-                aria-label="Capture doorway photo"
-                className="bg-accent text-accent-foreground border-card flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-4 shadow-md transition-transform duration-75 ease-out hover:opacity-95 active:scale-[0.92] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Camera className="h-7 w-7 fill-current" />
-              </button>
-
-              <span className="text-muted-foreground font-sans text-xs font-medium">
-                Tap shutter to capture
-              </span>
-            </div>
-          )}
-        </div>
+        </>
       )}
 
       {/* Bottom Thumb-Zone CTA */}
       <div className="bg-card/95 border-border fixed right-0 bottom-0 left-0 z-30 border-t px-4 py-3.5 font-sans backdrop-blur-sm">
         <div className="mx-auto max-w-md md:max-w-xl lg:max-w-2xl">
-          {previewUrl ? (
-            <button
-              type="button"
-              id="camera-continue-btn"
-              disabled={isNavigating}
-              onClick={handleContinue}
-              className="bg-accent text-accent-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold shadow-xs transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 md:text-base"
-            >
-              {isNavigating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>Loading...</span>
-                </>
-              ) : (
-                <>
-                  <MapPin className="h-4 w-4 fill-current" />
-                  <span>Lock Photo &amp; Set Entrance Pin</span>
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </button>
-          ) : (
-            <button
-              type="button"
-              disabled
-              id="camera-continue-btn"
-              className="bg-muted text-muted-foreground flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-sm py-3.5 font-sans text-sm font-semibold opacity-60 md:text-base"
-            >
-              <Camera className="h-4 w-4" />
-              <span>Capture doorway photo to continue</span>
-            </button>
-          )}
+          {renderBottomCta()}
         </div>
       </div>
     </div>
