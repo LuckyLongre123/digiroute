@@ -3,6 +3,7 @@ import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';
+import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 
 const geistSans = Geist({
@@ -74,6 +75,18 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
       >
+        <NextTopLoader
+          color="#ea580c"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="none"
+          zIndex={99999}
+        />
         {children}
         {/* Global Toast — top-center for non-intrusive feedback */}
         <Toaster

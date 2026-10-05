@@ -230,10 +230,11 @@ export default function CreateSharePage() {
 
     // 2. Instantly update Zustand store so the Success screen has the active slug, expiry, and link ready
     const isAuthed = useAuthStore.getState().isAuthenticated;
-    if (isAuthed) {
-      useAddressStore.getState().setIsSaved(true);
-      useAddressStore.getState().setSaveToAccount(true);
-    }
+    const userWantsSave = storeMetadata?.saveToAccount !== false;
+    const shouldSaveToAccount = Boolean(isAuthed && userWantsSave);
+
+    useAddressStore.getState().setIsSaved(shouldSaveToAccount);
+    useAddressStore.getState().setSaveToAccount(shouldSaveToAccount);
     useAddressStore.getState().setExpiresAt(computedExpiresAt);
     useAddressStore.getState().setIsEphemeral(currentExpiry !== 'never');
     setSlug(clientSlug, currentExpiry !== 'never');
@@ -390,6 +391,9 @@ export default function CreateSharePage() {
           if (result.userId) {
             useAddressStore.getState().setIsSaved(true);
             useAddressStore.getState().setSaveToAccount(true);
+          } else {
+            useAddressStore.getState().setIsSaved(false);
+            useAddressStore.getState().setSaveToAccount(false);
           }
         } else {
           setSubmitError(result.error || 'Failed to publish address');

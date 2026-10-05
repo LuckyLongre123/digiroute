@@ -126,9 +126,19 @@ export async function createAddress(
 
     const isAuthenticated = Boolean(session?.userId);
 
-    // Auto-Link During Creation (UX Fix): If a user is already logged in when generating,
-    // automatically assign their userId to the newly created address in Prisma.
-    const ownerId = isAuthenticated && session?.userId ? session.userId : null;
+    // Enforce strict user preference: If the user explicitly disabled saving to their account
+    // (saveToAccount === false or 'false'), we MUST set userId: null, even if a valid session exists.
+    const rawSaveToAccount = formData.get('saveToAccount');
+    const isSaveDisabled =
+      rawSaveToAccount === 'false' ||
+      rawSaveToAccount === '0' ||
+      (typeof rawSaveToAccount === 'string' &&
+        rawSaveToAccount.toLowerCase() === 'false');
+
+    const ownerId =
+      isAuthenticated && session?.userId && !isSaveDisabled
+        ? session.userId
+        : null;
 
     const addressPayload: AddressPayload = {
       slug,

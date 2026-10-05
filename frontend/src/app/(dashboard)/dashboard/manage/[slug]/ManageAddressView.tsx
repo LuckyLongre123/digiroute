@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import type { ManageAddressItem } from '@/components/shared/ManageAddressModal';
 import {
   Check,
   CheckCircle2,
@@ -11,7 +10,8 @@ import {
   QrCode,
   Share2,
 } from 'lucide-react';
-import type { ManageAddressItem } from '@/components/shared/ManageAddressModal';
+import Link from 'next/link';
+import { useState } from 'react';
 
 export function ManageAddressView({ address }: { address: ManageAddressItem }) {
   const [copied, setCopied] = useState(false);
@@ -105,11 +105,10 @@ export function ManageAddressView({ address }: { address: ManageAddressItem }) {
               <span>Sovereign Link</span>
             </span>
             <span
-              className={`font-sans text-[11px] font-medium normal-case ${
-                address.expiresAt
+              className={`font-sans text-[11px] font-medium normal-case ${address.expiresAt
                   ? 'text-amber-600 dark:text-amber-400'
                   : 'text-emerald-600 dark:text-emerald-400'
-              }`}
+                }`}
             >
               {address.expiresAt
                 ? '⏳ Ephemeral link'
@@ -165,7 +164,7 @@ export function ManageAddressView({ address }: { address: ManageAddressItem }) {
 
         {/* 3. Physical Distribution (QR Badge) */}
         <Link
-          href={`/qr?slug=${address.slug}`}
+          href={`/create/qr?slug=${address.slug}`}
           className="border-border bg-card hover:bg-muted/30 hover:border-primary/40 group flex cursor-pointer items-center justify-between rounded-[4px] border p-3 shadow-2xs transition-colors"
         >
           <div className="flex items-center gap-3">

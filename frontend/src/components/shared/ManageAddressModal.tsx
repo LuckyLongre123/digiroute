@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +16,8 @@ import {
   Share2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { TransitionLink } from '@/components/ui/TransitionLink';
+import { useEffect, useState } from 'react';
 
 export interface ManageAddressItem {
   id?: string;
@@ -83,7 +84,7 @@ export function ManageAddressModal({
             setFetchedExpiresAt(data.address.expiresAt);
           }
         })
-        .catch(() => {});
+        .catch(() => { });
     }
     return () => {
       isCancelled = true;
@@ -200,11 +201,10 @@ export function ManageAddressModal({
       >
         <DialogHeader className="items-center gap-2 pb-1 text-center">
           <div
-            className={`flex h-12 w-12 items-center justify-center rounded-full border shadow-xs ${
-              effectiveExpiresAt
+            className={`flex h-12 w-12 items-center justify-center rounded-full border shadow-xs ${effectiveExpiresAt
                 ? 'border-amber-200 bg-amber-50 text-amber-600 dark:border-amber-800 dark:bg-amber-950/40'
                 : 'border-emerald-200 bg-emerald-50 text-emerald-600 dark:border-emerald-800 dark:bg-emerald-950/40'
-            }`}
+              }`}
           >
             <CheckCircle2 className="h-6 w-6 stroke-[2.5]" />
           </div>
@@ -298,15 +298,15 @@ export function ManageAddressModal({
           </div>
 
           {/* 3. Full-Width Generate QR Badge Button */}
-          <Link
-            href={`/dashboard/manage/${address.slug}/qr`}
+          <TransitionLink
+            href={`/create/qr?slug=${address.slug}`}
             id="manage-generate-qr-badge-btn"
             onClick={onClose}
-            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] bg-zinc-900 px-4 py-2.5 font-sans text-xs font-semibold text-zinc-100 shadow-xs transition-all hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-zinc-900 px-4 py-2.5 font-sans text-xs font-semibold text-zinc-100 shadow-xs transition-all hover:bg-zinc-800 active:scale-[0.98] dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             <QrCode className="text-accent h-3.5 w-3.5" />
             <span>Generate QR Badge</span>
-          </Link>
+          </TransitionLink>
 
           {/* 4. Public View Button (explicit opt-in to view public view) */}
           <div className="border-border flex items-center justify-between gap-2 border-t pt-2">

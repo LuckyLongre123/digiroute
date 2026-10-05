@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { TransitionLink } from '@/components/ui/TransitionLink';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -92,19 +93,20 @@ export default function AdminLayout({
           {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
-              <Link
+              <TransitionLink
                 key={href}
                 href={href}
                 onClick={() => setIsMobileOpen(false)}
-                className={`flex min-h-[44px] items-center gap-3 rounded-[3px] px-3.5 py-3 transition-colors md:min-h-0 md:gap-2.5 md:px-3 md:py-2 ${
+                className={`flex min-h-[44px] items-center gap-3 rounded-sm px-3.5 py-3 transition-colors md:min-h-0 md:gap-2.5 md:px-3 md:py-2 ${
                   active
                     ? 'bg-cyan-400/10 font-semibold text-cyan-400'
                     : 'text-zinc-400 hover:bg-zinc-900/80 hover:text-zinc-200'
                 }`}
+                spinnerClassName="h-3.5 w-3.5 shrink-0 animate-spin text-cyan-400"
               >
                 <Icon size={16} className="shrink-0" />
                 <span className="leading-relaxed">{label}</span>
-              </Link>
+              </TransitionLink>
             );
           })}
         </nav>
@@ -131,7 +133,10 @@ export default function AdminLayout({
     >
       {/* 3. Mobile Header with Hamburger */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-2.5 md:hidden">
-        <Link href="/" className="flex min-h-[44px] items-center gap-2">
+        <TransitionLink
+          href="/admin/overview"
+          className="flex min-h-[44px] items-center gap-2"
+        >
           <Image
             src="/logo-transparent.png"
             alt="DigiRoute Logo"
@@ -144,7 +149,7 @@ export default function AdminLayout({
           <span className="rounded border border-cyan-800/60 bg-cyan-950/80 px-1.5 py-0.5 font-mono text-[10px] text-cyan-400">
             admin
           </span>
-        </Link>
+        </TransitionLink>
 
         <div className="flex items-center gap-2">
           <Link

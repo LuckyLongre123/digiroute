@@ -3,6 +3,46 @@
  * Zero external dependencies, 100% offline capable.
  */
 
+let preloadedLogoImage: HTMLImageElement | null = null;
+let logoLoadPromise: Promise<HTMLImageElement> | null = null;
+
+/**
+ * Returns a pre-loaded local HTMLImageElement of the brand icon for synchronous Canvas export.
+ */
+export function getOrPreloadLogoImage(): Promise<HTMLImageElement> {
+  if (preloadedLogoImage && preloadedLogoImage.complete && preloadedLogoImage.naturalWidth > 0) {
+    return Promise.resolve(preloadedLogoImage);
+  }
+  if (logoLoadPromise) {
+    return logoLoadPromise;
+  }
+  logoLoadPromise = new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      preloadedLogoImage = img;
+      resolve(img);
+    };
+    img.onerror = () => {
+      // Fallback to android-chrome-512x512.png or apple-touch-icon.png
+      const fallback = new Image();
+      fallback.onload = () => {
+        preloadedLogoImage = fallback;
+        resolve(fallback);
+      };
+      fallback.onerror = () => {
+        resolve(img);
+      };
+      fallback.src = '/android-chrome-512x512.png';
+    };
+    img.src = '/icon.png';
+  });
+  return logoLoadPromise;
+}
+
 // --- Galois Field GF(256) Math ---
 const GF_EXP = new Uint8Array(512);
 const GF_LOG = new Uint8Array(256);
@@ -390,16 +430,17 @@ export interface BadgeData {
   unit?: string;
   label?: string;
   format?: 'card' | 'sticker' | 'a4';
+  logoImage?: HTMLImageElement | null;
 }
 
 /**
  * Renders an official printable high-resolution badge to an HTML5 canvas.
  */
-export function drawQrBadgeToCanvas(
+export async function drawQrBadgeToCanvas(
   canvas: HTMLCanvasElement,
   data: BadgeData
-): void {
-  const { text, digipin, unit, label, format = 'sticker' } = data;
+): Promise<void> {
+  const { text, digipin, unit, label, format = 'sticker', logoImage } = data;
   const matrix = generateQrMatrix(text);
   const matrixSize = matrix.length;
 
@@ -483,8 +524,8 @@ export function drawQrBadgeToCanvas(
     }
   }
 
-  // Feature 1: Center Logo Emblem with Excavation
-  const centerLogoSize = Math.max(50, Math.round(qrBoxSize * 0.16));
+  // Feature 1: Center Logo Emblem with Excavation (Proportionate 13% of QR box)
+  const centerLogoSize = Math.max(40, Math.round(qrBoxSize * 0.13));
   const centerLogoX = qrBoxX + (qrBoxSize - centerLogoSize) / 2;
   const centerLogoY = qrBoxY + (qrBoxSize - centerLogoSize) / 2;
 
@@ -492,33 +533,58 @@ export function drawQrBadgeToCanvas(
   ctx.fillStyle = '#FFFFFF';
   ctx.beginPath();
   ctx.roundRect(
-    centerLogoX - 6,
-    centerLogoY - 6,
-    centerLogoSize + 12,
-    centerLogoSize + 12,
-    12
+    centerLogoX - 4,
+    centerLogoY - 4,
+    centerLogoSize + 8,
+    centerLogoSize + 8,
+    8
   );
   ctx.fill();
   ctx.strokeStyle = '#E2E8F0';
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Inner Brand Badge
-  ctx.fillStyle = '#EA580C';
-  ctx.beginPath();
-  ctx.roundRect(centerLogoX, centerLogoY, centerLogoSize, centerLogoSize, 10);
-  ctx.fill();
+  // Draw resolved pre-loaded logo static asset
+  let resolvedImg = logoImage;
+  if (!resolvedImg || !resolvedImg.complete || resolvedImg.naturalWidth === 0) {
+    try {
+      resolvedImg = await getOrPreloadLogoImage();
+    } catch {
+      resolvedImg = null;
+    }
+  }
 
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = `bold ${Math.round(centerLogoSize * 0.55)}px system-ui, sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(
-    'D',
-    centerLogoX + centerLogoSize / 2,
-    centerLogoY + centerLogoSize / 2 + 1
-  );
-  ctx.textBaseline = 'alphabetic';
+  if (resolvedImg && resolvedImg.complete && resolvedImg.naturalWidth > 0) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(centerLogoX, centerLogoY, centerLogoSize, centerLogoSize, 10);
+    ctx.clip();
+    ctx.drawImage(
+      resolvedImg,
+      centerLogoX,
+      centerLogoY,
+      centerLogoSize,
+      centerLogoSize
+    );
+    ctx.restore();
+  } else {
+    // Fallback: Inner Brand Badge
+    ctx.fillStyle = '#EA580C';
+    ctx.beginPath();
+    ctx.roundRect(centerLogoX, centerLogoY, centerLogoSize, centerLogoSize, 10);
+    ctx.fill();
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = `bold ${Math.round(centerLogoSize * 0.55)}px system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      'D',
+      centerLogoX + centerLogoSize / 2,
+      centerLogoY + centerLogoSize / 2 + 1
+    );
+    ctx.textBaseline = 'alphabetic';
+  }
 
   // Spacing & Tag Pill (Bug 3: Generous vertical gap-5 / gap-6)
   let curY = qrBoxY + qrBoxSize + 55;

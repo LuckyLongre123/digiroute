@@ -421,6 +421,84 @@ export async function deleteUserAddress(
 }
 
 /**
+ * Bulk delete addresses owned strictly by a specific user.
+ * Guarantees that only addresses where userId matches are deleted.
+ */
+export async function bulkDeleteUserAddresses(
+  userId: string,
+  idsOrSlugs: string[]
+): Promise<{ count: number; deletedSlugs: string[] }> {
+  if (!idsOrSlugs || idsOrSlugs.length === 0) {
+    return { count: 0, deletedSlugs: [] };
+  }
+
+  // Load all user addresses to guarantee strict ownership verification
+  const userAddresses = await getUserAddresses(userId);
+  const targetSet = new Set(idsOrSlugs);
+
+  // Filter addresses strictly owned by this user
+  const matchingAddresses = userAddresses.filter(
+    (addr) =>
+      addr.userId === userId &&
+      ((addr.id && targetSet.has(addr.id)) ||
+        (addr.slug && targetSet.has(addr.slug)))
+  );
+
+  if (matchingAddresses.length === 0) {
+    return { count: 0, deletedSlugs: [] };
+  }
+
+  const deletedSlugs: string[] = [];
+
+  // 1. Delete from PostgreSQL with strict userId security assertion
+  try {
+    if (typeof (db as any).address?.deleteMany === 'function') {
+      const matchIds = matchingAddresses.map((a) => a.id).filter(Boolean);
+      await (db as any).address.deleteMany({
+        where: {
+          id: { in: matchIds },
+          userId,
+        },
+      });
+    }
+    for (const addr of matchingAddresses) {
+      await db.orm.public.Address.where({ slug: addr.slug, userId }).delete();
+      deletedSlugs.push(addr.slug);
+    }
+  } catch (dbErr) {
+    console.warn('[Prisma 8] Failed to bulk delete from PostgreSQL:', dbErr);
+    for (const addr of matchingAddresses) {
+      if (!deletedSlugs.includes(addr.slug)) {
+        deletedSlugs.push(addr.slug);
+      }
+    }
+  }
+
+  // 2. Remove from in-memory cache
+  for (const slug of deletedSlugs) {
+    addressMemoryCache.delete(slug);
+  }
+
+  // 3. Update local file storage fallback
+  try {
+    await ensureLocalStorage();
+    const currentList = Array.from(addressMemoryCache.values());
+    await fs.writeFile(
+      LOCAL_STORAGE_FILE,
+      JSON.stringify(currentList, null, 2),
+      'utf-8'
+    );
+  } catch (fileErr) {
+    console.error(
+      '[Storage] Error removing addresses from local file:',
+      fileErr
+    );
+  }
+
+  return { count: deletedSlugs.length, deletedSlugs };
+}
+
+/**
  * Claim an ephemeral address for an authenticated user.
  * Persists the userId binding to Prisma 8 Neon PostgreSQL, in-memory cache, and local file storage.
  */

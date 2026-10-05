@@ -27,7 +27,17 @@ export async function GET(
       const expiryTime = new Date(address.expiresAt).getTime();
       if (Date.now() > expiryTime) {
         return NextResponse.json(
-          { error: 'Address link has expired' },
+          {
+            error: 'Address link has expired',
+            isExpired: true,
+            address: {
+              id: address.id || address.slug,
+              slug: address.slug,
+              digipin: address.digipin,
+              label: address.label,
+              expiresAt: address.expiresAt,
+            },
+          },
           { status: 410 }
         );
       }

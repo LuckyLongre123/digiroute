@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { TransitionLink } from '@/components/ui/TransitionLink';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -85,9 +86,9 @@ export function Sidebar() {
         {/* Desktop Nav items */}
         <nav className="space-y-1 font-sans">
           {/* 1. Addresses */}
-          <Link
+          <TransitionLink
             href="/dashboard"
-            className={`flex items-center gap-3 rounded-[4px] px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
               pathname === '/dashboard' ||
               pathname.startsWith('/dashboard/address')
                 ? 'bg-primary text-primary-foreground'
@@ -96,7 +97,7 @@ export function Sidebar() {
           >
             <MapPin className="h-4 w-4" />
             <span>Addresses</span>
-          </Link>
+          </TransitionLink>
 
           {/* 2. Reports (Disabled) */}
           <div
@@ -114,9 +115,9 @@ export function Sidebar() {
           </div>
 
           {/* 3. Settings */}
-          <Link
+          <TransitionLink
             href="/dashboard/settings"
-            className={`flex items-center gap-3 rounded-[4px] px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
               pathname === '/dashboard/settings'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-foreground hover:bg-muted'
@@ -124,7 +125,7 @@ export function Sidebar() {
           >
             <Settings className="h-4 w-4" />
             <span>Settings</span>
-          </Link>
+          </TransitionLink>
         </nav>
       </div>
 

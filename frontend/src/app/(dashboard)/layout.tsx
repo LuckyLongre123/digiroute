@@ -1,11 +1,7 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useAuthStore } from '@/store/useAuthStore';
-import { getSessionAction } from '@/app/actions/auth';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 import { Navbar } from '@/components/navigation/Navbar';
+import { AuthSync } from '@/components/auth/AuthSync';
 
 /**
  * (dashboard) Layout - Authenticated User Area (ROUTE-04)
@@ -20,20 +16,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = useAuthStore((state) => state.user);
-
-  useEffect(() => {
-    if (!user) {
-      getSessionAction().then((res) => {
-        if (res.user) {
-          useAuthStore.getState().setUser(res.user);
-        }
-      });
-    }
-  }, [user]);
-
   return (
     <div className="bg-background flex min-h-screen flex-col font-sans md:flex-row">
+      <AuthSync />
       {/* Desktop Sidebar (hidden on mobile) */}
       <Sidebar />
 

@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { deleteAddressAction } from '@/app/actions/deleteAddress';
+import { updateAddressAction } from '@/app/actions/updateAddress';
+import { updateAddressPhoto } from '@/app/actions/updateAddressPhoto';
+import { EditCameraModal } from '@/components/dashboard/EditCameraModal';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 import {
   ArrowLeft,
   Camera,
@@ -14,12 +16,11 @@ import {
   Save,
   Trash2,
 } from 'lucide-react';
+import Link from 'next/link';
+import { TransitionLink } from '@/components/ui/TransitionLink';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { updateAddressAction } from '@/app/actions/updateAddress';
-import { deleteAddressAction } from '@/app/actions/deleteAddress';
-import { updateAddressPhoto } from '@/app/actions/updateAddressPhoto';
-import { uploadToCloudinary } from '@/lib/cloudinary';
-import { EditCameraModal } from '@/components/dashboard/EditCameraModal';
 
 export interface EditableAddressRecord {
   id: string;
@@ -223,13 +224,13 @@ export function EditMicroAddressView({
       {/* Back Navigation & Top Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link
+          <TransitionLink
             href={backHref}
-            className="hover:bg-muted text-muted-foreground hover:text-foreground rounded p-1.5 transition-colors"
+            className="hover:bg-muted text-muted-foreground hover:text-foreground rounded-sm p-1.5 transition-colors"
             aria-label="Back to addresses"
           >
             <ArrowLeft className="h-5 w-5" />
-          </Link>
+          </TransitionLink>
           <div>
             <h1 className="text-foreground text-xl font-bold tracking-tight">
               Edit Micro-Address
@@ -240,13 +241,13 @@ export function EditMicroAddressView({
           </div>
         </div>
 
-        <Link
-          href={`/dashboard/manage/${address.slug}/qr`}
-          className="bg-secondary text-secondary-foreground hover:bg-muted inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium shadow-2xs transition-colors"
+        <TransitionLink
+          href={`/create/qr?slug=${address.slug}`}
+          className="bg-secondary text-secondary-foreground hover:bg-muted inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 text-xs font-medium shadow-2xs transition-colors"
         >
           <QrCode className="text-primary h-4 w-4" />
           <span>QR Badge</span>
-        </Link>
+        </TransitionLink>
       </div>
 
       <div className="space-y-5">
@@ -419,44 +420,40 @@ export function EditMicroAddressView({
                   setExpiryOption('never');
                   setCustomDatetime('');
                 }}
-                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
-                  expiryOption === 'never'
-                    ? 'border-accent bg-accent/10 text-accent font-semibold'
-                    : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
-                }`}
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${expiryOption === 'never'
+                  ? 'border-accent bg-accent/10 text-accent font-semibold'
+                  : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 Permanent (Never)
               </button>
               <button
                 type="button"
                 onClick={() => setExpiryOption('24h')}
-                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
-                  expiryOption === '24h'
-                    ? 'border-accent bg-accent/10 text-accent font-semibold'
-                    : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
-                }`}
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${expiryOption === '24h'
+                  ? 'border-accent bg-accent/10 text-accent font-semibold'
+                  : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 24 Hours (TTL)
               </button>
               <button
                 type="button"
                 onClick={() => setExpiryOption('7d')}
-                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
-                  expiryOption === '7d'
-                    ? 'border-accent bg-accent/10 text-accent font-semibold'
-                    : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
-                }`}
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${expiryOption === '7d'
+                  ? 'border-accent bg-accent/10 text-accent font-semibold'
+                  : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 7 Days (TTL)
               </button>
               <button
                 type="button"
                 onClick={() => setExpiryOption('custom')}
-                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${
-                  expiryOption === 'custom'
-                    ? 'border-accent bg-accent/10 text-accent font-semibold'
-                    : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
-                }`}
+                className={`cursor-pointer rounded border px-2 py-1.5 text-center text-xs transition-colors ${expiryOption === 'custom'
+                  ? 'border-accent bg-accent/10 text-accent font-semibold'
+                  : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 Custom Date
               </button>
