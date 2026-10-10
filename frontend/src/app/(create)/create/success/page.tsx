@@ -630,11 +630,11 @@ function CreateSuccessContent() {
         </button>
       </div>
 
-      {/* Contextual Guest PWA Install Prompt */}
+      {/* Contextual Native Android App Banner */}
       {!isAuthenticated && (
         <InstallPromptCard
-          title="Get the DigiRoute Mobile App"
-          description="Micro-address created successfully. Download the DigiRoute app for faster access and offline tracking."
+          title="Experience DigiRoutes on Android"
+          description="Micro-address created successfully! Download our native Android app for instant QR scanning and turn-by-turn navigation."
           buttonText="Download App"
           className="mt-4"
         />

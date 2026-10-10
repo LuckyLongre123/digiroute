@@ -1,0 +1,35 @@
+# DigiRoute — Turn Any Doorstep Into a Precise 10-Character Sovereign DIGIPIN
+
+## 🚀 The Launch Post (X / Twitter / LinkedIn)
+
+Addresses in India are complicated. Finding the exact door is a nightmare.
+
+DigiRoute solves this by transforming imprecise GPS coordinates into a 10-character sovereign micro-address (`39J-M99-P9CJ`).
+
+Built with a Refined Utilitarian design system (Zinc #09090b + Amber #f97316), DigiRoute delivers:
+
+1️⃣ The 5-Step Sovereign Creation Flow
+• Base Location pin + automatic WGS84 bounding
+• Step 2: Visual Lock (building outline & rooftop snapping)
+• Step 3: Exact Entrance Pin (no more calling drivers from the gate)
+• Step 4: Details & Security (ephemeral sharing & contact cloaking)
+• Step 5: Instant Live Sovereign Link & verifiable Doorway QR badge
+
+2️⃣ Ephemeral Privacy & Smart QR Badges
+• Printable Doorway QR Badges (`8Z7X-6C5V-4B`) for gates & delivery boxes
+• Self-destructing temporary access tokens ("Expires in 16m", "Expires in 4h")
+• Zero phone number leakage to delivery riders or third-party couriers
+
+3️⃣ Native Android Engine (Flutter)
+• Millisecond camera QR scanner HUD with target laser sweeps
+• 100% offline India route planner & deterministic DIGIPIN mathematical decoding (works in remote valleys & basements)
+
+4️⃣ Real-Time Emergency SOS Broadcast
+• Instant crimson beacon (`4M8K-9P2L-1X`) with live helper response tracking
+• Turn-by-turn guidance straight to the victim's exact physical doorstep
+
+🌐 Live Web App: https://digiroute.antideploy.com
+📱 Android App: https://digiroute.antideploy.com/download
+⚡ Tech Stack: Next.js 15 · Tailwind · GSAP · Flutter · OpenStreetMap / WGS84 DIGIPIN Engine
+
+#IndieHacker #BuildInPublic #DigiRoute #OpenSource #Flutter #NextJS #Logistics

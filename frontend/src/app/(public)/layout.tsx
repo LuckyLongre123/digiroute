@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/navigation/Navbar';
+import { AndroidIcon } from '@/components/icons/AndroidIcon';
 
 /**
  * (public) Layout
@@ -8,7 +9,7 @@ import { Navbar } from '@/components/navigation/Navbar';
  * Sticky glassmorphic header with dynamic login/dashboard states.
  * ROUTE-10: SOS must never be more than 1 tap away from home and create flow.
  * Responsive max width container for desktop and mobile utility.
- * Includes consistent public brand footer.
+ * Includes consistent public brand footer linking internally to the /download landing page.
  */
 export default function PublicLayout({
   children,
@@ -62,11 +63,12 @@ export default function PublicLayout({
               Why Register
             </Link>
             <Link
-              href="/download-app"
-              id="footer-download-pwa-link"
-              className="text-slate-500 transition-colors hover:text-slate-800 dark:text-zinc-400 dark:hover:text-zinc-100"
+              href="/download"
+              id="footer-download-app-link"
+              className="inline-flex items-center gap-1.5 text-slate-700 transition-colors hover:text-slate-950 dark:text-zinc-300 dark:hover:text-zinc-100"
             >
-              Get Mobile App
+              <AndroidIcon className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Download App</span>
             </Link>
             <Link
               href="/sos"

@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { AlertTriangle, Download } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+import { AndroidIcon } from '@/components/icons/AndroidIcon';
 
 interface NavbarClientProps {
   isLikelyAuthenticated: boolean;
@@ -14,29 +15,6 @@ export function NavbarClient({
   isLikelyAuthenticated,
   userSection,
 }: NavbarClientProps) {
-  const [isStandalone, setIsStandalone] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return (
-      window.matchMedia('(display-mode: standalone)').matches ||
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (navigator as any).standalone === true
-    );
-  });
-
-  useEffect(() => {
-    const checkStandalone = () => {
-      setIsStandalone(
-        window.matchMedia('(display-mode: standalone)').matches ||
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (navigator as any).standalone === true
-      );
-    };
-    window.addEventListener('appinstalled', checkStandalone);
-    return () => {
-      window.removeEventListener('appinstalled', checkStandalone);
-    };
-  }, []);
-
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/80 font-sans backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/80">
       <div className="mx-auto flex h-15 max-w-4xl items-center justify-between px-4">
@@ -57,46 +35,27 @@ export function NavbarClient({
           />
         </Link>
 
-        {/* Right: Navigation Links, Auth State & SOS */}
+        {/* Right: Download App Link, Auth State & SOS */}
         <div className="flex items-center gap-2.5 sm:gap-3.5">
+          {/* Download App Route Link (Internal /download Landing Page) */}
           <Link
-            href="/about"
-            className="font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100"
+            href="/download"
+            id="navbar-download-app-link"
+            title="Download DigiRoutes Android App"
+            className="hidden items-center gap-1.5 rounded-sm border border-zinc-200/90 bg-zinc-50/80 px-2.5 py-1.5 font-sans text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-950 sm:inline-flex dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
-            How it works
+            <AndroidIcon className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Download App</span>
           </Link>
-
-          {/* Join / Why Register: strictly hidden when likely authenticated */}
-          {!isLikelyAuthenticated && (
-            <Link
-              href="/why-join"
-              id="navbar-why-join-link"
-              className="hidden font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:inline sm:text-sm dark:text-zinc-400 dark:hover:text-zinc-100"
-            >
-              Why register
-            </Link>
-          )}
-
-          {/* Download App Link for authenticated desktop/mobile (hidden in standalone PWA) */}
-          {isLikelyAuthenticated && !isStandalone && (
-            <>
-              <Link
-                href="/download-app"
-                id="navbar-download-app-link"
-                className="hidden items-center gap-1.5 rounded-sm px-2.5 py-1.5 font-sans text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 md:inline-flex dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
-              >
-                <span>📱 Download App</span>
-              </Link>
-              <Link
-                href="/download-app"
-                id="navbar-download-app-mobile-btn"
-                aria-label="Download App"
-                className="flex h-8 w-8 items-center justify-center rounded-sm border border-zinc-200 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 md:hidden dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
-              >
-                <Download className="h-4 w-4" />
-              </Link>
-            </>
-          )}
+          <Link
+            href="/download"
+            id="navbar-download-app-mobile-btn"
+            aria-label="Download App"
+            title="Download App"
+            className="flex h-8 w-8 items-center justify-center rounded-sm border border-zinc-200 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 sm:hidden dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+          >
+            <AndroidIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          </Link>
 
           {/* Auth Section: Suspense wrapped if likely authenticated, else instant guest login */}
           {userSection}

@@ -19,6 +19,7 @@ import { formatDigipin, cleanDigipin, isValid } from '@/lib/digipin';
 import { clearDraftAndReset } from '@/lib/draft';
 import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 import { TransitionLink } from '@/components/ui/TransitionLink';
+import { AppPromoModal } from '@/components/shared/AppPromoModal';
 
 interface HomePageClientProps {
   isLikelyAuthenticated: boolean;
@@ -44,6 +45,7 @@ export function HomePageClient({
   const [resolveError, setResolveError] = useState('');
   const [showResumeToast, setShowResumeToast] = useState(false);
   const [resumeStep, setResumeStep] = useState<string>('/create');
+  const [isPromoOpen, setIsPromoOpen] = useState(false);
 
   const [isAuthenticated, setIsAuthenticated] = useState(isLikelyAuthenticated);
 
@@ -273,52 +275,60 @@ export function HomePageClient({
         )}
       </section>
 
-      {/* ─── 3. QUICK UTILITY SHORTCUTS (DISABLED FOR RELEASE) ──────────────── */}
+      {/* ─── 3. QUICK UTILITY SHORTCUTS (ACTIVE - PROMOTES ANDROID APP) ───── */}
       <section className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
         <button
           type="button"
-          disabled
-          aria-disabled="true"
           id="quick-scan-link"
-          className="bg-card flex w-full cursor-not-allowed items-center justify-between rounded-sm border border-zinc-200 p-4.5 text-left opacity-50 shadow-2xs dark:border-zinc-800"
+          onClick={() => setIsPromoOpen(true)}
+          className="bg-card hover:bg-muted/70 group flex w-full cursor-pointer items-center justify-between rounded-sm border border-zinc-200 p-4.5 text-left shadow-2xs transition-all active:scale-[0.99] dark:border-zinc-800 dark:hover:bg-zinc-900"
         >
           <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-zinc-100 text-zinc-900 transition-colors group-hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:group-hover:bg-zinc-700">
               <QrCode className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-foreground text-sm font-semibold">
-                Scan QR Badge
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-foreground text-sm font-semibold">
+                  Scan QR Badge
+                </p>
+                <span className="rounded-xs border border-emerald-300/80 bg-emerald-50 px-1.5 py-0.2 font-mono text-[10px] font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                  Android App
+                </span>
+              </div>
               <p className="text-muted-foreground mt-0.5 text-xs">
                 Resolve a physical doorway plate instantly
               </p>
             </div>
           </div>
-          <ChevronRight className="text-muted-foreground h-4 w-4 shrink-0" />
+          <ChevronRight className="text-muted-foreground h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
         </button>
 
         <button
           type="button"
-          disabled
-          aria-disabled="true"
           id="quick-report-link"
-          className="bg-card flex w-full cursor-not-allowed items-center justify-between rounded-sm border border-zinc-200 p-4.5 text-left opacity-50 shadow-2xs dark:border-zinc-800"
+          onClick={() => setIsPromoOpen(true)}
+          className="bg-card hover:bg-muted/70 group flex w-full cursor-pointer items-center justify-between rounded-sm border border-zinc-200 p-4.5 text-left shadow-2xs transition-all active:scale-[0.99] dark:border-zinc-800 dark:hover:bg-zinc-900"
         >
           <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-zinc-100 text-zinc-900 transition-colors group-hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:group-hover:bg-zinc-700">
               <Flag className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-foreground text-sm font-semibold">
-                Report Civic Defect
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-foreground text-sm font-semibold">
+                  Report Civic Defect
+                </p>
+                <span className="rounded-xs border border-emerald-300/80 bg-emerald-50 px-1.5 py-0.2 font-mono text-[10px] font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                  Android App
+                </span>
+              </div>
               <p className="text-muted-foreground mt-0.5 text-xs">
                 Potholes, broken lights and access blockers
               </p>
             </div>
           </div>
-          <ChevronRight className="text-muted-foreground h-4 w-4 shrink-0" />
+          <ChevronRight className="text-muted-foreground h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
         </button>
       </section>
 
@@ -354,6 +364,12 @@ export function HomePageClient({
 
       {/* ─── 5. MOBILE BOTTOM NAVIGATION (LOGGED-IN USERS ONLY) ───────────── */}
       {isAuthenticated && <MobileBottomNav />}
+
+      {/* ─── 6. APP PROMO MODAL ───────────────────────────────────────────── */}
+      <AppPromoModal
+        isOpen={isPromoOpen}
+        onClose={() => setIsPromoOpen(false)}
+      />
     </div>
   );
 }

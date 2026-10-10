@@ -56,5 +56,11 @@ test/
 
 PROJECT_RULES.md
 
-brag-output/
+brag-output/composition/
+brag-output/bake_poster.cjs
+brag-output/bake_poster.js
+brag-output/brag*.mp4
+brag-output/.*
 graphify-out/
+bin/
+scripts/

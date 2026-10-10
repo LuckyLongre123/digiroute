@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { TransitionLink } from '@/components/ui/TransitionLink';
 import Image from 'next/image';
@@ -13,19 +14,22 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { logoutAction } from '@/app/actions/auth';
+import { AndroidIcon } from '@/components/icons/AndroidIcon';
+import { AppPromoModal } from '@/components/shared/AppPromoModal';
 
 /**
  * Dashboard Sidebar (Desktop)
  *
  * Cleaned desktop sidebar:
  * - "Addresses" (/dashboard)
- * - "Reports" (Visually disabled, non-clickable)
+ * - "Reports" (Active promo teasing Android app capabilities)
  * - "Settings" (/dashboard/settings)
- * - Note: "Create" link is removed from sidebar; primary "+ Create Address" button remains on main dashboard view.
+ * - "Download App" (/download)
  */
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isPromoOpen, setIsPromoOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
 
   const displayName =
@@ -99,20 +103,21 @@ export function Sidebar() {
             <span>Addresses</span>
           </TransitionLink>
 
-          {/* 2. Reports (Disabled) */}
-          <div
-            aria-disabled="true"
-            title="Reports feature coming soon"
-            className="flex cursor-not-allowed items-center justify-between rounded-[4px] px-3 py-2.5 text-sm font-medium text-zinc-500 opacity-50 select-none"
+          {/* 2. Reports (Active - Teases App Feature) */}
+          <button
+            type="button"
+            onClick={() => setIsPromoOpen(true)}
+            title="Reports feature available in Android App"
+            className="flex w-full cursor-pointer items-center justify-between rounded-[4px] px-3 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 select-none dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
             <div className="flex items-center gap-3">
               <FileBarChart className="h-4 w-4 text-zinc-500" />
               <span>Reports</span>
             </div>
-            <span className="rounded bg-zinc-200 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-500 uppercase dark:bg-zinc-800">
-              Soon
+            <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 uppercase dark:bg-emerald-950/60 dark:text-emerald-300">
+              App
             </span>
-          </div>
+          </button>
 
           {/* 3. Settings */}
           <TransitionLink
@@ -125,6 +130,19 @@ export function Sidebar() {
           >
             <Settings className="h-4 w-4" />
             <span>Settings</span>
+          </TransitionLink>
+
+          {/* 4. Download App */}
+          <TransitionLink
+            href="/download"
+            className={`flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
+              pathname === '/download'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-foreground hover:bg-muted'
+            }`}
+          >
+            <AndroidIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <span>Download App</span>
           </TransitionLink>
         </nav>
       </div>
@@ -148,6 +166,12 @@ export function Sidebar() {
           <span>Log Out</span>
         </button>
       </div>
+
+      {/* App Promo Modal */}
+      <AppPromoModal
+        isOpen={isPromoOpen}
+        onClose={() => setIsPromoOpen(false)}
+      />
     </aside>
   );
 }

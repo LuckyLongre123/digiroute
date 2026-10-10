@@ -39,11 +39,11 @@ export default function WhyJoinPage() {
         </p>
       </div>
 
-      {/* Prominent PWA Install Prompt */}
+      {/* Native Android App Banner */}
       <InstallPromptCard
-        title="Get the DigiRoute Mobile App"
-        description="Install DigiRoute on your home screen for quick micro-address creation, instant GPS locks, and offline access."
-        buttonText="Install App"
+        title="Experience DigiRoutes on Android"
+        description="Download our native Android app for built-in QR scanning, OpenRouteService navigation, offline DIGIPIN, and rich WhatsApp sharing."
+        buttonText="Download App"
       />
 
       {/* Asymmetric Bento Grid */}
