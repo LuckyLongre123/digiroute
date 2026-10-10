@@ -1,6 +1,7 @@
 # DigiRoute
 
-[![DigiRoute Promo Video](brag-output/intro.mp4)](brag-output/intro.mp4)
+[![DigiRoute Promo Video](https://img.youtube.com/vi/aL8fsSRdiFU/maxresdefault.jpg)](https://youtu.be/aL8fsSRdiFU)
+
 
 DigiRoute solves the last-50-meters navigation problem in India. It converts any exact doorstep location into a sovereign, highly accurate 10-character DIGIPIN, wrapping it in a shareable digital address card with entrance photos, routing notes, and printable QR badges.
 
