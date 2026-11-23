@@ -1,14 +1,14 @@
-import { Suspense } from 'react';
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { SESSION_COOKIE_NAME } from '@/lib/auth';
 import { HomePageClient } from '@/components/home/HomePageClient';
 import { RecentAddressesAsync } from '@/components/home/RecentAddressesAsync';
 import { RecentAddressesSkeleton } from '@/components/home/RecentAddressesSkeleton';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { SESSION_COOKIE_NAME } from '@/lib/auth';
+import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { Suspense } from 'react';
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const BASE_URL = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
 
 export const metadata: Metadata = {
   title: 'Sovereign Micro-Addressing & DIGIPIN Navigation',

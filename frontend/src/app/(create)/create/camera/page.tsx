@@ -1,27 +1,27 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { uploadToCloudinary } from '@/lib/cloudinary';
+import { getCameraBlob, saveCameraBlob } from '@/lib/db';
 import {
-  Camera,
-  RefreshCw,
-  AlertTriangle,
-  Check,
-  RotateCcw,
-  MapPin,
-  Loader2,
-  ShieldCheck,
-  ArrowRight,
-  SkipForward,
-} from 'lucide-react';
-import {
+  setActiveCloudinaryPromise,
   useAddressStore,
   useHasHydrated,
-  setActiveCloudinaryPromise,
 } from '@/store/useAddressStore';
-import { saveCameraBlob, getCameraBlob } from '@/lib/db';
-import { uploadToCloudinary } from '@/lib/cloudinary';
+import {
+  AlertTriangle,
+  ArrowRight,
+  Camera,
+  Check,
+  Loader2,
+  MapPin,
+  RefreshCw,
+  RotateCcw,
+  ShieldCheck,
+  SkipForward,
+} from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Helper to downscale and compress an image or video frame into WebP (< 300KB)

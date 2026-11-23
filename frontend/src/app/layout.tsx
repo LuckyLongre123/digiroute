@@ -2,8 +2,8 @@ import { AdminTriggerMount } from '@/components/AdminTriggerMount';
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Toaster } from 'sonner';
 import NextTopLoader from 'nextjs-toploader';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 const geistSans = Geist({
@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
   display: 'swap',
 });
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const BASE_URL = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

@@ -1,3 +1,4 @@
+import { JsonLd } from '@/components/seo/JsonLd';
 import {
   Download,
   ExternalLink,
@@ -8,13 +9,12 @@ import {
   WifiOff,
 } from 'lucide-react';
 import type { Metadata } from 'next';
-import { JsonLd } from '@/components/seo/JsonLd';
 
 export const GITHUB_RELEASES_URL =
   'https://github.com/kushkumarkashyap7280/digiroutes_app/releases/latest';
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const BASE_URL = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
 
 export const metadata: Metadata = {
   title: 'Download Android App',

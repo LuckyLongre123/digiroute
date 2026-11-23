@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+const BASE_URL = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
 
 /**
  * Dynamic XML Sitemap
