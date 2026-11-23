@@ -2,8 +2,8 @@ import { AdminTriggerMount } from '@/components/AdminTriggerMount';
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Toaster } from 'sonner';
 import NextTopLoader from 'nextjs-toploader';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 const geistSans = Geist({
@@ -54,6 +54,10 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
   },
+
+  verification: {
+    google: "YJT3V7SAl5PaWe683R3jVOccc9zwVF_YuC0KMOzyqmI"
+  }
 };
 
 export const viewport: Viewport = {
