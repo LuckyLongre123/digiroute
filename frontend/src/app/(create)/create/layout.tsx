@@ -341,6 +341,7 @@ export default function CreateLayout({
 
       {/* Wizard content */}
       <main
+        id="main-content"
         className={`mx-auto w-full max-w-md flex-1 md:max-w-xl lg:max-w-2xl ${isCameraStep || isMapStep ? 'flex h-full min-h-0 flex-col overflow-hidden px-3 py-2 sm:px-4' : 'px-4 py-4 md:py-6'}`}
       >
         {children}

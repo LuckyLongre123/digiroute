@@ -1,5 +1,15 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Keyboard } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Scan Doorway QR Code',
+  description:
+    'Scan high-density DigiRoute doorway QR badges to view micro-address cards, entrance visual locks, and last-mile spatial directions.',
+  alternates: {
+    canonical: '/scan',
+  },
+};
 
 export default function ScanPage() {
   return (

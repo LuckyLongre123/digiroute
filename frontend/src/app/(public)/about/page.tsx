@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import {
   ArrowLeft,
   Camera,
@@ -11,6 +12,15 @@ import {
   ShieldCheck,
   Zap,
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'About DigiRoute & DIGIPIN',
+  description:
+    'Learn how DigiRoute solves last-mile navigation using India Post DIGIPIN grids, doorway visual lock photography, and offline-first PWA architecture.',
+  alternates: {
+    canonical: '/about',
+  },
+};
 
 /**
  * /about - Editorial Educational Guide

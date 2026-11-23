@@ -265,9 +265,9 @@ export default function CreatorRadarPage({ params }: PageProps) {
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold tracking-wider text-zinc-900 sm:text-sm">
+              <h1 className="font-mono text-xs font-bold tracking-wider text-zinc-900 sm:text-sm">
                 {code}
-              </span>
+              </h1>
               <span className="inline-flex items-center gap-1 rounded border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-wide text-emerald-700 uppercase">
                 <span className="h-1.5 w-1.5 animate-ping rounded-full bg-emerald-500" />
                 Radar Live

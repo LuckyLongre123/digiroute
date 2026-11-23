@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Live Radar - DigiRoute Creator Hub',
+  title: 'Live Radar',
   description:
     'Real-time telemetry and recipient tracking for your sovereign micro-address.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 /**
@@ -16,8 +20,11 @@ export default function TrackLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-[100dvh] w-full flex-col overflow-hidden bg-zinc-50 font-sans text-zinc-900 antialiased">
+    <main
+      id="main-content"
+      className="flex h-[100dvh] w-full flex-col overflow-hidden bg-zinc-50 font-sans text-zinc-900 antialiased"
+    >
       {children}
-    </div>
+    </main>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, use } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import {
   Navigation,
   ShieldAlert,
@@ -12,7 +13,21 @@ import {
   ExternalLink,
   CheckCircle2,
 } from 'lucide-react';
-import { MapplsMap, MapMarkerItem } from '@/components/ui/MapplsMap';
+import type { MapMarkerItem } from '@/components/ui/MapplsMap';
+
+const DynamicMapplsMap = dynamic(
+  () => import('@/components/ui/MapplsMap').then((mod) => mod.MapplsMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full w-full items-center justify-center bg-zinc-100 dark:bg-zinc-900">
+        <span className="font-mono text-xs text-zinc-500 animate-pulse">
+          Initializing Map &amp; GPS...
+        </span>
+      </div>
+    ),
+  }
+);
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -97,7 +112,7 @@ export default function CommunityResponderPage({ params }: PageProps) {
 
       {/* ─── 2. REUSABLE MAPPLS MAP (OFFSET UPWARD TO AVOID CARD COLLISION) ─── */}
       <div className="absolute inset-0 z-0">
-        <MapplsMap
+        <DynamicMapplsMap
           center={mapCenter}
           zoom={17}
           markers={mapMarkers}
@@ -130,9 +145,9 @@ export default function CommunityResponderPage({ params }: PageProps) {
               <ShieldAlert className="h-3.5 w-3.5 shrink-0 fill-current" />
               <span>Community SOS Alert</span>
             </div>
-            <h2 className="font-sans text-sm leading-tight font-bold tracking-tight text-zinc-900 sm:text-base">
+            <h1 className="font-sans text-sm leading-tight font-bold tracking-tight text-zinc-900 sm:text-base">
               Someone needs help 80 meters away.
-            </h2>
+            </h1>
           </div>
 
           {/* Telemetry Summary */}

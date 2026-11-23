@@ -488,6 +488,7 @@ export default function AdminImagesPage() {
     >
       {/* Top Bar */}
       <header className="z-10 flex shrink-0 flex-col gap-3 border-b border-zinc-800 bg-[#09090b] px-4 py-3.5 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-4 md:py-2.5">
+        <h1 className="sr-only">Admin Media Gallery</h1>
         <div className="flex w-full items-center justify-between gap-2 sm:gap-3 md:w-auto md:justify-start">
           <div className="grid w-full grid-cols-2 items-center gap-1 rounded-[3px] border border-zinc-800 bg-zinc-950 p-1 font-mono text-xs sm:flex sm:w-auto md:p-0.5 md:text-[11px]">
             <span className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-[2px] bg-cyan-400/10 px-3 py-2 font-semibold text-cyan-400 md:min-h-0 md:px-2.5 md:py-1">

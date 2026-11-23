@@ -134,9 +134,9 @@ export function Sidebar() {
 
           {/* 4. Download App */}
           <TransitionLink
-            href="/download"
+            href="/download-app"
             className={`flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-medium transition-colors ${
-              pathname === '/download'
+              pathname === '/download-app'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-foreground hover:bg-muted'
             }`}

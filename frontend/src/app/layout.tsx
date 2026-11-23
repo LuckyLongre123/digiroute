@@ -2,8 +2,8 @@ import { AdminTriggerMount } from '@/components/AdminTriggerMount';
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from 'sonner';
+import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 
 const geistSans = Geist({
@@ -18,17 +18,26 @@ const geistMono = Geist_Mono({
   display: 'swap',
 });
 
+const BASE_URL =
+  process.env.NEXT_PUBLIC_APP_URL || 'https://digiroute.antideploy.com';
+
 export const metadata: Metadata = {
-  title: 'DigiRoute — Sovereign Micro-Addressing',
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'DigiRoute — Sovereign Micro-Addressing & DIGIPIN Navigation',
+    template: '%s | DigiRoute',
+  },
   description:
-    'Solve the last 50 meters. Create a precise 4-factor micro-address using DIGIPIN, doorway photo, map pin, and floor details. Shareable in seconds.',
+    'Resolve last-50-meter delivery failures in India with 2-factor micro-addresses pairing India Post DIGIPIN codes with verified doorway visual lock photos.',
   keywords: [
     'DIGIPIN',
     'micro-address',
     'India Post',
-    'last mile',
-    'delivery',
-    'navigation',
+    'last mile navigation',
+    'doorway visual lock',
+    'spatial addressing India',
+    'delivery coordinates',
+    'offline navigation',
   ],
   authors: [{ name: 'DigiRoute' }],
   manifest: '/manifest.webmanifest',
@@ -48,24 +57,29 @@ export const metadata: Metadata = {
     title: 'DigiRoute',
   },
   openGraph: {
-    title: 'DigiRoute — Sovereign Micro-Addressing',
+    title: 'DigiRoute — Sovereign Micro-Addressing & DIGIPIN Navigation',
     description:
-      'Solve the last 50 meters with a precise, shareable micro-address.',
-    type: 'website',
+      'Resolve last-50-meter delivery failures in India with 2-factor micro-addresses pairing India Post DIGIPIN codes with verified doorway visual lock photos.',
+    url: BASE_URL,
+    siteName: 'DigiRoute',
     locale: 'en_IN',
+    type: 'website',
   },
-
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DigiRoute — Sovereign Micro-Addressing & DIGIPIN Navigation',
+    description:
+      'Resolve last-50-meter delivery failures in India with 2-factor micro-addresses pairing India Post DIGIPIN codes with verified doorway visual lock photos.',
+  },
   verification: {
-    google: "YJT3V7SAl5PaWe683R3jVOccc9zwVF_YuC0KMOzyqmI"
-  }
+    google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || undefined,
+  },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: '#ffffff',
+  themeColor: '#09090b',
 };
 
 export default function RootLayout({
@@ -79,6 +93,14 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
       >
+        {/* WCAG AAA Keyboard Skip Navigation Link */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100000] focus:px-4 focus:py-2.5 focus:bg-orange-600 focus:text-white focus:rounded-md focus:shadow-xl focus:outline-none font-sans text-xs font-bold uppercase tracking-wider"
+        >
+          Skip to main content
+        </a>
+
         <NextTopLoader
           color="#ea580c"
           initialPosition={0.08}
@@ -92,7 +114,7 @@ export default function RootLayout({
           zIndex={99999}
         />
         {children}
-        {/* Global Toast — top-center for non-intrusive feedback */}
+        {/* Global Toast — bottom-center for non-intrusive feedback */}
         <Toaster
           position="bottom-center"
           closeButton

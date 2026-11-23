@@ -1,7 +1,16 @@
+import type { Metadata } from 'next';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 import { Navbar } from '@/components/navigation/Navbar';
 import { AuthSync } from '@/components/auth/AuthSync';
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 /**
  * (dashboard) Layout - Authenticated User Area (ROUTE-04)
@@ -30,7 +39,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Page Content with bottom padding for mobile nav bar */}
-        <main className="mx-auto w-full max-w-4xl flex-1 p-4 pb-24 md:p-8 md:pb-8">
+        <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 p-4 pb-24 md:p-8 md:pb-8">
           {children}
         </main>
 

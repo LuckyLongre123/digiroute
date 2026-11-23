@@ -36,10 +36,10 @@ export function NavbarClient({
         </Link>
 
         {/* Right: Download App Link, Auth State & SOS */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5">
-          {/* Download App Route Link (Internal /download Landing Page) */}
+        <nav aria-label="Main Navigation" className="flex items-center gap-2.5 sm:gap-3.5">
+          {/* Download App Route Link (Internal /download-app Landing Page) */}
           <Link
-            href="/download"
+            href="/download-app"
             id="navbar-download-app-link"
             title="Download DigiRoutes Android App"
             className="hidden items-center gap-1.5 rounded-sm border border-zinc-200/90 bg-zinc-50/80 px-2.5 py-1.5 font-sans text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-950 sm:inline-flex dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300 dark:hover:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
@@ -48,11 +48,11 @@ export function NavbarClient({
             <span>Download App</span>
           </Link>
           <Link
-            href="/download"
+            href="/download-app"
             id="navbar-download-app-mobile-btn"
             aria-label="Download App"
             title="Download App"
-            className="flex h-8 w-8 items-center justify-center rounded-sm border border-zinc-200 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 sm:hidden dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-sm border border-zinc-200 text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 sm:hidden dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
           >
             <AndroidIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </Link>
@@ -74,7 +74,7 @@ export function NavbarClient({
             />
             <span>SOS</span>
           </Link>
-        </div>
+        </nav>
       </div>
     </header>
   );

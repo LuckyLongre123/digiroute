@@ -687,9 +687,9 @@ export default function CreateCameraPage() {
                       <AlertTriangle className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-foreground text-sm font-bold">
+                      <h2 className="text-foreground text-sm font-bold">
                         Camera Access Required
-                      </h3>
+                      </h2>
                       <p className="text-muted-foreground text-xs">
                         Camera access is required for the Visual Lock.
                       </p>

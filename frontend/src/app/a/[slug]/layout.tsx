@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'DigiRoute - Sovereign Doorway Navigation',
+  title: 'Shared Micro-Address Card',
   description:
     'Verified micro-address navigation direct to the doorway with sovereign accuracy.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 /**
@@ -17,9 +21,12 @@ export default function RecipientLayout({
 }) {
   return (
     <div className="bg-background text-foreground flex h-[100dvh] w-full flex-col items-center justify-start overflow-hidden font-sans antialiased">
-      <div className="relative flex h-full w-full max-w-md flex-col overflow-hidden md:max-w-lg">
+      <main
+        id="main-content"
+        className="relative flex h-full w-full max-w-md flex-col overflow-hidden md:max-w-lg"
+      >
         {children}
-      </div>
+      </main>
     </div>
   );
 }

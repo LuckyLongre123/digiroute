@@ -22,7 +22,7 @@ export default function PublicLayout({
       <Navbar />
 
       {/* Page content */}
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 md:py-10">
+      <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 md:py-10">
         {children}
       </main>
 
@@ -51,6 +51,24 @@ export default function PublicLayout({
 
           <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
             <Link
+              href="/create"
+              className="hover:text-foreground transition-colors"
+            >
+              Create Address
+            </Link>
+            <Link
+              href="/scan"
+              className="hover:text-foreground transition-colors"
+            >
+              Scan QR
+            </Link>
+            <Link
+              href="/report"
+              className="hover:text-foreground transition-colors"
+            >
+              Report Issue
+            </Link>
+            <Link
               href="/about"
               className="hover:text-foreground transition-colors"
             >
@@ -63,7 +81,7 @@ export default function PublicLayout({
               Why Register
             </Link>
             <Link
-              href="/download"
+              href="/download-app"
               id="footer-download-app-link"
               className="inline-flex items-center gap-1.5 text-slate-700 transition-colors hover:text-slate-950 dark:text-zinc-300 dark:hover:text-zinc-100"
             >

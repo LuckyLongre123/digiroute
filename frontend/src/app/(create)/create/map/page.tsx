@@ -182,6 +182,10 @@ export default function CreateMapPage() {
       <div className="mx-auto flex h-full min-h-0 w-full max-w-md flex-col justify-between overflow-y-auto font-sans sm:max-w-lg">
         {/* Top Content Card */}
         <div className="space-y-4 pt-1">
+          <h1 className="text-foreground font-sans text-xl font-bold tracking-tight md:text-2xl">
+            Entrance Pin Placement
+          </h1>
+
           {/* Header prompt banner */}
           <div className="bg-card rounded-sm border border-zinc-200 p-4 shadow-2xs sm:p-5 dark:border-zinc-800">
             <div className="flex items-start gap-3">
@@ -189,9 +193,9 @@ export default function CreateMapPage() {
                 <MapPin className="h-5 w-5 fill-current" />
               </div>
               <div className="space-y-1">
-                <h3 className="font-sans text-sm font-bold text-zinc-900 sm:text-base dark:text-zinc-100">
+                <h2 className="font-sans text-sm font-bold text-zinc-900 sm:text-base dark:text-zinc-100">
                   Base Location Captured
-                </h3>
+                </h2>
                 <p className="font-sans text-xs text-slate-600 dark:text-zinc-400">
                   Your micro-address is currently locked to your GPS fix.
                 </p>
@@ -221,9 +225,9 @@ export default function CreateMapPage() {
 
           {/* Interactive Map Opt-In Prompt */}
           <div className="bg-card rounded-sm border border-zinc-200 p-4 shadow-2xs sm:p-5 dark:border-zinc-800">
-            <h4 className="font-sans text-sm font-bold text-zinc-900 dark:text-zinc-100">
+            <h3 className="font-sans text-sm font-bold text-zinc-900 dark:text-zinc-100">
               Need exact doorway precision?
-            </h4>
+            </h3>
             <p className="mt-1 font-sans text-xs leading-relaxed text-slate-600 dark:text-zinc-400">
               Adjust the pin manually to help couriers find your exact entrance.
             </p>
@@ -272,6 +276,7 @@ export default function CreateMapPage() {
   // ─── MILESTONE 2: FULL-BLEED ZERO-LAG MAP WITH FIXED CENTER PIN ───────────
   return (
     <div className="relative flex h-full min-h-0 w-full flex-1 flex-col gap-2.5 overflow-hidden font-sans select-none">
+      <h1 className="sr-only">Entrance Pin Map Alignment</h1>
       {/* ─── 1. FULL-BLEED MAP WRAPPER WITH FIXED CENTER PIN ───────────────── */}
       <div className="border-border relative min-h-0 w-full flex-1 overflow-hidden rounded-sm border bg-zinc-100 shadow-xs dark:bg-zinc-900">
         <DynamicMapplsMap

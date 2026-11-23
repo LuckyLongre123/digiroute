@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InstallPromptCard } from '@/components/pwa/InstallPromptCard';
 import {
@@ -10,10 +11,13 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
-export const metadata = {
-  title: 'Why Register - Benefits of a DigiRoute Account',
+export const metadata: Metadata = {
+  title: 'Why Join DigiRoute',
   description:
-    'Discover the advantages of registered micro-addresses: permanent doorway links, resident passcodes, vector QR badges, and multi-address management.',
+    'Join DigiRoute to manage permanent digital address books, generate branded printable QR badges, and access verified micro-address navigation.',
+  alternates: {
+    canonical: '/why-join',
+  },
 };
 
 /**
@@ -72,14 +76,14 @@ export default function WhyJoinPage() {
           <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
             <div className="space-y-1 rounded-[4px] border border-zinc-200/80 bg-zinc-50 p-3.5 dark:border-zinc-800 dark:bg-zinc-950">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-semibold text-zinc-500">
+                <span className="font-mono text-xs font-semibold text-zinc-600 dark:text-zinc-400">
                   Guest Session
                 </span>
                 <span className="rounded-[2px] bg-amber-500/10 px-1.5 py-0.5 font-mono text-[10px] font-medium text-amber-700 dark:text-amber-400">
                   30m - 24h Expiry
                 </span>
               </div>
-              <p className="text-[11px] leading-snug text-zinc-500">
+              <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-400">
                 Temporary link designed for one-off parcels or short-term
                 visitor navigation.
               </p>

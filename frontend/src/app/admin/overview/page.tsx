@@ -546,6 +546,7 @@ export default function AdminOverviewPage() {
         className="flex shrink-0 flex-col gap-3 border-b px-4 py-3.5 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-4 md:py-2.5"
         style={{ backgroundColor: '#09090b', borderColor: '#27272a' }}
       >
+        <h1 className="sr-only">Admin Visual Node Graph &amp; Edge Overview</h1>
         <div className="flex w-full flex-col items-stretch gap-2.5 sm:flex-row sm:items-center sm:gap-3 md:w-auto">
           {/* View Mode Switch */}
           <div className="grid w-full grid-cols-2 items-center gap-1 rounded-[3px] border border-zinc-800 bg-zinc-950 p-1 font-mono text-xs sm:flex sm:w-auto md:p-0.5 md:text-[11px]">

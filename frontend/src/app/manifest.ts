@@ -9,12 +9,13 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'DigiRoute',
     short_name: 'DigiRoute',
-    description: 'Geospatial addressing and offline tracking.',
+    description:
+      'Sovereign micro-addressing and spatial navigation for the last 50 meters.',
     start_url: '/',
     display: 'standalone',
     orientation: 'portrait',
-    background_color: '#ffffff',
-    theme_color: '#ffffff',
+    background_color: '#09090b',
+    theme_color: '#09090b',
     categories: ['navigation', 'utilities', 'productivity'],
     icons: [
       {

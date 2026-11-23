@@ -49,7 +49,7 @@ export function InstallPromptCard({
 
       <div className="flex w-full shrink-0 items-center gap-2 sm:w-auto">
         <Link
-          href="/download"
+          href="/download-app"
           id="native-apk-download-card-btn"
           className="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-sm bg-zinc-900 px-3.5 py-2 font-sans text-xs font-semibold text-white shadow-2xs transition-all hover:bg-zinc-800 active:scale-[0.98] sm:w-auto dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >

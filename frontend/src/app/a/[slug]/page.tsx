@@ -902,9 +902,9 @@ export default function RecipientPage({ params }: PageProps) {
                   className="mx-auto mb-2 h-6 w-6 shrink-0 text-[#FF6B00] dark:text-orange-400"
                   strokeWidth={2}
                 />
-                <h1 className="font-sans text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                <h2 className="font-sans text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
                   Secure Micro-Address
-                </h1>
+                </h2>
                 <p className="font-sans text-xs text-slate-600 dark:text-slate-400">
                   This micro-address is protected by a resident passcode.
                 </p>
@@ -1136,9 +1136,9 @@ export default function RecipientPage({ params }: PageProps) {
                     </div>
                   ) : (
                     <>
-                      <span className="text-primary block font-mono text-xs font-bold">
+                      <h1 className="text-primary block font-mono text-xs font-bold sm:text-sm">
                         {code}
-                      </span>
+                      </h1>
                       <span className="text-muted-foreground font-mono text-[10px]">
                         {destLat && destLng
                           ? `${destLat.toFixed(4)}° N, ${destLng.toFixed(4)}° E`

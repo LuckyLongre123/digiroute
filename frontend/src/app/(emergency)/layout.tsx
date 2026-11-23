@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Emergency SOS - DigiRoute',
-  description: 'Emergency dispatch channel and community responder navigation.',
+  title: 'Emergency SOS Dispatch',
+  description:
+    'Trigger rapid emergency dispatch with pre-populated DIGIPIN coordinates and one-tap direct dialing to emergency services at 112.',
+  alternates: {
+    canonical: '/sos',
+  },
 };
 
 /**
@@ -17,8 +21,8 @@ export default function EmergencyLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-[100dvh] w-full font-sans antialiased select-none">
+    <main id="main-content" className="min-h-[100dvh] w-full font-sans antialiased select-none">
       {children}
-    </div>
+    </main>
   );
 }

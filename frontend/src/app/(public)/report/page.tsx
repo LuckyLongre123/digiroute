@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
 import { Flag } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Report Civic Issue',
+  description:
+    'Submit anonymous civic infrastructure defect reports tagged with precise 10-character DIGIPIN spatial coordinates and doorway photos.',
+  alternates: {
+    canonical: '/report',
+  },
+};
 
 const CATEGORIES = [
   { id: 'pothole', label: 'Pothole' },
