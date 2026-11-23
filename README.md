@@ -94,7 +94,7 @@ DigiRoute is engineered to strict technical SEO, Core Web Vitals, and WCAG AA ac
 * **Search Engine Indexing & Privacy**: Dynamic `sitemap.xml` indexing public routes (`/`, `/download-app`, `/create`, `/scan`, `/sos`, `/report`). Privacy-first `robots.txt` and explicit `noindex, nofollow` shielding on ephemeral and private routes (`/a/[slug]`, `/dashboard/*`, `/admin/*`, `/api/*`).
 * **Structured Data**: XSS-safe native Schema.org JSON-LD markup for `WebApplication`, `SoftwareApplication` (Android APK), and `Organization`.
 * **Social Previews**: Dynamic 1200×630 Open Graph and Twitter summary cards generated via `next/og` using the Refined Utilitarian theme.
-* **Semantic Accessibility (WCAG AA)**: Single `<h1>` hierarchy across all 35 routes, keyboard-accessible skip-to-content landmark, explicit ARIA labels on map controls, ≥44×44px mobile touch targets, and contrast ratios ≥4.5:1 on Zinc (#09090b) backgrounds.
+* **Semantic Accessibility (WCAG AA)**: Single `<h1>` hierarchy across all 35 routes, keyboard-accessible skip-to-content landmark, explicit ARIA labels on map controls, calibrated mobile touch targets across key navigation and interactive controls, and contrast ratios ≥4.5:1 on Zinc (#09090b) backgrounds.
 * **Performance & Core Web Vitals**: Automatic AVIF/WebP image optimization, `next/font` zero-shift typography, and dynamic lazy loading with skeleton fallbacks for heavy map and graph components.
 * **Security & Headers**: Production HTTP headers including strict HSTS, nosniff, Referrer-Policy, SAMEORIGIN, and explicit Permissions-Policy (`camera=(self), geolocation=(self)`).
 * **Search Console Ready**: Native Google Search Console token verification hook via environment configuration.
