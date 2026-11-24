@@ -1,21 +1,43 @@
 'use client';
 
 import { getSessionAction, logoutAction } from '@/app/actions/auth';
+import {
+  getUserConsentAction,
+  updateUserConsentAction,
+} from '@/app/actions/consent';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Check, LogOut, Map, Smartphone, Trash2, User } from 'lucide-react';
+import {
+  Check,
+  LogOut,
+  Map,
+  ShieldCheck,
+  Smartphone,
+  Trash2,
+  User,
+  ExternalLink,
+} from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch';
 
 /**
  * /dashboard/settings - Citizen & App Settings (ROUTE-01, ROUTE-04)
  *
- * User profile, offline map layer defaults, cache management, and sign out.
+ * User profile, legal consents, offline map layer defaults, cache management, and sign out.
  */
 export default function SettingsPage() {
   const router = useRouter();
   const [offlineMap, setOfflineMap] = useState('mappls');
   const [isClearing, setIsClearing] = useState(false);
+
+  // Legal Consent State (Optimistic)
+  const [consentAccepted, setConsentAccepted] = useState(true);
+  const [consentDateIST, setConsentDateIST] = useState<string | null>(null);
+  const [consentLastAction, setConsentLastAction] = useState<
+    'ACCEPTED' | 'REVOKED' | null
+  >(null);
 
   const user = useAuthStore((state) => state.user);
 
@@ -27,6 +49,21 @@ export default function SettingsPage() {
         }
       });
     }
+
+    // Load user consent status
+    getUserConsentAction().then((res) => {
+      if (res && res.success) {
+        if (res.lastAction) {
+          setConsentAccepted(res.accepted ?? true);
+          setConsentLastAction(res.lastAction);
+          setConsentDateIST(res.formattedDateIST || null);
+        } else {
+          // Pre-existing or unrecorded user: default active
+          setConsentAccepted(true);
+          setConsentLastAction('ACCEPTED');
+        }
+      }
+    });
   }, [user]);
 
   const email = user?.email || 'citizen@digiroute.in';
@@ -40,18 +77,61 @@ export default function SettingsPage() {
         .toUpperCase()
     : email.slice(0, 2).toUpperCase();
 
+  const handleConsentToggle = async (checked: boolean) => {
+    // 1. Optimistic UI update (Instant, zero blocking spinner)
+    const prevAccepted = consentAccepted;
+    const prevDate = consentDateIST;
+    const prevAction = consentLastAction;
+
+    setConsentAccepted(checked);
+    setConsentLastAction(checked ? 'ACCEPTED' : 'REVOKED');
+    const nowIST = new Intl.DateTimeFormat('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }).format(new Date()) + ' IST';
+    setConsentDateIST(nowIST);
+
+    toast.success(
+      checked
+        ? 'Consent recorded: Terms & Privacy Policy accepted.'
+        : 'Consent revoked. Your preferences have been updated in the audit ledger.'
+    );
+
+    // 2. Non-blocking background persistence
+    try {
+      const res = await updateUserConsentAction(checked);
+      if (!res.success) {
+        // Revert on failure
+        setConsentAccepted(prevAccepted);
+        setConsentDateIST(prevDate);
+        setConsentLastAction(prevAction);
+        toast.error('Failed to update consent preference. Please retry.');
+      } else if (res.formattedDateIST) {
+        setConsentDateIST(res.formattedDateIST);
+      }
+    } catch {
+      setConsentAccepted(prevAccepted);
+      setConsentDateIST(prevDate);
+      setConsentLastAction(prevAction);
+      toast.error('Failed to update consent preference. Please retry.');
+    }
+  };
+
   const handleClearCache = async () => {
     if (isClearing) return;
     setIsClearing(true);
 
     try {
-      // 1. Unregister active service workers
       if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
         await Promise.all(registrations.map((reg) => reg.unregister()));
       }
 
-      // 2. Clear Cache Storage
       if (typeof window !== 'undefined' && 'caches' in window) {
         await caches
           .keys()
@@ -60,13 +140,11 @@ export default function SettingsPage() {
           );
       }
 
-      // 3. Clear Local and Session Storage
       if (typeof window !== 'undefined') {
         localStorage.clear();
         sessionStorage.clear();
       }
 
-      // 4. Sonner Toast Feedback & Reload
       toast.success('Cache cleared successfully. Reloading...');
       setTimeout(() => {
         window.location.reload();
@@ -95,11 +173,11 @@ export default function SettingsPage() {
           Settings &amp; Preferences
         </h1>
         <p className="text-muted-foreground mt-0.5 text-xs">
-          Manage your account profile, offline storage, and spatial defaults
+          Manage your account profile, legal consents, offline storage, and spatial defaults
         </p>
       </div>
 
-      {/* Profile Card — Dynamically rendered for authenticated user */}
+      {/* Profile Card */}
       <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
           <User className="h-3.5 w-3.5" />
@@ -116,6 +194,76 @@ export default function SettingsPage() {
             </h2>
             <p className="text-muted-foreground truncate text-xs">{email}</p>
           </div>
+        </div>
+      </div>
+
+      {/* Privacy & Legal Consents Card */}
+      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex items-center justify-between">
+          <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
+            <ShieldCheck className="h-3.5 w-3.5 text-amber-500" />
+            <span>Privacy &amp; Legal Consents</span>
+          </div>
+          {consentAccepted ? (
+            <span className="inline-flex items-center gap-1.5 rounded-[3px] border border-emerald-500/30 bg-emerald-950/40 px-2 py-0.5 font-mono text-[11px] font-semibold text-emerald-400">
+              ● Active Accepted
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-[3px] border border-amber-500/30 bg-amber-950/40 px-2 py-0.5 font-mono text-[11px] font-semibold text-amber-400">
+              ○ Consent Revoked
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col justify-between gap-4 pt-1 sm:flex-row sm:items-center">
+          <div className="space-y-1">
+            <div className="text-foreground text-xs font-medium tracking-tight">
+              Age (13+) &amp; Terms of Service Acceptance
+            </div>
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
+              Confirm you are 13 years of age or older (or have parental consent) and agree to DigiRoute&apos;s{' '}
+              <Link
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-500 underline inline-flex items-center gap-0.5 hover:text-amber-400"
+              >
+                Terms of Service <ExternalLink className="h-2.5 w-2.5" />
+              </Link>{' '}
+              and{' '}
+              <Link
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-500 underline inline-flex items-center gap-0.5 hover:text-amber-400"
+              >
+                Privacy Policy <ExternalLink className="h-2.5 w-2.5" />
+              </Link>
+              .
+            </p>
+            {consentDateIST && (
+              <p className="text-muted-foreground font-mono text-[10px]">
+                {consentLastAction === 'ACCEPTED'
+                  ? `Accepted on: ${consentDateIST}`
+                  : `Revoked on: ${consentDateIST}`}
+              </p>
+            )}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-3">
+            <Switch
+              checked={consentAccepted}
+              onCheckedChange={handleConsentToggle}
+              id="consent-status-toggle"
+              aria-label="Toggle Age and Terms Consent"
+            />
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-100 pt-3 dark:border-zinc-800/80">
+          <p className="text-muted-foreground text-[11px]">
+            Unticking this setting revokes your legal consent in the immutable audit ledger. Your account and saved addresses remain active; you can re-accept at any time.
+          </p>
         </div>
       </div>
 
@@ -144,8 +292,7 @@ export default function SettingsPage() {
             <option value="bhuvan">ISRO Bhuvan Satellite Hybrid</option>
           </select>
           <p className="text-muted-foreground text-[11px]">
-            Mappls is recommended for optimal accuracy in dense Indian urban
-            wards.
+            Mappls is recommended for optimal accuracy in dense Indian urban wards.
           </p>
         </div>
       </div>
@@ -163,8 +310,7 @@ export default function SettingsPage() {
               Local Offline Cache
             </div>
             <p className="text-muted-foreground text-[11px]">
-              Clear saved tile caches, temporary camera captures, and draft
-              addresses.
+              Clear saved tile caches, temporary camera captures, and draft addresses.
             </p>
           </div>
           <button

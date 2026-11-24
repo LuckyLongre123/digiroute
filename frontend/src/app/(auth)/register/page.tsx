@@ -25,6 +25,7 @@ function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [acceptedConsent, setAcceptedConsent] = useState(false);
   const isSubmittingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -60,11 +61,24 @@ function RegisterForm() {
       return;
     }
 
+    if (!acceptedConsent) {
+      const msg =
+        'You must confirm you are 13 years of age or older and agree to the Terms of Service and Privacy Policy.';
+      setErrorMessage(msg);
+      toast.error(msg);
+      return;
+    }
+
     isSubmittingRef.current = true;
     setIsLoading(true);
 
     try {
-      const result = await registerAction({ name, email, password });
+      const result = await registerAction({
+        name,
+        email,
+        password,
+        acceptedConsent,
+      });
 
       if (!result.success || !result.user) {
         const errorText =
@@ -201,6 +215,46 @@ function RegisterForm() {
           </div>
         </div>
 
+        {/* Mandatory Age & Terms Checkbox */}
+        <div className="pt-1">
+          <label
+            htmlFor="accepted-consent"
+            className="flex items-start gap-2.5 cursor-pointer text-xs leading-relaxed text-zinc-700 select-none"
+          >
+            <input
+              id="accepted-consent"
+              type="checkbox"
+              checked={acceptedConsent}
+              onChange={(e) => setAcceptedConsent(e.target.checked)}
+              disabled={isLoading}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded-[3px] border-zinc-300 text-amber-600 focus:ring-amber-500 accent-amber-600 cursor-pointer disabled:cursor-not-allowed"
+            />
+            <span>
+              I confirm I am 13 years of age or older (or have parental consent) and agree to the{' '}
+              <Link
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-600 font-semibold underline hover:text-amber-500"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-600 font-semibold underline hover:text-amber-500"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Privacy Policy
+              </Link>
+              .
+            </span>
+          </label>
+        </div>
+
         <button
           type="submit"
           disabled={isLoading}
@@ -240,9 +294,8 @@ export default function RegisterPage() {
   return (
     <Suspense
       fallback={
-        <div className="rounded-[4px] border border-zinc-300 bg-white p-6 text-center text-xs text-zinc-500 shadow-md">
-          <Loader2 className="text-accent mx-auto mb-2 h-5 w-5 animate-spin" />
-          <span>Loading registration form...</span>
+        <div className="flex justify-center p-8">
+          <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
         </div>
       }
     >

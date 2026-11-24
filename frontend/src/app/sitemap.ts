@@ -10,7 +10,7 @@ const BASE_URL = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
  * Excludes private, administrative, auth, and ephemeral routes.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = '2026-10-10T00:00:00.000Z';
+  const lastModified = '2026-11-24T00:00:00.000Z';
 
   return [
     {
@@ -48,6 +48,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/privacy`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/terms`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.5,
     },
   ];
 }

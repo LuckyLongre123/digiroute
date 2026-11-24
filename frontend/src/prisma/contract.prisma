@@ -1,12 +1,13 @@
 // use prisma-8
 
 model User {
-  id           String    @id @default(uuid())
-  email        String?   @unique
-  phone        String?   @unique
+  id           String       @id @default(uuid())
+  email        String?      @unique
+  phone        String?      @unique
   name         String?
   passwordHash String?
   addresses    Address[]
+  consentLogs  ConsentLog[]
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
 }
@@ -32,4 +33,18 @@ model Address {
   user            User?     @relation(fields: [userId], references: [id])
   createdAt       TimestamptzString @default(now())
   updatedAt       temporal.updatedAtString()
+}
+
+model ConsentLog {
+  id            String    @id @default(uuid())
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
+  userEmail     String
+  userName      String?
+  consentType   String
+  action        String
+  policyVersion String
+  source        String
+  userAgent     String?
+  createdAt     TimestamptzString @default(now())
 }

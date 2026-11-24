@@ -1,5 +1,7 @@
 'use server';
 
+import { after } from 'next/server';
+import { headers } from 'next/headers';
 import {
   hashPassword,
   verifyPassword,
@@ -9,6 +11,7 @@ import {
   type SessionUser,
 } from '@/lib/auth';
 import { findUserByEmail, createUser } from '@/lib/userService';
+import { recordConsentEvent } from '@/lib/consent-logger';
 
 export interface AuthActionResult {
   success: boolean;
@@ -75,21 +78,33 @@ export async function loginAction(
  * Server Action: Register new user and automatically establish active session
  */
 export async function registerAction(
-  input: FormData | { name?: string; email?: string; password?: string }
+  input:
+    | FormData
+    | {
+        name?: string;
+        email?: string;
+        password?: string;
+        acceptedConsent?: boolean;
+      }
 ): Promise<AuthActionResult> {
   try {
     let name = '';
     let email = '';
     let password = '';
+    let acceptedConsent = false;
 
     if (input instanceof FormData) {
       name = (input.get('name') as string)?.trim() || '';
       email = (input.get('email') as string)?.trim() || '';
       password = (input.get('password') as string) || '';
+      const consentVal = input.get('acceptedConsent');
+      acceptedConsent =
+        consentVal === 'true' || consentVal === 'on' || consentVal === '1';
     } else {
       name = input.name?.trim() || '';
       email = input.email?.trim() || '';
       password = input.password || '';
+      acceptedConsent = Boolean(input.acceptedConsent);
     }
 
     if (!name) {
@@ -104,6 +119,15 @@ export async function registerAction(
       return {
         success: false,
         error: 'Password must be at least 6 characters long.',
+      };
+    }
+
+    // Enforce mandatory age and terms consent
+    if (!acceptedConsent) {
+      return {
+        success: false,
+        error:
+          'You must confirm you are 13 years of age or older and agree to the Terms of Service and Privacy Policy.',
       };
     }
 
@@ -133,6 +157,26 @@ export async function registerAction(
 
     // Auto-login requirement: automatically issue session cookie
     await setSessionCookie(sessionUser);
+
+    // Non-blocking background consent audit logging via Next.js after()
+    after(async () => {
+      try {
+        const headersList = await headers();
+        const userAgent = headersList.get('user-agent') || undefined;
+        await recordConsentEvent({
+          userId: newUser.id,
+          userEmail: newUser.email || email,
+          userName: newUser.name || name,
+          consentType: 'AGE_AND_TERMS',
+          action: 'ACCEPTED',
+          policyVersion: 'v1.0',
+          source: 'REGISTER',
+          userAgent,
+        });
+      } catch (err) {
+        console.error('[registerAction] Background consent log failed:', err);
+      }
+    });
 
     return {
       success: true,
