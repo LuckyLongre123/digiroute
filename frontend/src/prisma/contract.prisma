@@ -48,3 +48,13 @@ model ConsentLog {
   userAgent     String?
   createdAt     TimestamptzString @default(now())
 }
+
+model ContactMessage {
+  id        String            @id @default(uuid())
+  name      String
+  email     String
+  category  String
+  message   String
+  status    String            @default("NEW")
+  createdAt TimestamptzString @default(now())
+}

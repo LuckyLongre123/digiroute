@@ -3,7 +3,7 @@
 > **Sovereign 4m-Precision Doorstep Navigation & Digital Address Infrastructure for India**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Web%20App-digiroute.antideploy.com-ea580c?style=for-the-badge&logo=globe)](https://digiroute.antideploy.com)
-[![Android APK](https://img.shields.io/badge/Download-Android%20APK-16a34a?style=for-the-badge&logo=android)](https://digiroute.antideploy.com/download)
+[![Android APK](https://img.shields.io/badge/Download-Android%20APK-16a34a?style=for-the-badge&logo=android)](https://digiroute.antideploy.com/download-app)
 [![YouTube Video](https://img.shields.io/badge/YouTube-Watch%20Official%20Demo-dc2626?style=for-the-badge&logo=youtube)](https://youtu.be/_AtHaqphT30)
 [![Technical Spec](https://img.shields.io/badge/Technical%20Docs-DIGIROUTE__MASTER__DOC.md-2563eb?style=for-the-badge&logo=readme)](./DIGIROUTE_MASTER_DOC.md)
 
@@ -25,7 +25,7 @@
 | Resource | Description | Direct Link |
 | :--- | :--- | :--- |
 | 🌐 **Live Web Platform** | Production web dashboard & 5-step address generator | [https://digiroute.antideploy.com](https://digiroute.antideploy.com) |
-| 📱 **Android APK Download** | Production mobile client build for Android devices | [https://digiroute.antideploy.com/download](https://digiroute.antideploy.com/download) |
+| 📱 **Android APK Download** | Production mobile client build for Android devices | [https://digiroute.antideploy.com/download-app](https://digiroute.antideploy.com/download-app) |
 | 🎥 **YouTube Video** | Full 60s feature showcase & architecture walkthrough | [https://youtu.be/_AtHaqphT30](https://youtu.be/_AtHaqphT30) |
 | 📖 **Technical Master Doc** | Comprehensive engineering specification & data model | [DIGIROUTE_MASTER_DOC.md](./DIGIROUTE_MASTER_DOC.md) |
 | 📦 **GitHub Releases** | Official distribution packages & release notes | [GitHub Releases](https://github.com/LuckyLongre123/digiroute/releases) |

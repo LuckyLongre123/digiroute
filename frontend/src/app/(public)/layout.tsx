@@ -106,6 +106,12 @@ export default function PublicLayout({
             >
               Terms of Service
             </Link>
+            <Link
+              href="/contact"
+              className="hover:text-foreground transition-colors"
+            >
+              Contact
+            </Link>
           </div>
         </div>
       </footer>

@@ -15,11 +15,13 @@ import {
   X,
   Trash2,
   ShieldCheck,
+  MessageSquare,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/admin/overview', label: 'Graph Overview', icon: LayoutDashboard },
   { href: '/admin/consent', label: 'Consent Logs', icon: ShieldCheck },
+  { href: '/admin/contacts', label: 'Contacts', icon: MessageSquare },
   { href: '/admin/images', label: 'Media Gallery', icon: ImageIcon },
   { href: '/admin/images/trash', label: 'Trash Images', icon: Trash2 },
   { href: '/admin/settings', label: 'Security & Keys', icon: Settings },
