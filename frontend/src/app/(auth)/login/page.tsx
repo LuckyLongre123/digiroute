@@ -139,6 +139,13 @@ function LoginForm() {
             >
               Password
             </label>
+            <Link
+              href="/forgot-password"
+              id="login-forgot-password-link"
+              className="text-xs font-medium text-zinc-500 transition-colors hover:text-accent hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
           <div className="relative">
             <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
