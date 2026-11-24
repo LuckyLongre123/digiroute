@@ -36,10 +36,6 @@ export default function PrivacyPolicyPage() {
 
       {/* Header */}
       <header className="space-y-3">
-        <div className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          <span>Legal</span>
-        </div>
         <h1 className="text-foreground text-2xl leading-tight font-bold tracking-tight md:text-4xl">
           Privacy Policy
         </h1>
