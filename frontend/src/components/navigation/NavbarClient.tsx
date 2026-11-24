@@ -36,8 +36,17 @@ export function NavbarClient({
           />
         </Link>
 
-        {/* Right: Download App Link, Auth State & SOS */}
+        {/* Right: Contact Link, Download App Link, Auth State & SOS */}
         <nav aria-label="Main Navigation" className="flex items-center gap-2.5 sm:gap-3.5">
+          {/* Contact Link */}
+          <TransitionLink
+            href="/contact"
+            id="navbar-contact-link"
+            className="inline-flex items-center rounded-sm px-2 py-1.5 font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:px-2.5 dark:text-zinc-400 dark:hover:text-zinc-100"
+          >
+            Contact
+          </TransitionLink>
+
           {/* Download App Route Link (Internal /download-app Landing Page) */}
           <Link
             href="/download-app"
@@ -57,15 +66,6 @@ export function NavbarClient({
           >
             <AndroidIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </Link>
-
-          {/* Contact Link */}
-          <TransitionLink
-            href="/contact"
-            id="navbar-contact-link"
-            className="inline-flex items-center rounded-sm px-2 py-1.5 font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:px-2.5 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            Contact
-          </TransitionLink>
 
           {/* Auth Section: Suspense wrapped if likely authenticated, else instant guest login */}
           {userSection}
