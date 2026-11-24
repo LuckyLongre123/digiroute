@@ -11,10 +11,10 @@ import {
   LogOut,
   Map,
   ShieldCheck,
-  Smartphone,
   Trash2,
   User,
   ExternalLink,
+  HardDrive,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -23,9 +23,13 @@ import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 
 /**
- * /dashboard/settings - Citizen & App Settings (ROUTE-01, ROUTE-04)
+ * /dashboard/settings - Account Settings & Preferences
  *
- * User profile, legal consents, offline map layer defaults, cache management, and sign out.
+ * Dark Utilitarian Citizen Settings:
+ * - Account identity snapshot
+ * - Privacy & Consents with audit logging & instant optimistic toggle
+ * - Map preferences & offline cache diagnostics
+ * - Clean WCAG AA contrast and safe bottom-navigation clearance
  */
 export default function SettingsPage() {
   const router = useRouter();
@@ -85,21 +89,22 @@ export default function SettingsPage() {
 
     setConsentAccepted(checked);
     setConsentLastAction(checked ? 'ACCEPTED' : 'REVOKED');
-    const nowIST = new Intl.DateTimeFormat('en-IN', {
-      timeZone: 'Asia/Kolkata',
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    }).format(new Date()) + ' IST';
+    const nowIST =
+      new Intl.DateTimeFormat('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      }).format(new Date()) + ' IST';
     setConsentDateIST(nowIST);
 
     toast.success(
       checked
         ? 'Consent recorded: Terms & Privacy Policy accepted.'
-        : 'Consent revoked. Your preferences have been updated in the audit ledger.'
+        : 'Consent revoked. Your preference has been logged to the audit ledger.'
     );
 
     // 2. Non-blocking background persistence
@@ -166,83 +171,87 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="animate-in fade-in max-w-2xl space-y-6 font-sans duration-150">
+    <div className="animate-in fade-in max-w-2xl space-y-6 font-sans duration-150 pb-28 md:pb-12 text-zinc-300">
       {/* Header */}
-      <div>
-        <h1 className="text-foreground text-2xl font-bold tracking-tight">
-          Settings &amp; Preferences
+      <div className="border-b border-zinc-800 pb-4">
+        <h1 className="text-xl font-bold tracking-tight text-zinc-100 sm:text-2xl">
+          Account Settings
         </h1>
-        <p className="text-muted-foreground mt-0.5 text-xs">
-          Manage your account profile, legal consents, offline storage, and spatial defaults
+        <p className="mt-1 text-xs text-zinc-400">
+          Manage your account profile, privacy consents, map preferences, and local storage.
         </p>
       </div>
 
-      {/* Profile Card */}
-      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
-          <User className="h-3.5 w-3.5" />
-          <span>Sovereign Identity Profile</span>
+      {/* 1. Account Profile Card */}
+      <div className="space-y-4 rounded-[4px] border border-zinc-800 bg-zinc-900/90 p-5">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          <User className="h-3.5 w-3.5 text-orange-500" />
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            Account
+          </h2>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="bg-primary text-primary-foreground flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-lg font-bold">
+        <div className="flex items-center gap-4 pt-1">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[4px] border border-orange-500/30 bg-orange-950/40 font-mono text-sm font-bold text-orange-400">
             {initials}
           </div>
           <div className="min-w-0">
-            <h2 className="text-foreground truncate text-base font-semibold tracking-tight">
+            <p className="truncate text-sm font-semibold text-zinc-100">
               {name}
-            </h2>
-            <p className="text-muted-foreground truncate text-xs">{email}</p>
+            </p>
+            <p className="truncate text-xs font-mono text-zinc-400">{email}</p>
           </div>
         </div>
       </div>
 
-      {/* Privacy & Legal Consents Card */}
-      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="flex items-center justify-between">
-          <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
-            <ShieldCheck className="h-3.5 w-3.5 text-amber-500" />
-            <span>Privacy &amp; Legal Consents</span>
+      {/* 2. Privacy & Consents Card */}
+      <div className="space-y-4 rounded-[4px] border border-zinc-800 bg-zinc-900/90 p-5">
+        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-orange-500" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+              Privacy &amp; Consents
+            </h2>
           </div>
           {consentAccepted ? (
-            <span className="inline-flex items-center gap-1.5 rounded-[3px] border border-emerald-500/30 bg-emerald-950/40 px-2 py-0.5 font-mono text-[11px] font-semibold text-emerald-400">
-              ● Active Accepted
+            <span className="whitespace-nowrap inline-flex items-center gap-1.5 rounded-[3px] border border-emerald-500/40 bg-emerald-950/50 px-2 py-0.5 font-mono text-[11px] font-semibold text-emerald-400">
+              ● Accepted
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-[3px] border border-amber-500/30 bg-amber-950/40 px-2 py-0.5 font-mono text-[11px] font-semibold text-amber-400">
-              ○ Consent Revoked
+            <span className="whitespace-nowrap inline-flex items-center gap-1.5 rounded-[3px] border border-amber-500/40 bg-amber-950/50 px-2 py-0.5 font-mono text-[11px] font-semibold text-amber-400">
+              ○ Revoked
             </span>
           )}
         </div>
 
         <div className="flex flex-col justify-between gap-4 pt-1 sm:flex-row sm:items-center">
-          <div className="space-y-1">
-            <div className="text-foreground text-xs font-medium tracking-tight">
-              Age (13+) &amp; Terms of Service Acceptance
+          <div className="space-y-1.5">
+            <div className="text-xs font-medium text-zinc-100">
+              Age (13+) &amp; Terms Acceptance
             </div>
-            <p className="text-muted-foreground text-[11px] leading-relaxed">
-              Confirm you are 13 years of age or older (or have parental consent) and agree to DigiRoute&apos;s{' '}
+            <p className="text-xs leading-relaxed text-zinc-400">
+              I confirm I am 13 years of age or older (or have parental consent) and agree to DigiRoute&apos;s{' '}
               <Link
                 href="/terms"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-amber-500 underline inline-flex items-center gap-0.5 hover:text-amber-400"
+                className="font-medium text-orange-400 underline inline-flex items-center gap-0.5 hover:text-orange-300"
               >
-                Terms of Service <ExternalLink className="h-2.5 w-2.5" />
+                Terms <ExternalLink className="h-2.5 w-2.5" />
               </Link>{' '}
               and{' '}
               <Link
                 href="/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-amber-500 underline inline-flex items-center gap-0.5 hover:text-amber-400"
+                className="font-medium text-orange-400 underline inline-flex items-center gap-0.5 hover:text-orange-300"
               >
                 Privacy Policy <ExternalLink className="h-2.5 w-2.5" />
               </Link>
               .
             </p>
             {consentDateIST && (
-              <p className="text-muted-foreground font-mono text-[10px]">
+              <p className="font-mono text-[10px] text-zinc-500">
                 {consentLastAction === 'ACCEPTED'
                   ? `Accepted on: ${consentDateIST}`
                   : `Revoked on: ${consentDateIST}`}
@@ -250,7 +259,7 @@ export default function SettingsPage() {
             )}
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center">
             <Switch
               checked={consentAccepted}
               onCheckedChange={handleConsentToggle}
@@ -260,24 +269,27 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="border-t border-zinc-100 pt-3 dark:border-zinc-800/80">
-          <p className="text-muted-foreground text-[11px]">
-            Unticking this setting revokes your legal consent in the immutable audit ledger. Your account and saved addresses remain active; you can re-accept at any time.
+        <div className="border-t border-zinc-800/80 pt-3">
+          <p className="text-[11px] leading-relaxed text-zinc-500">
+            Unticking this setting records consent revocation in the compliance audit ledger. Your account credentials and saved micro-addresses remain preserved; you can re-accept at any time.
           </p>
         </div>
       </div>
 
-      {/* Spatial / Map Layer Settings */}
-      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
-          <Map className="h-3.5 w-3.5" />
-          <span>Spatial &amp; Map Layer Preferences</span>
+      {/* 3. Map & Storage Card */}
+      <div className="space-y-5 rounded-[4px] border border-zinc-800 bg-zinc-900/90 p-5">
+        <div className="flex items-center gap-2 border-b border-zinc-800/80 pb-3">
+          <Map className="h-4 w-4 text-orange-500" />
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+            Map &amp; Storage
+          </h2>
         </div>
 
+        {/* Map Layer Selector */}
         <div className="space-y-2">
           <label
             htmlFor="map-provider"
-            className="text-foreground block text-xs font-medium tracking-tight"
+            className="block text-xs font-medium text-zinc-200"
           >
             Default Spatial Base Map
           </label>
@@ -285,32 +297,26 @@ export default function SettingsPage() {
             id="map-provider"
             value={offlineMap}
             onChange={(e) => setOfflineMap(e.target.value)}
-            className="bg-background border-input text-foreground focus:ring-accent w-full cursor-pointer rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+            className="w-full cursor-pointer rounded-[4px] border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-100 transition-colors focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
           >
             <option value="mappls">Mappls (MapmyIndia) Sovereign Vector</option>
             <option value="osm">OpenStreetMap India Regional</option>
             <option value="bhuvan">ISRO Bhuvan Satellite Hybrid</option>
           </select>
-          <p className="text-muted-foreground text-[11px]">
-            Mappls is recommended for optimal accuracy in dense Indian urban wards.
+          <p className="text-[11px] text-zinc-500">
+            Mappls is recommended for sub-meter resolution in dense Indian municipal sectors.
           </p>
         </div>
-      </div>
 
-      {/* Storage & Offline Cache */}
-      <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-5 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
-          <Smartphone className="h-3.5 w-3.5" />
-          <span>Offline PWA Storage &amp; Diagnostics</span>
-        </div>
-
-        <div className="flex flex-col justify-between gap-3 pt-1 sm:flex-row sm:items-center">
+        {/* Offline Cache Cleanup */}
+        <div className="border-t border-zinc-800/80 pt-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div>
-            <div className="text-foreground text-xs font-medium tracking-tight">
-              Local Offline Cache
+            <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-200">
+              <HardDrive className="h-3.5 w-3.5 text-zinc-400" />
+              <span>Local Offline Cache</span>
             </div>
-            <p className="text-muted-foreground text-[11px]">
-              Clear saved tile caches, temporary camera captures, and draft addresses.
+            <p className="mt-0.5 text-[11px] text-zinc-500">
+              Purges cached map tiles, temporary camera frames, and local drafts.
             </p>
           </div>
           <button
@@ -318,16 +324,16 @@ export default function SettingsPage() {
             disabled={isClearing}
             type="button"
             id="clear-offline-cache-btn"
-            className="border-border bg-background hover:bg-muted text-foreground inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-sm border px-3 py-2 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-[4px] border border-zinc-700 bg-zinc-950 px-3.5 py-2 text-xs font-medium text-zinc-200 transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isClearing ? (
               <>
-                <Check className="text-accent h-3.5 w-3.5" />
+                <Check className="h-3.5 w-3.5 text-orange-400" />
                 <span>Clearing Cache...</span>
               </>
             ) : (
               <>
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3.5 w-3.5 text-zinc-400" />
                 <span>Clear Cache</span>
               </>
             )}
@@ -335,15 +341,15 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Session Management */}
-      <div className="pt-2">
+      {/* 4. Session Termination */}
+      <div className="pt-1">
         <button
           type="button"
           onClick={handleLogout}
           id="settings-logout-btn"
-          className="border-destructive/30 text-destructive hover:bg-destructive/10 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded border text-sm font-semibold transition-all active:scale-[0.98]"
+          className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-[4px] border border-red-500/30 bg-red-950/20 text-xs font-semibold text-red-400 transition-colors hover:bg-red-950/40 hover:border-red-500/50"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-3.5 w-3.5" />
           <span>Log Out</span>
         </button>
       </div>

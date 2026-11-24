@@ -48,16 +48,14 @@ export async function saveContactMessage(input: {
 
   // 1. Attempt Prisma Neon DB persistence
   try {
-    await (db as any).contactMessage.create({
-      data: {
-        id: record.id,
-        name: record.name,
-        email: record.email,
-        category: record.category,
-        message: record.message,
-        status: record.status,
-        createdAt: record.createdAt,
-      },
+    await db.orm.public.ContactMessage.create({
+      id: record.id,
+      name: record.name,
+      email: record.email,
+      category: record.category,
+      message: record.message,
+      status: record.status,
+      createdAt: record.createdAt,
     });
   } catch (dbErr) {
     console.warn('[Contact] Prisma write failed, using local mirror:', dbErr);
@@ -87,7 +85,7 @@ export async function getAllContactMessages(): Promise<ContactMessageRecord[]> {
   }
 
   try {
-    const dbRecords = await (db as any).contactMessage.findMany();
+    const dbRecords = await db.orm.public.ContactMessage.all();
     if (Array.isArray(dbRecords)) {
       for (const item of dbRecords) {
         memoryMap.set(item.id, {
@@ -121,9 +119,8 @@ export async function updateContactMessageStatus(
 
   // 1. Update in Prisma
   try {
-    await (db as any).contactMessage.update({
-      where: { id },
-      data: { status },
+    await db.orm.public.ContactMessage.where({ id }).update({
+      status,
     });
     updatedAny = true;
   } catch (dbErr) {
@@ -154,9 +151,7 @@ export async function deleteContactMessage(id: string): Promise<boolean> {
 
   // 1. Delete in Prisma
   try {
-    await (db as any).contactMessage.delete({
-      where: { id },
-    });
+    await db.orm.public.ContactMessage.where({ id }).delete();
     deletedAny = true;
   } catch (dbErr) {
     console.warn('[Contact] Prisma delete failed, removing from local mirror:', dbErr);

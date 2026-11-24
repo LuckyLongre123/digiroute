@@ -1,17 +1,16 @@
-import Link from 'next/link';
-import type { Metadata } from 'next';
 import {
   ArrowLeft,
   Camera,
-  MapPin,
-  Layers,
-  Navigation,
   CheckCircle2,
-  XCircle,
   HelpCircle,
+  Layers,
+  MapPin,
+  Navigation,
   ShieldCheck,
-  Zap,
+  XCircle
 } from 'lucide-react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'About DigiRoute & DIGIPIN',
@@ -100,10 +99,6 @@ export default function AboutPage() {
 
       {/* Hero Header */}
       <section className="space-y-3">
-        <div className="bg-accent/10 text-accent inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-semibold tracking-wide">
-          <Zap className="h-3.5 w-3.5" />
-          <span>Sovereign Indian Navigation</span>
-        </div>
         <h1 className="text-foreground text-2xl leading-tight font-bold tracking-tight md:text-4xl">
           Stop explaining your address on phone calls.
         </h1>
