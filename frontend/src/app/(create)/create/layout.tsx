@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { X, ArrowLeft, RotateCcw, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -263,15 +264,17 @@ export default function CreateLayout({
                 type="button"
                 onClick={handleCloseClick}
                 id="wizard-header-logo-btn"
-                className="group flex cursor-pointer items-center gap-1.5 focus:outline-none"
+                className="group flex cursor-pointer items-center focus:outline-none"
                 aria-label="Return Home"
               >
-                <span className="font-sans text-base font-bold tracking-tight text-zinc-950 sm:text-lg dark:text-zinc-50">
-                  Digi<span className="text-accent">Route</span>
-                </span>
-                <span
-                  className="bg-accent h-2 w-2 animate-pulse rounded-full"
-                  aria-hidden="true"
+                <Image
+                  src="/logo-transparent.png"
+                  alt="DigiRoute Logo"
+                  width={150}
+                  height={40}
+                  priority={true}
+                  quality={75}
+                  className="h-auto w-28 object-contain sm:w-32 dark:brightness-200 dark:invert"
                 />
               </button>
             </div>
