@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { AlertTriangle } from 'lucide-react';
 import { AndroidIcon } from '@/components/icons/AndroidIcon';
-import { TransitionLink } from '@/components/ui/TransitionLink';
 
 interface NavbarClientProps {
   isLikelyAuthenticated: boolean;
@@ -39,13 +38,13 @@ export function NavbarClient({
         {/* Right: Contact Link, Download App Link, Auth State & SOS */}
         <nav aria-label="Main Navigation" className="flex items-center gap-2.5 sm:gap-3.5">
           {/* Contact Link */}
-          <TransitionLink
+          <Link
             href="/contact"
             id="navbar-contact-link"
             className="inline-flex items-center rounded-sm px-2 py-1.5 font-sans text-xs font-medium text-zinc-600 transition-colors hover:text-zinc-950 sm:px-2.5 dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             Contact
-          </TransitionLink>
+          </Link>
 
           {/* Download App Route Link (Internal /download-app Landing Page) */}
           <Link
